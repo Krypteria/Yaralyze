@@ -1,18 +1,21 @@
-package com.example.yaralyze01;
+package com.example.yaralyze01.WIP;
 
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.example.yaralyze01.ui.analysis.staticAnalysis.StaticAnalysisActivity;
 
-public class GetAllAppsTask extends BackgroundTask{
-    private List<ApplicationInfo> apps;
+import java.util.ArrayList;
+
+public class GetAllAppsTask extends BackgroundTask {
+    private StaticAnalysisActivity appsActivity;
+    private ArrayList<AppDetails> apps;
     private PackageManager packageManager;
 
-    public GetAllAppsTask(AppsActivity activity){
+    public GetAllAppsTask(StaticAnalysisActivity activity){
         super(activity);
-        this.apps = new ArrayList<ApplicationInfo>();
+        this.appsActivity = activity;
+        this.apps = new ArrayList<AppDetails>();
         this.packageManager = this.activity.getPackageManager();
     }
 
@@ -23,14 +26,15 @@ public class GetAllAppsTask extends BackgroundTask{
 
     @Override
     public void onPostExecute() {
-        //Actualizo la GUI de Apps
+        //this.appsActivity.GetAllAppsTaskCallback(this.apps);
     }
 
     private void getAllAppsIntent(){
         for(ApplicationInfo applicationInfo : this.packageManager.getInstalledApplications(PackageManager.GET_META_DATA)){
             try{
                 if(this.packageManager.getLaunchIntentForPackage(applicationInfo.packageName) != null){
-                    this.apps.add(applicationInfo);
+                    System.out.println(applicationInfo.name + " - " + applicationInfo.packageName + " - " + applicationInfo.dataDir + " - " + applicationInfo.sourceDir);
+                    this.apps.add(new AppDetails(applicationInfo.name, applicationInfo.icon));
                 }
             }
             catch (Exception e){
