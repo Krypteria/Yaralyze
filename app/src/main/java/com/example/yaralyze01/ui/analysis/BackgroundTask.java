@@ -1,20 +1,22 @@
-package com.example.yaralyze01.WIP;
+package com.example.yaralyze01.ui.analysis;
 
 import android.app.Activity;
 
-public abstract class BackgroundTask{
-    protected Activity activity;
+import androidx.fragment.app.Fragment;
 
-    public BackgroundTask(Activity activity){
-        this.activity = activity;
+public abstract class BackgroundTask{
+    protected Fragment fragment;
+
+    public BackgroundTask(Fragment fragment){
+        this.fragment = fragment;
     }
 
-    private void startBackground(){
+    public void startBackground(){
         new Thread(new Runnable() {
             @Override
             public void run() {
                 doInBackground();
-                activity.runOnUiThread(new Runnable() {
+                fragment.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         onPostExecute();
@@ -22,10 +24,6 @@ public abstract class BackgroundTask{
                 });
             }
         }).start();
-    }
-
-    public void execute(){
-        startBackground();
     }
 
     public abstract void doInBackground();

@@ -1,4 +1,4 @@
-package com.example.yaralyze01.WIP;
+package com.example.yaralyze01.ui.analysis;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +19,14 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsViewHolder> {
         this.apps = apps;
     }
 
+    public AppsAdapter(){
+        this.apps = new ArrayList<AppDetails>();
+    }
+
+    public void updateData(ArrayList<AppDetails> apps){
+        this.apps = apps;
+    }
+
     @NonNull
     @Override
     public AppsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -28,6 +36,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull AppsViewHolder holder, int position) {
+        System.out.print(this.apps.get(position).getName());
         holder.getNameView().setText(this.apps.get(position).getName());
         //holder.getImageView().setImageResource(this.apps.get(position).getImage());
     }

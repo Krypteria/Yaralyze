@@ -1,4 +1,4 @@
-package com.example.yaralyze01.WIP;
+package com.example.yaralyze01.ui.analysis;
 
 //En la primera activity muestro: Nombre, Foto
 
