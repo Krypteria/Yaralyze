@@ -11,20 +11,33 @@ import com.example.yaralyze01.R;
 
 public class AppsViewHolder extends RecyclerView.ViewHolder {
 
-    private ImageView imageView;
-    private TextView nameView;
+    private ImageView appIcon;
+    private TextView appName;
+    private TextView appVersion;
+    private TextView packageName;
 
     public AppsViewHolder(@NonNull View itemView) {
         super(itemView);
-        imageView = itemView.findViewById(R.id.appImageView);
-        nameView = itemView.findViewById(R.id.appNameView);
+        this.appName = itemView.findViewById(R.id.appName);
+        this.appVersion = itemView.findViewById(R.id.appVersion);
+        this.packageName = itemView.findViewById(R.id.packageName);
+        this.appIcon = itemView.findViewById(R.id.appIcon);
     }
 
-    public ImageView getImageView(){
-        return this.imageView;
+    public TextView getAppName(){
+        return this.appName;
     }
 
-    public TextView getNameView(){
-        return this.nameView;
+    public TextView getAppVersion(){
+        return this.appVersion;
     }
+
+    public TextView getPackageName(){
+        return this.packageName;
+    }
+
+    public ImageView getAppIcon(){
+        return this.appIcon;
+    }
+
 }

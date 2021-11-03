@@ -36,9 +36,10 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull AppsViewHolder holder, int position) {
-        System.out.print(this.apps.get(position).getName());
-        holder.getNameView().setText(this.apps.get(position).getName());
-        //holder.getImageView().setImageResource(this.apps.get(position).getImage());
+        holder.getAppName().setText(this.apps.get(position).getAppName());
+        holder.getAppVersion().setText(this.apps.get(position).getAppVersion());
+        holder.getPackageName().setText(this.apps.get(position).getPackageName());
+        holder.getAppIcon().setImageDrawable(this.apps.get(position).getAppIcon());
     }
 
     @Override

@@ -48,10 +48,6 @@ public class StaticAnalysisMainMenuFragment extends Fragment {
 
     public void GetAllAppsTaskCallback(ArrayList<AppDetails> apps){
         this.apps = apps;
-        System.out.println(this.apps.size());
-        for(int i = 0; i < apps.size(); i++){
-            System.out.println(apps.get(i).getName());
-        }
         this.appsAdapter.updateData(apps);
         this.appsAdapter.notifyDataSetChanged();
     }
