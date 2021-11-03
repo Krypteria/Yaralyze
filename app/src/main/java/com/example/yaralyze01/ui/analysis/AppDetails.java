@@ -1,8 +1,11 @@
 package com.example.yaralyze01.ui.analysis;
 
-//En la primera activity muestro: Nombre, Foto
-
 import android.graphics.drawable.Drawable;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 //En la segunda además de lo de la primera muestro: firstInstallTime, installLocation, lastUpdateTime, providers, (permissions), (requested permissions),
 public class AppDetails {
@@ -11,11 +14,19 @@ public class AppDetails {
     private String appVersion;
     private Drawable appIcon;
 
-    public AppDetails(String appName, String packageName, String appVersion, Drawable appIcon){
+    private String appSrc;
+    private String firstTimeInstalledDate;
+    private String lastTimeUpdatedDate;
+
+    public AppDetails(String appName, String packageName, String appVersion, Drawable appIcon, String appSrc, long firstTimeInstalledDate, long lastTimeUpdatedDate){
         this.appName = appName;
         this.packageName = packageName;
         this.appVersion = appVersion;
         this.appIcon = appIcon;
+
+        this.appSrc = appSrc;
+        this.firstTimeInstalledDate = getDateFormated(firstTimeInstalledDate);
+        this.lastTimeUpdatedDate = getDateFormated(lastTimeUpdatedDate);
     }
 
     public String getAppName(){
@@ -26,4 +37,15 @@ public class AppDetails {
     }
     public String getAppVersion(){ return this.appVersion; }
     public Drawable getAppIcon(){ return this.appIcon; }
+
+    public String getAppSrc(){ return this.appSrc; }
+
+    private String getDateFormated(long milisecondsDate){
+        Date date = new Date(milisecondsDate);
+        DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        format.setTimeZone(TimeZone.getTimeZone("Spain/Madrid"));
+        String formatedDate = format.format(date);
+
+        return formatedDate;
+    }
 }

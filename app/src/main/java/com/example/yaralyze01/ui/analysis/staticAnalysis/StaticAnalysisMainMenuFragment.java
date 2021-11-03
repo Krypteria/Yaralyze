@@ -27,7 +27,10 @@ public class StaticAnalysisMainMenuFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.apps = new ArrayList<AppDetails>();
+        this.apps = new ArrayList<>();
+
+        //Obtengo las aplicaciones instaladas
+        new GetInstalledAppsTask(this).startOnBackground();
     }
 
     @Override
@@ -35,20 +38,18 @@ public class StaticAnalysisMainMenuFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_static_analysis_main_menu, container, false);
 
         this.recyclerApps = view.findViewById(R.id.recyclerViewApps);
-        //Enlazo el adaptador al recycler
+
         this.appsAdapter = new AppsAdapter();
         this.recyclerApps.setLayoutManager(new LinearLayoutManager(this.getActivity()));
         this.recyclerApps.setAdapter(appsAdapter);
 
-        //Lleno la lista (Al lanzarse en otro thread seguramente me de problemas)
-        new GetInstalledAppsTask(this).startOnBackground();
 
         return view;
     }
 
     public void GetAllAppsTaskCallback(ArrayList<AppDetails> apps){
         this.apps = apps;
-        this.appsAdapter.updateData(apps);
+        this.appsAdapter.updateData(this.apps);
         this.appsAdapter.notifyDataSetChanged();
     }
 }

@@ -9,14 +9,17 @@ import com.example.yaralyze01.ui.analysis.BackgroundTask;
 import com.example.yaralyze01.ui.analysis.staticAnalysis.StaticAnalysisActivity;
 import com.example.yaralyze01.ui.analysis.staticAnalysis.StaticAnalysisMainMenuFragment;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class GetInstalledAppsTask extends BackgroundTask {
     private StaticAnalysisMainMenuFragment fragment;
     private ArrayList<AppDetails> apps;
     private PackageManager packageManager;
 
-    //Esto luego lo tendré que cambiar para que solo acepte el fragmento correspondiente a la lista de apps
     public GetInstalledAppsTask(StaticAnalysisMainMenuFragment fragment){
         super(fragment);
         this.fragment = fragment;
@@ -24,7 +27,6 @@ public class GetInstalledAppsTask extends BackgroundTask {
         this.packageManager = this.fragment.getActivity().getPackageManager();
     }
 
-    //Función de lanzamiento
     public void startOnBackground(){
         this.startBackground();
     }
@@ -45,8 +47,10 @@ public class GetInstalledAppsTask extends BackgroundTask {
                 if((!getSysPackages) && (packageInfo.versionName == null)){
                     continue;
                 }
+
                 this.apps.add(new AppDetails(packageInfo.applicationInfo.loadLabel(this.packageManager).toString(),
-                        packageInfo.packageName, packageInfo.versionName, packageInfo.applicationInfo.loadIcon(this.packageManager)));
+                        packageInfo.packageName, packageInfo.versionName, packageInfo.applicationInfo.loadIcon(this.packageManager), packageInfo.applicationInfo.sourceDir,
+                            packageInfo.firstInstallTime, packageInfo.lastUpdateTime));
             }
         }
     }
