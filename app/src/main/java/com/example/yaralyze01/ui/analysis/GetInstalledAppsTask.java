@@ -41,16 +41,13 @@ public class GetInstalledAppsTask extends BackgroundTask {
 
     private void getInstalledAppsIntent(boolean getSysPackages){
         for(PackageInfo packageInfo : this.packageManager.getInstalledPackages(0)){
-            if((!getSysPackages) && (packageInfo.versionName == null)){
-                continue;
+            if(this.packageManager.getLaunchIntentForPackage(packageInfo.packageName) != null){
+                if((!getSysPackages) && (packageInfo.versionName == null)){
+                    continue;
+                }
+                this.apps.add(new AppDetails(packageInfo.applicationInfo.loadLabel(this.packageManager).toString(),
+                        packageInfo.packageName, packageInfo.versionName, packageInfo.applicationInfo.loadIcon(this.packageManager)));
             }
-
-            this.apps.add(new AppDetails(packageInfo.applicationInfo.loadLabel(this.packageManager).toString(),
-                            packageInfo.packageName, packageInfo.versionName, packageInfo.applicationInfo.loadIcon(this.packageManager)));
-
-            /*System.out.println(packageInfo.applicationInfo.loadLabel(this.packageManager).toString());
-            System.out.println(packageInfo.packageName);
-            System.out.println(packageInfo.versionName);*/
         }
     }
 }
