@@ -7,14 +7,12 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.telecom.Call;
 
-import com.example.yaralyze01.R;
-import com.example.yaralyze01.ui.CallBackInterface;
+import com.example.yaralyze01.ui.SimpleCallbackInterface;
 import com.example.yaralyze01.ui.analysis.staticAnalysis.StaticAnalysisActivity;
 import com.example.yaralyze01.ui.mainMenu.mainMenuFragment;
 
-public class MainActivity extends AppCompatActivity implements CallBackInterface {
+public class MainActivity extends AppCompatActivity implements SimpleCallbackInterface {
 
     //Control de Fragmentos
     private FragmentManager fragmentManager;

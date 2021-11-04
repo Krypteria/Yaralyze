@@ -8,28 +8,27 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.yaralyze01.R;
+import com.example.yaralyze01.ui.analysis.staticAnalysis.OnAppListener;
 
-public class AppsViewHolder extends RecyclerView.ViewHolder {
+public class AppsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     private ImageView appIcon;
     private TextView appName;
-    private TextView appVersion;
     private TextView packageName;
+    private OnAppListener onAppListener;
 
-    public AppsViewHolder(@NonNull View itemView) {
+    public AppsViewHolder(@NonNull View itemView, OnAppListener onAppListener) {
         super(itemView);
         this.appName = itemView.findViewById(R.id.appName);
-        this.appVersion = itemView.findViewById(R.id.appVersion);
         this.packageName = itemView.findViewById(R.id.packageName);
         this.appIcon = itemView.findViewById(R.id.appIcon);
+        this.onAppListener = onAppListener;
+
+        itemView.setOnClickListener(this);
     }
 
     public TextView getAppName(){
         return this.appName;
-    }
-
-    public TextView getAppVersion(){
-        return this.appVersion;
     }
 
     public TextView getPackageName(){
@@ -40,4 +39,8 @@ public class AppsViewHolder extends RecyclerView.ViewHolder {
         return this.appIcon;
     }
 
+    @Override
+    public void onClick(View v) {
+        this.onAppListener.onAppClick(this.getAdapterPosition());
+    }
 }

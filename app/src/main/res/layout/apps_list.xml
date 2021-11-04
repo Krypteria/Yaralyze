@@ -18,34 +18,15 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
+
+        <TextView
+            android:id="@+id/appName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:orientation="horizontal">
-            <TextView
-                android:id="@+id/appName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textColor="@color/black"
-                android:textSize="14dp"
-                tools:text="Application name" />
-
-            <Space
-                android:layout_width="4dp"
-                android:layout_height="0dp"/>
-
-            <TextView
-                android:id="@+id/appVersion"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textColor="@color/black"
-                android:textSize="14dp"
-                tools:text="1.0" />
-
-        </LinearLayout>
+            android:layout_marginTop="4dp"
+            android:textColor="@color/black"
+            android:textSize="14dp"
+            tools:text="Application name" />
 
         <Space
             android:layout_width="4dp"

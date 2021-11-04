@@ -8,19 +8,18 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.yaralyze01.R;
+import com.example.yaralyze01.ui.analysis.staticAnalysis.OnAppListener;
 
 import java.util.ArrayList;
 
 public class AppsAdapter extends RecyclerView.Adapter<AppsViewHolder> {
 
     private ArrayList<AppDetails> apps;
+    private OnAppListener onAppListener;
 
-    public AppsAdapter(ArrayList<AppDetails> apps){
-        this.apps = apps;
-    }
-
-    public AppsAdapter(){
-        this.apps = new ArrayList<AppDetails>();
+    public AppsAdapter(OnAppListener onAppListener){
+        this.onAppListener = onAppListener;
+        this.apps = new ArrayList<>();
     }
 
     public void updateData(ArrayList<AppDetails> apps){
@@ -31,13 +30,12 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsViewHolder> {
     @Override
     public AppsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.apps_list, null, false);
-        return new AppsViewHolder(view);
+        return new AppsViewHolder(view, this.onAppListener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull AppsViewHolder holder, int position) {
         holder.getAppName().setText(this.apps.get(position).getAppName());
-        holder.getAppVersion().setText(this.apps.get(position).getAppVersion());
         holder.getPackageName().setText(this.apps.get(position).getPackageName());
         holder.getAppIcon().setImageDrawable(this.apps.get(position).getAppIcon());
     }

@@ -1,5 +1,5 @@
 package com.example.yaralyze01.ui;
 
-public interface CallBackInterface {
+public interface SimpleCallbackInterface {
     public void callBackMethod();
 }

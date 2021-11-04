@@ -1,5 +1,7 @@
 package com.example.yaralyze01.ui.analysis;
 
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 
 import java.text.DateFormat;
@@ -18,15 +20,15 @@ public class AppDetails {
     private String firstTimeInstalledDate;
     private String lastTimeUpdatedDate;
 
-    public AppDetails(String appName, String packageName, String appVersion, Drawable appIcon, String appSrc, long firstTimeInstalledDate, long lastTimeUpdatedDate){
-        this.appName = appName;
-        this.packageName = packageName;
-        this.appVersion = appVersion;
-        this.appIcon = appIcon;
+    public AppDetails(PackageInfo packageInfo, PackageManager packageManager){
+        this.appName = packageInfo.applicationInfo.loadLabel(packageManager).toString();
+        this.packageName = packageInfo.packageName;
+        this.appVersion = packageInfo.versionName;
+        this.appIcon = packageInfo.applicationInfo.loadIcon(packageManager);
 
-        this.appSrc = appSrc;
-        this.firstTimeInstalledDate = getDateFormated(firstTimeInstalledDate);
-        this.lastTimeUpdatedDate = getDateFormated(lastTimeUpdatedDate);
+        this.appSrc = packageInfo.applicationInfo.sourceDir;
+        this.firstTimeInstalledDate = getDateFormated(packageInfo.firstInstallTime);
+        this.lastTimeUpdatedDate = getDateFormated(packageInfo.lastUpdateTime);
     }
 
     public String getAppName(){
@@ -39,13 +41,14 @@ public class AppDetails {
     public Drawable getAppIcon(){ return this.appIcon; }
 
     public String getAppSrc(){ return this.appSrc; }
+    public String getFirstTimeInstalledDate(){ return this.firstTimeInstalledDate; }
+    public String getLastTimeUpdatedDate(){ return this.lastTimeUpdatedDate; }
 
     private String getDateFormated(long milisecondsDate){
         Date date = new Date(milisecondsDate);
         DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         format.setTimeZone(TimeZone.getTimeZone("Spain/Madrid"));
-        String formatedDate = format.format(date);
 
-        return formatedDate;
+        return format.format(date);
     }
 }

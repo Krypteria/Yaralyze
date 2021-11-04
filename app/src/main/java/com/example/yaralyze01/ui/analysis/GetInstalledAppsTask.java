@@ -47,10 +47,7 @@ public class GetInstalledAppsTask extends BackgroundTask {
                 if((!getSysPackages) && (packageInfo.versionName == null)){
                     continue;
                 }
-
-                this.apps.add(new AppDetails(packageInfo.applicationInfo.loadLabel(this.packageManager).toString(),
-                        packageInfo.packageName, packageInfo.versionName, packageInfo.applicationInfo.loadIcon(this.packageManager), packageInfo.applicationInfo.sourceDir,
-                            packageInfo.firstInstallTime, packageInfo.lastUpdateTime));
+                this.apps.add(new AppDetails(packageInfo, this.packageManager));
             }
         }
     }
