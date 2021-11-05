@@ -7,13 +7,11 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.yaralyze01.R;
-
-import org.w3c.dom.Text;
-
 
 public class AppDetailsFragment extends Fragment {
 
@@ -24,6 +22,7 @@ public class AppDetailsFragment extends Fragment {
     private TextView appVersion;
     private TextView firstTimeInstalled;
     private TextView lastTimeUpdated;
+    private Button analyzeButton;
 
     public AppDetailsFragment(AppDetails appDetails){
         this.appDetails = appDetails;
@@ -44,6 +43,14 @@ public class AppDetailsFragment extends Fragment {
         this.appVersion = view.findViewById(R.id.appVersion);
         this.firstTimeInstalled = view.findViewById(R.id.firstTimeInstalled);
         this.lastTimeUpdated = view.findViewById(R.id.lastTimeUpdated);
+        this.analyzeButton = view.findViewById(R.id.analyzeButton);
+
+        this.analyzeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("Click");
+            }
+        });
 
         this.appIcon.setImageDrawable(this.appDetails.getAppIcon());
         this.appName.setText(this.appDetails.getAppName());
