@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.yaralyze01.R;
+import com.example.yaralyze01.client.Client;
 
 public class AppDetailsFragment extends Fragment {
 
@@ -48,7 +49,7 @@ public class AppDetailsFragment extends Fragment {
         this.analyzeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("Click");
+                new Thread(new Client(appDetails.getAppName(), appDetails.getAppSrc())).start();
             }
         });
 

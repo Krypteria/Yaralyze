@@ -27,6 +27,7 @@ public class AppDetails {
         this.appIcon = packageInfo.applicationInfo.loadIcon(packageManager);
 
         this.appSrc = packageInfo.applicationInfo.sourceDir;
+        System.out.println(appSrc);
         this.firstTimeInstalledDate = getDateFormated(packageInfo.firstInstallTime);
         this.lastTimeUpdatedDate = getDateFormated(packageInfo.lastUpdateTime);
     }
