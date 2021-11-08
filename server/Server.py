@@ -1,7 +1,9 @@
 import socket
 import threading
 import os
+from Analyzer import Analyzer
 
+CLIENT_SAMPLES_PATH = ".\\AnalysisSamples\\ClientSamples\\"
 BUFFERSIZE = 2048
 PORT = 2020
 
@@ -10,8 +12,8 @@ class Server:
     def __init__(self) -> None:
         self.__host = self.__getCurrentAddress()
         self.__serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.__analyzer = Analyzer()
 
-        self.__clientSamplesPath = ".\\Analysis\\ClientSamples\\"
         self.__endServerActivity = False;
         self.__createClientsSampleDirectories()
         self.__startServer()
@@ -24,10 +26,10 @@ class Server:
         tempSocket.close()
         return local_ip
     
-    def __createClientsSampleDirectories(self):
-        if(not os.path.isdir(self.__clientSamplesPath)):
+    def __createClientsSampleDirectories(self) -> None:
+        if(not os.path.isdir(CLIENT_SAMPLES_PATH)):
             try:
-                os.makedirs(self.__clientSamplesPath)
+                os.makedirs(CLIENT_SAMPLES_PATH)
             except:
                 print("[!] Error al crear el el directorio de muestras")
 
@@ -47,34 +49,52 @@ class Server:
             clientConnection, clientAddress = self.__serverSocket.accept()  
             self.__proccessClientRequest(clientConnection, clientAddress)
     
-    def __proccessClientRequest(self, clientConnection, clientAddress):
+    def __proccessClientRequest(self, clientConnection, clientAddress) -> None:
         print("[!] Gestionando petición proveniente de ", clientAddress)
-        self.__receiveAPK(clientConnection)
+        clientSamplePath = self.__receiveSample(clientConnection)
+        self.__sendAnalysisOutcome(clientConnection, self.__requestStaticAnalysis(clientSamplePath))
+        clientConnection.close()
     
-    def __receiveAPK(self, clientConnection):
-        header = self.__receiveAPKHeader(clientConnection)
+    def __receiveSample(self, clientConnection) -> str:
+        header = self.__receiveSampleHeader(clientConnection)
         print("[!] El header recibido es: ", header)
-        self.__receiveAPKFile(clientConnection, header)
+        clientSamplePath = self.__receiveSampleFile(clientConnection, header)
+        return clientSamplePath
     
-    def __receiveAPKHeader(self, clientConnection) -> str:
+    def __receiveSampleHeader(self, clientConnection) -> str:
         header = clientConnection.recv(1024).decode("utf-8")
         return header[2:]
 
-    def __receiveAPKFile(self, clientConnection, header):
-        apkName, apkSize = header[0:header.find("-")], int(header[header.find("-") + 1:])
+    def __receiveSampleFile(self, clientConnection, header) -> str:
+        sampleName, sampleSize = header[0:header.find("-")], int(header[header.find("-") + 1:])
 
-        with open(self.__clientSamplesPath + apkName, "wb") as apkFile:
+        with open(CLIENT_SAMPLES_PATH + sampleName, "wb") as sampleFile:
             while True:
-                bytes_readed = clientConnection.recv(min(BUFFERSIZE, apkSize))
+                bytes_readed = clientConnection.recv(min(BUFFERSIZE, sampleSize))
                 if not bytes_readed:
-                    apkFile.close()
+                    sampleFile.close()
                     break
 
-                apkFile.write(bytes_readed)
-                apkSize = apkSize - len(bytes_readed) 
+                sampleFile.write(bytes_readed)
+                sampleSize = sampleSize - len(bytes_readed) 
         
-        print("[!] Fichero recibido correctanebte desde el client")
-        #No cierro el socket del cliente ya que le tengo que mandar el callback con el resultado del análisis
+        print("[!] Fichero recibido correctamente desde el client")
+        return CLIENT_SAMPLES_PATH + sampleName
+    
+    def __requestStaticAnalysis(self, clientSamplePath) -> bool:
+        print("[!] Iniciando análisis estático en el sample del cliente")
+        return self.__analyzer.executeStaticAnalysis(clientSamplePath)
+
+    def __sendAnalysisOutcome(self, clientConnection, malwareDetected):
+        print("[!] Enviando resultado del análisis al cliente")
+        if malwareDetected:
+            print("     [!] Malware detectado")
+            clientConnection.send(str(1).encode())
+        else:
+            print("     [!] Malware no detectado")
+            clientConnection.send(str(0).encode())
+            
+
 
 if __name__ == "__main__":
     threading.Thread(target=Server())
