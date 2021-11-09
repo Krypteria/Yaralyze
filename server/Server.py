@@ -1,6 +1,7 @@
 import socket
 import threading
 import os
+
 from Analyzer import Analyzer
 
 CLIENT_SAMPLES_PATH = ".\\AnalysisSamples\\ClientSamples\\"
@@ -53,7 +54,6 @@ class Server:
         print("[!] Gestionando petición proveniente de ", clientAddress)
         clientSamplePath = self.__receiveSample(clientConnection)
         self.__sendAnalysisOutcome(clientConnection, self.__requestStaticAnalysis(clientSamplePath))
-        clientConnection.close()
     
     def __receiveSample(self, clientConnection) -> str:
         header = self.__receiveSampleHeader(clientConnection)
@@ -89,10 +89,10 @@ class Server:
         print("[!] Enviando resultado del análisis al cliente")
         if malwareDetected:
             print("     [!] Malware detectado")
-            clientConnection.send(str(1).encode())
+            clientConnection.sendall(("1").encode())
         else:
             print("     [!] Malware no detectado")
-            clientConnection.send(str(0).encode())
+            clientConnection.sendall(("0").encode())
             
 
 

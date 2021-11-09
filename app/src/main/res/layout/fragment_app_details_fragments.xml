@@ -145,11 +145,30 @@
 
     </LinearLayout>
 
+    <ProgressBar
+        android:id="@+id/analyzeProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="120dp"
+        android:visibility="invisible"/>
+
+    <TextView
+        android:id="@+id/analyzeOutcomeText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/black"
+        android:textSize="20dp"
+        android:visibility="invisible" />
+
     <Button
         android:id="@+id/analyzeButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="275dp"
+        android:layout_marginTop="60dp"
         android:text="Analizar estáticamente" />
+
 
 </LinearLayout>

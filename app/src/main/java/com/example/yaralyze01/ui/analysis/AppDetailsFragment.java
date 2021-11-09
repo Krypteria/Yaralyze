@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.yaralyze01.R;
@@ -23,6 +24,9 @@ public class AppDetailsFragment extends Fragment {
     private TextView appVersion;
     private TextView firstTimeInstalled;
     private TextView lastTimeUpdated;
+
+    private ProgressBar analyzeProgressBar;
+    private TextView analyzeOutcomeText;
     private Button analyzeButton;
 
     public AppDetailsFragment(AppDetails appDetails){
@@ -44,14 +48,25 @@ public class AppDetailsFragment extends Fragment {
         this.appVersion = view.findViewById(R.id.appVersion);
         this.firstTimeInstalled = view.findViewById(R.id.firstTimeInstalled);
         this.lastTimeUpdated = view.findViewById(R.id.lastTimeUpdated);
+
+        this.analyzeProgressBar = view.findViewById(R.id.analyzeProgressBar);
+        this.analyzeOutcomeText = view.findViewById(R.id.analyzeOutcomeText);
         this.analyzeButton = view.findViewById(R.id.analyzeButton);
 
         this.analyzeButton.setOnClickListener(new View.OnClickListener() {
+            private AppDetailsFragment appDetailsFragment;
+
             @Override
             public void onClick(View v) {
-                new Thread(new Client(appDetails.getAppName(), appDetails.getAppSrc())).start();
+                this.appDetailsFragment.analyzeProgressBar.setVisibility(View.VISIBLE);
+                new Thread(new Client(this.appDetailsFragment, appDetails.getAppName(), appDetails.getAppSrc())).start();
             }
-        });
+
+            private View.OnClickListener getAppDetailsFragment(AppDetailsFragment appDetailsFragment){
+                this.appDetailsFragment = appDetailsFragment;
+                return this;
+            }
+        }.getAppDetailsFragment(this));
 
         this.appIcon.setImageDrawable(this.appDetails.getAppIcon());
         this.appName.setText(this.appDetails.getAppName());
@@ -61,5 +76,22 @@ public class AppDetailsFragment extends Fragment {
         this.lastTimeUpdated.setText(this.appDetails.getLastTimeUpdatedDate());
 
         return view;
+    }
+
+    public void showAnalysisOutcome(boolean malwareDetected){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                analyzeProgressBar.setVisibility(View.INVISIBLE);
+                if(malwareDetected){
+                    analyzeOutcomeText.setText("Malware detectado en el programa");
+                }
+                else{
+                    analyzeOutcomeText.setText("Malware no detectado en el programa");
+                }
+
+                analyzeOutcomeText.setVisibility(View.VISIBLE);
+            }
+        });
     }
 }
