@@ -54,6 +54,7 @@ class Server:
         print("[!] Gestionando petición proveniente de ", clientAddress)
         clientSamplePath = self.__receiveSample(clientConnection)
         self.__sendAnalysisOutcome(clientConnection, self.__requestStaticAnalysis(clientSamplePath))
+        self.__removeClientSample(clientSamplePath)
     
     def __receiveSample(self, clientConnection) -> str:
         header = self.__receiveSampleHeader(clientConnection)
@@ -93,6 +94,9 @@ class Server:
         else:
             print("     [!] Malware no detectado")
             clientConnection.sendall(("0").encode())
+
+    def __removeClientSample(self, clientSamplePath):
+        os.remove(clientSamplePath)
             
 
 
