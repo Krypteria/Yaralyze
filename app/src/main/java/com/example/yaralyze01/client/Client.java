@@ -3,6 +3,10 @@ package com.example.yaralyze01.client;
 
 import com.example.yaralyze01.ui.analysis.AppDetailsFragment;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
@@ -10,8 +14,10 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class Client implements Runnable{
     private Socket clientSocket;
@@ -25,7 +31,7 @@ public class Client implements Runnable{
     private AppDetailsFragment appDetailsFragment;
 
     private final int BUFFERSIZE = 2048;
-    private final String serverIP = "192.168.1.36";
+    private final String serverIP = "192.168.1.35"; //192.168.56.102
     private final int PORT = 2020;
 
     public Client(AppDetailsFragment appDetailsFragment, String apkName, String apkPath){
@@ -40,7 +46,7 @@ public class Client implements Runnable{
         sendStaticAnalysisRequest();
         try {
             receiveServerOutcome();
-        } catch (IOException e) {
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
     }
@@ -96,10 +102,22 @@ public class Client implements Runnable{
         this.output.flush();
     }
 
-    private void receiveServerOutcome() throws IOException {
+    private void receiveServerOutcome() throws IOException, JSONException {
         this.input = new DataInputStream(new BufferedInputStream(this.clientSocket.getInputStream()));
 
-        this.appDetailsFragment.showAnalysisOutcome((char)this.input.readByte() == '1');
+        int character;
+        StringBuilder analysisOutcomeString = new StringBuilder();
+        while((character = this.input.read()) != -1) {
+            analysisOutcomeString.append((char) character);
+        }
+
+        JSONObject analysisOutcome = new JSONObject(analysisOutcomeString.toString());
+        System.out.println(analysisOutcome.get("detected"));
+        System.out.println(analysisOutcome.get("matchedRulesCount"));
+        JSONArray matchedRules = (JSONArray) analysisOutcome.get("matchedRules");
+        System.out.println(matchedRules.get(0));
+
+        this.appDetailsFragment.showAnalysisOutcome(true);
 
         this.input.close();
         this.clientSocket.close();

@@ -1,6 +1,7 @@
 import socket
 import threading
 import os
+import json
 
 from Analyzer import Analyzer
 
@@ -38,7 +39,7 @@ class Server:
         try:
             self.__serverSocket.bind((self.__host, PORT))
         except socket.error as msg:
-            print(msg)
+            print(msg) #Modificar 
 
     def __endServerActivity(self) -> None:
         self.__endServerActivity = True
@@ -55,6 +56,7 @@ class Server:
         clientSamplePath = self.__receiveSample(clientConnection)
         self.__sendAnalysisOutcome(clientConnection, self.__requestStaticAnalysis(clientSamplePath))
         self.__removeClientSample(clientSamplePath)
+        self.__analyzer.cleanAnalysisOutcome()
     
     def __receiveSample(self, clientConnection) -> str:
         header = self.__receiveSampleHeader(clientConnection)
@@ -69,7 +71,7 @@ class Server:
     def __receiveSampleFile(self, clientConnection, header) -> str:
         sampleName, sampleSize = header[0:header.find("-")], int(header[header.find("-") + 1:])
 
-        with open(CLIENT_SAMPLES_PATH + sampleName, "wb") as sampleFile:
+        with open(CLIENT_SAMPLES_PATH + sampleName + ".apk", "wb") as sampleFile:
             while True:
                 bytes_readed = clientConnection.recv(min(BUFFERSIZE, sampleSize))
                 if not bytes_readed:
@@ -84,19 +86,22 @@ class Server:
     
     def __requestStaticAnalysis(self, clientSamplePath) -> bool:
         print("[!] Iniciando análisis estático en el sample del cliente")
-        return self.__analyzer.executeStaticAnalysis(clientSamplePath)
+        return self.__analyzer.executeStaticAnalysis(clientSamplePath + ".apk")
 
-    def __sendAnalysisOutcome(self, clientConnection, malwareDetected):
+    def __sendAnalysisOutcome(self, clientConnection, analysisOutcome):
         print("[!] Enviando resultado del análisis al cliente")
-        if malwareDetected:
+        if analysisOutcome["detected"]:
+            analysisOutcome = json.dumps(analysisOutcome) #eliminar luego
+            print(analysisOutcome)
             print("     [!] Malware detectado")
-            clientConnection.sendall(("1").encode())
+            clientConnection.sendall(bytes(analysisOutcome, encoding="utf-8"))
+            clientConnection.close()
         else:
             print("     [!] Malware no detectado")
             clientConnection.sendall(("0").encode())
 
     def __removeClientSample(self, clientSamplePath):
-        os.remove(clientSamplePath)
+        os.remove(clientSamplePath + ".apk")
             
 
 
