@@ -3,6 +3,7 @@ package com.example.yaralyze01.ui.analysis.staticAnalysis;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -44,7 +45,7 @@ public class StaticAnalysisMainMenuFragment extends Fragment implements OnAppLis
         this.recyclerApps = view.findViewById(R.id.recyclerViewApps);
 
         this.appsAdapter = new AppsAdapter(this);
-        this.recyclerApps.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+        this.recyclerApps.setLayoutManager(new GridLayoutManager(getActivity(), 3, RecyclerView.VERTICAL, false));
         this.recyclerApps.setAdapter(appsAdapter);
 
         return view;
@@ -58,6 +59,7 @@ public class StaticAnalysisMainMenuFragment extends Fragment implements OnAppLis
 
     @Override
     public void onAppClick(int position) {
+        this.apps.get(position).calculateHashes();
         this.analysisCallbackInterface.callBackMethod(this.apps.get(position));
     }
 

@@ -25,6 +25,9 @@ public class AppDetailsFragment extends Fragment {
     private TextView firstTimeInstalled;
     private TextView lastTimeUpdated;
 
+    private TextView sha256Hash;
+    private TextView md5Hash;
+
     private ProgressBar analyzeProgressBar;
     private TextView analyzeOutcomeText;
     private Button analyzeButton;
@@ -48,6 +51,8 @@ public class AppDetailsFragment extends Fragment {
         this.appVersion = view.findViewById(R.id.appVersion);
         this.firstTimeInstalled = view.findViewById(R.id.firstTimeInstalled);
         this.lastTimeUpdated = view.findViewById(R.id.lastTimeUpdated);
+        this.sha256Hash = view.findViewById(R.id.appSha256Hash);
+        this.md5Hash = view.findViewById(R.id.appMd5Hash);
 
         this.analyzeProgressBar = view.findViewById(R.id.analyzeProgressBar);
         this.analyzeOutcomeText = view.findViewById(R.id.analyzeOutcomeText);
@@ -74,6 +79,8 @@ public class AppDetailsFragment extends Fragment {
         this.appVersion.setText(this.appDetails.getAppVersion());
         this.firstTimeInstalled.setText(this.appDetails.getFirstTimeInstalledDate());
         this.lastTimeUpdated.setText(this.appDetails.getLastTimeUpdatedDate());
+        this.sha256Hash.setText(this.appDetails.getSha256hash());
+        this.md5Hash.setText(this.appDetails.getMd5hash());
 
         return view;
     }

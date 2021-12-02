@@ -14,13 +14,11 @@ public class AppsViewHolder extends RecyclerView.ViewHolder implements View.OnCl
 
     private ImageView appIcon;
     private TextView appName;
-    private TextView packageName;
     private OnAppListener onAppListener;
 
     public AppsViewHolder(@NonNull View itemView, OnAppListener onAppListener) {
         super(itemView);
         this.appName = itemView.findViewById(R.id.appName);
-        this.packageName = itemView.findViewById(R.id.packageName);
         this.appIcon = itemView.findViewById(R.id.appIcon);
         this.onAppListener = onAppListener;
 
@@ -29,10 +27,6 @@ public class AppsViewHolder extends RecyclerView.ViewHolder implements View.OnCl
 
     public TextView getAppName(){
         return this.appName;
-    }
-
-    public TextView getPackageName(){
-        return this.packageName;
     }
 
     public ImageView getAppIcon(){

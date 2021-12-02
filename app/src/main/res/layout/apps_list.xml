@@ -1,45 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:padding="4dp"
     xmlns:tools="http://schemas.android.com/tools">
 
     <ImageView
         android:id="@+id/appIcon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_centerVertical="true"
-        android:layout_marginRight="5dp" />
-    
-    <LinearLayout
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:id="@+id/appName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/black"
+        android:textSize="12dp"
+        tools:text="Application name" />
 
-
-        <TextView
-            android:id="@+id/appName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textColor="@color/black"
-            android:textSize="14dp"
-            tools:text="Application name" />
-
-        <Space
-            android:layout_width="4dp"
-            android:layout_height="0dp"/>
-
-        <TextView
-            android:id="@+id/packageName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#646464"
-            android:textSize="10dp"
-            tools:text="Package name" />
-
-    </LinearLayout>
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="20dp"></Space>
 
 </LinearLayout>
