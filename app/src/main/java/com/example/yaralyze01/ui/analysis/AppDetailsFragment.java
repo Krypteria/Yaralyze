@@ -20,8 +20,10 @@ public class AppDetailsFragment extends Fragment {
     private AppDetails appDetails;
     private ImageView appIcon;
     private TextView appName;
-    private TextView packageName;
     private TextView appVersion;
+
+    private TextView packageName;
+    private TextView sourceDir;
     private TextView firstTimeInstalled;
     private TextView lastTimeUpdated;
 
@@ -43,18 +45,21 @@ public class AppDetailsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_app_details_fragments, container, false);
+        View view = inflater.inflate(R.layout.fragment_app_details, container, false);
 
         this.appIcon = view.findViewById(R.id.appIcon);
         this.appName = view.findViewById(R.id.appName);
-        this.packageName = view.findViewById(R.id.packageName);
         this.appVersion = view.findViewById(R.id.appVersion);
+
+        this.packageName = view.findViewById(R.id.packageName);
+        this.sourceDir = view.findViewById(R.id.sourceDir);
         this.firstTimeInstalled = view.findViewById(R.id.firstTimeInstalled);
         this.lastTimeUpdated = view.findViewById(R.id.lastTimeUpdated);
+
         this.sha256Hash = view.findViewById(R.id.appSha256Hash);
         this.md5Hash = view.findViewById(R.id.appMd5Hash);
 
-        this.analyzeProgressBar = view.findViewById(R.id.analyzeProgressBar);
+        /*this.analyzeProgressBar = view.findViewById(R.id.analyzeProgressBar);
         this.analyzeOutcomeText = view.findViewById(R.id.analyzeOutcomeText);
         this.analyzeButton = view.findViewById(R.id.analyzeButton);
 
@@ -71,12 +76,14 @@ public class AppDetailsFragment extends Fragment {
                 this.appDetailsFragment = appDetailsFragment;
                 return this;
             }
-        }.getAppDetailsFragment(this));
+        }.getAppDetailsFragment(this));*/
 
         this.appIcon.setImageDrawable(this.appDetails.getAppIcon());
         this.appName.setText(this.appDetails.getAppName());
-        this.packageName.setText(this.appDetails.getPackageName());
         this.appVersion.setText(this.appDetails.getAppVersion());
+
+        this.packageName.setText(this.appDetails.getPackageName());
+        this.sourceDir.setText(this.appDetails.getAppSrc());
         this.firstTimeInstalled.setText(this.appDetails.getFirstTimeInstalledDate());
         this.lastTimeUpdated.setText(this.appDetails.getLastTimeUpdatedDate());
         this.sha256Hash.setText(this.appDetails.getSha256hash());

@@ -43,8 +43,8 @@ public class AppDetails {
 
     public void calculateHashes(){
         File apk = new File(this.appSrc);
-        this.sha256hash = getAppHash("SHA-256", apk);
-        this.md5hash = getAppHash("MD5", apk);
+        //this.sha256hash = getAppHash("SHA-256", apk);
+        //this.md5hash = getAppHash("MD5", apk);
     }
 
     private String getAppHash(String algorithm, File apk){
