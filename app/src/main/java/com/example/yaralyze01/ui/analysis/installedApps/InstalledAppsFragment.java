@@ -51,7 +51,6 @@ public class InstalledAppsFragment extends Fragment implements OnAppListener{
 
     @Override
     public void onAppClick(int position) {
-        //this.apps.get(position).calculateHashes();
         AppDetailsFragment fragment = new AppDetailsFragment(this.installedApps.get(position));
         FragmentManager manager = getParentFragmentManager();
         manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack(null).commit();

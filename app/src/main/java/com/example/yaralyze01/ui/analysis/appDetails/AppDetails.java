@@ -3,10 +3,13 @@ package com.example.yaralyze01.ui.analysis.appDetails;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.util.Pair;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
@@ -36,57 +39,37 @@ public class AppDetails {
 
         this.firstTimeInstalledDate = getDateFormated(packageInfo.firstInstallTime);
         this.lastTimeUpdatedDate = getDateFormated(packageInfo.lastUpdateTime);
-
     }
 
-    public void calculateHashes(){
-        File apk = new File(this.appSrc);
-        //this.sha256hash = getAppHash("SHA-256", apk);
-        //this.md5hash = getAppHash("MD5", apk);
+
+    public void setSha256hash(String hash){
+        this.sha256hash = hash;
     }
 
-    private String getAppHash(String algorithm, File apk){
-        try {
-            MessageDigest digest = MessageDigest.getInstance(algorithm);
-
-            //Leo todos los bytes del fichero
-            FileInputStream fileReader = new FileInputStream(apk);
-            byte[] buffer = new byte[1024];
-            int readedBytes = 0;
-
-            while((readedBytes = fileReader.read(buffer)) != -1){
-                digest.update(buffer, 0 , readedBytes);
-            }
-
-            fileReader.close();
-
-            //Calculo el hash (NO FUNCIONA DEL TODO BIEN)
-            byte[] digestBuffer = digest.digest();
-            StringBuilder stringBuilder = new StringBuilder();
-            for(int i = 0; i < digestBuffer.length; i++){
-                stringBuilder.append(Integer.toString((buffer[i] & 0xff) + 0x100, 16).substring(1));
-            }
-
-            return stringBuilder.toString();
-        } catch (NoSuchAlgorithmException | IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public void setMd5hash(String hash){
+        this.md5hash = hash;
     }
 
     public String getAppName(){
         return this.appName;
     }
+
     public String getPackageName(){
         return this.packageName;
     }
+
     public String getAppVersion(){ return this.appVersion; }
+
     public Drawable getAppIcon(){ return this.appIcon; }
 
     public String getAppSrc(){ return this.appSrc; }
+
     public String getFirstTimeInstalledDate(){ return this.firstTimeInstalledDate; }
+
     public String getLastTimeUpdatedDate(){ return this.lastTimeUpdatedDate; }
+
     public String getSha256hash(){ return this.sha256hash; }
+
     public String getMd5hash(){ return this.md5hash; }
 
     private String getDateFormated(long ms){
