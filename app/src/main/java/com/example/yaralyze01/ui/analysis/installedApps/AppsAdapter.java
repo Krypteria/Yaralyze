@@ -1,4 +1,4 @@
-package com.example.yaralyze01.ui.analysis;
+package com.example.yaralyze01.ui.analysis.installedApps;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.yaralyze01.R;
-import com.example.yaralyze01.ui.analysis.staticAnalysis.OnAppListener;
+import com.example.yaralyze01.ui.analysis.appDetails.AppDetails;
 
 import java.util.ArrayList;
 

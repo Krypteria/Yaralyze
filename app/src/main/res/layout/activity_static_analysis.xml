@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.analysis.staticAnalysis.StaticAnalysisActivity">
+    tools:context=".ui.analysis.installedApps.StaticAnalysisActivity">
 
     <FrameLayout
         android:layout_width="match_parent"

@@ -1,4 +1,4 @@
-package com.example.yaralyze01.ui.analysis;
+package com.example.yaralyze01.ui.analysis.appDetails;
 
 import android.os.Bundle;
 
@@ -13,7 +13,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.yaralyze01.R;
-import com.example.yaralyze01.client.Client;
 
 public class AppDetailsFragment extends Fragment {
 

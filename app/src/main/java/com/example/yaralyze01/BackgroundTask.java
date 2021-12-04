@@ -1,6 +1,4 @@
-package com.example.yaralyze01.ui.analysis;
-
-import android.app.Activity;
+package com.example.yaralyze01;
 
 import androidx.fragment.app.Fragment;
 

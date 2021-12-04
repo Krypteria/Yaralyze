@@ -1,7 +1,7 @@
 package com.example.yaralyze01.client;
 
 
-import com.example.yaralyze01.ui.analysis.AppDetailsFragment;
+import com.example.yaralyze01.ui.analysis.appDetails.AppDetailsFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,10 +14,8 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.ArrayList;
 
 public class Client implements Runnable{
     private Socket clientSocket;

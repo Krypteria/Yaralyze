@@ -1,29 +1,23 @@
-package com.example.yaralyze01.ui.analysis;
+package com.example.yaralyze01.ui.home;
 
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
-import com.example.yaralyze01.ui.analysis.AppDetails;
-import com.example.yaralyze01.ui.analysis.BackgroundTask;
-import com.example.yaralyze01.ui.analysis.staticAnalysis.StaticAnalysisActivity;
-import com.example.yaralyze01.ui.analysis.staticAnalysis.StaticAnalysisMainMenuFragment;
+import com.example.yaralyze01.BackgroundTask;
+import com.example.yaralyze01.ui.analysis.appDetails.AppDetails;
+import com.example.yaralyze01.ui.home.HomeFragment;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.TimeZone;
 
 public class GetInstalledAppsTask extends BackgroundTask {
-    private StaticAnalysisMainMenuFragment fragment;
-    private ArrayList<AppDetails> apps;
+    private HomeFragment fragment;
+    private ArrayList<AppDetails> installedApps;
     private PackageManager packageManager;
 
-    public GetInstalledAppsTask(StaticAnalysisMainMenuFragment fragment){
+    public GetInstalledAppsTask(HomeFragment fragment){
         super(fragment);
         this.fragment = fragment;
-        this.apps = new ArrayList<AppDetails>();
+        this.installedApps = new ArrayList<>();
         this.packageManager = this.fragment.getActivity().getPackageManager();
     }
 
@@ -38,7 +32,7 @@ public class GetInstalledAppsTask extends BackgroundTask {
 
     @Override
     public void onPostExecute() {
-        this.fragment.GetAllAppsTaskCallback(this.apps);
+        this.fragment.installedAppsTaskCallback(this.installedApps);
     }
 
     private void getInstalledAppsIntent(boolean getSysPackages){
@@ -47,7 +41,7 @@ public class GetInstalledAppsTask extends BackgroundTask {
                 if((!getSysPackages) && (packageInfo.versionName == null)){
                     continue;
                 }
-                this.apps.add(new AppDetails(packageInfo, this.packageManager));
+                this.installedApps.add(new AppDetails(packageInfo, this.packageManager));
             }
         }
     }
