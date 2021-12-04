@@ -2,6 +2,7 @@ package com.example.yaralyze01.client;
 
 
 import com.example.yaralyze01.ui.analysis.appDetails.AppDetailsFragment;
+import com.example.yaralyze01.ui.analysis.outcome.AnalysisOutcome;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,14 +27,14 @@ public class Client implements Runnable{
     private String apkName;
     private String apkPath;
 
-    private AppDetailsFragment appDetailsFragment;
+    private AnalysisOutcome analysisOutcome;
 
     private final int BUFFERSIZE = 2048;
     private final String serverIP = "192.168.1.35"; //192.168.56.102
     private final int PORT = 2020;
 
-    public Client(AppDetailsFragment appDetailsFragment, String apkName, String apkPath){
-        this.appDetailsFragment = appDetailsFragment;
+    public Client(AnalysisOutcome analysisOutcome, String apkName, String apkPath){
+        this.analysisOutcome = analysisOutcome;
         this.buffer = new byte[this.BUFFERSIZE];
         this.apkPath = apkPath;
         this.apkName = apkName;
@@ -102,7 +103,6 @@ public class Client implements Runnable{
 
     private void receiveServerOutcome() throws IOException, JSONException {
         this.input = new DataInputStream(new BufferedInputStream(this.clientSocket.getInputStream()));
-
         int character;
         StringBuilder analysisOutcomeString = new StringBuilder();
         while((character = this.input.read()) != -1) {
@@ -110,15 +110,9 @@ public class Client implements Runnable{
         }
 
         JSONObject analysisOutcome = new JSONObject(analysisOutcomeString.toString());
-        System.out.println(analysisOutcome.get("detected"));
-        System.out.println(analysisOutcome.get("matchedRulesCount"));
-        JSONArray matchedRules = (JSONArray) analysisOutcome.get("matchedRules");
-        System.out.println(matchedRules.get(0));
-
-        this.appDetailsFragment.showAnalysisOutcome(true);
+        this.analysisOutcome.showAnalysisOutcome(analysisOutcome);
 
         this.input.close();
         this.clientSocket.close();
-        System.out.println("Respuesta del servidor recibida correctamente");
     }
 }

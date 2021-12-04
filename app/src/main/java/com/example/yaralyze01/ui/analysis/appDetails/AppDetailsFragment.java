@@ -3,18 +3,24 @@ package com.example.yaralyze01.ui.analysis.appDetails;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.yaralyze01.R;
+import com.example.yaralyze01.client.Client;
+import com.example.yaralyze01.ui.analysis.outcome.AnalysisOutcomeManagerFragment;
 
 public class AppDetailsFragment extends Fragment {
+
+    private final int HASH = 0;
+    private final int STATIC = 1;
+    private final int COMPLETE = 2;
 
     private AppDetails appDetails;
     private ImageView appIcon;
@@ -29,9 +35,9 @@ public class AppDetailsFragment extends Fragment {
     private TextView sha256Hash;
     private TextView md5Hash;
 
-    private ProgressBar analyzeProgressBar;
-    private TextView analyzeOutcomeText;
-    private Button analyzeButton;
+    private Button completeAnalysisButton;
+    private Button staticAnalysisButton;
+    private Button hashAnalysisButton;
 
     public AppDetailsFragment(AppDetails appDetails){
         this.appDetails = appDetails;
@@ -58,24 +64,21 @@ public class AppDetailsFragment extends Fragment {
         this.sha256Hash = view.findViewById(R.id.appSha256Hash);
         this.md5Hash = view.findViewById(R.id.appMd5Hash);
 
-        /*this.analyzeProgressBar = view.findViewById(R.id.analyzeProgressBar);
-        this.analyzeOutcomeText = view.findViewById(R.id.analyzeOutcomeText);
-        this.analyzeButton = view.findViewById(R.id.analyzeButton);
 
-        this.analyzeButton.setOnClickListener(new View.OnClickListener() {
-            private AppDetailsFragment appDetailsFragment;
+        this.completeAnalysisButton = view.findViewById(R.id.completeAnalysisButton);
+        this.staticAnalysisButton = view.findViewById(R.id.staticAnalysisButton);
+        this.hashAnalysisButton = view.findViewById(R.id.hashAnalysisButton);
 
+        this.staticAnalysisButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                this.appDetailsFragment.analyzeProgressBar.setVisibility(View.VISIBLE);
-                new Thread(new Client(this.appDetailsFragment, appDetails.getAppName(), appDetails.getAppSrc())).start();
-            }
+                AnalysisOutcomeManagerFragment fragment = new AnalysisOutcomeManagerFragment(STATIC);
+                new Thread(new Client(fragment, appDetails.getAppName(), appDetails.getAppSrc())).start();
 
-            private View.OnClickListener getAppDetailsFragment(AppDetailsFragment appDetailsFragment){
-                this.appDetailsFragment = appDetailsFragment;
-                return this;
+                FragmentManager manager = getParentFragmentManager();
+                manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack(null).commit();
             }
-        }.getAppDetailsFragment(this));*/
+        });
 
         this.appIcon.setImageDrawable(this.appDetails.getAppIcon());
         this.appName.setText(this.appDetails.getAppName());
@@ -89,22 +92,5 @@ public class AppDetailsFragment extends Fragment {
         this.md5Hash.setText(this.appDetails.getMd5hash());
 
         return view;
-    }
-
-    public void showAnalysisOutcome(boolean malwareDetected){
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                analyzeProgressBar.setVisibility(View.INVISIBLE);
-                if(malwareDetected){
-                    analyzeOutcomeText.setText("Malware detectado en el programa");
-                }
-                else{
-                    analyzeOutcomeText.setText("Malware no detectado en el programa");
-                }
-
-                analyzeOutcomeText.setVisibility(View.VISIBLE);
-            }
-        });
     }
 }

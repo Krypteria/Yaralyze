@@ -16,7 +16,7 @@ class Analyzer():
             yaraRulesDic = {}
             for root, __, files in os.walk(YARA_RULES_PATH):
                 for file in files:
-                    filePath = os.path.join(root, file)                   
+                    filePath = os.path.join(root, file)                 
                     yaraRulesDic[file] = filePath
 
             return yara.compile(filepaths=yaraRulesDic) 

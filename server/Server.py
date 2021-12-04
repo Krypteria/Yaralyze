@@ -91,14 +91,13 @@ class Server:
     def __sendAnalysisOutcome(self, clientConnection, analysisOutcome):
         print("[!] Enviando resultado del análisis al cliente")
         if analysisOutcome["detected"]:
-            analysisOutcome = json.dumps(analysisOutcome) #eliminar luego
-            print(analysisOutcome)
             print("     [!] Malware detectado")
-            clientConnection.sendall(bytes(analysisOutcome, encoding="utf-8"))
-            clientConnection.close()
         else:
             print("     [!] Malware no detectado")
-            clientConnection.sendall(("0").encode())
+            
+        analysisOutcome = json.dumps(analysisOutcome)
+        clientConnection.sendall(bytes(analysisOutcome, encoding="utf-8"))
+        clientConnection.close()
 
     def __removeClientSample(self, clientSamplePath):
         os.remove(clientSamplePath + ".apk")

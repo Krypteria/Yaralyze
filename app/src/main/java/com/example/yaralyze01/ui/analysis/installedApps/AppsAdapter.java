@@ -29,7 +29,7 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsViewHolder> {
     @NonNull
     @Override
     public AppsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.apps_list, null, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.app_item, null, false);
         return new AppsViewHolder(view, this.onAppListener);
     }
 

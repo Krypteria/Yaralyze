@@ -35,7 +35,7 @@ public class InstalledAppsFragment extends Fragment implements OnAppListener{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_static_analysis_main_menu, container, false);
+        View view = inflater.inflate(R.layout.fragment_installed_apps, container, false);
 
         this.recyclerApps = view.findViewById(R.id.recyclerViewApps);
 

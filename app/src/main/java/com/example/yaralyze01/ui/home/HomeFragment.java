@@ -23,7 +23,7 @@ public class HomeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_main_menu, container, false);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         //Cargo en background las aplicaciones instaladas en el dispositivo para tenerlas disponibles en el siguiente fragmento
         new GetInstalledAppsTask(this).startOnBackground();
