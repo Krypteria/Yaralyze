@@ -57,7 +57,7 @@ public class StaticAnalysisOutcomeFragment extends Fragment{
         this.appIcon.setImageDrawable(this.appDetails.getAppIcon());
         this.appName.setText(this.appDetails.getAppName());
         this.appVersion.setText(this.appDetails.getAppVersion());
-        
+
         try {
             if(this.analysisOutcome.getBoolean("detected")){
                 this.malwareDetectionText.setText("Malware detectado.");

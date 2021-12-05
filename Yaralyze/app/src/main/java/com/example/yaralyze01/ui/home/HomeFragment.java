@@ -16,14 +16,14 @@ import com.example.yaralyze01.ui.analysis.installedApps.InstalledAppsFragment;
 
 public class HomeFragment extends Fragment {
 
-    private Button staticAnalysisButton;
+    private Button analyzeAppsButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        this.staticAnalysisButton = view.findViewById(R.id.staticAnalysisButton);
-        this.staticAnalysisButton.setOnClickListener(new View.OnClickListener() {
+        this.analyzeAppsButton = view.findViewById(R.id.analyzeAppsButton);
+        this.analyzeAppsButton.setOnClickListener(new View.OnClickListener() {
             private PackageManager packageManager;
 
             @Override
