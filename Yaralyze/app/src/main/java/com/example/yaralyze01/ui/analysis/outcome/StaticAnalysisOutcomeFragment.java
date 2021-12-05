@@ -14,8 +14,10 @@ import android.widget.TextView;
 import com.example.yaralyze01.R;
 import com.example.yaralyze01.ui.analysis.appDetails.AppDetails;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 
 public class StaticAnalysisOutcomeFragment extends Fragment{
@@ -39,7 +41,6 @@ public class StaticAnalysisOutcomeFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -56,19 +57,28 @@ public class StaticAnalysisOutcomeFragment extends Fragment{
         this.appIcon.setImageDrawable(this.appDetails.getAppIcon());
         this.appName.setText(this.appDetails.getAppName());
         this.appVersion.setText(this.appDetails.getAppVersion());
-
-        //System.out.println(analysisOutcome.get("matchedRulesCount"));
-        //JSONArray matchedRules = (JSONArray) analysisOutcome.get("matchedRules");
-        //System.out.println(matchedRules.get(0));
-
+        
         try {
-            if(this.analysisOutcome.get("detected") == "1"){
-                this.malwareDetectionText.setText("Malware detectado");
+            if(this.analysisOutcome.getBoolean("detected")){
+                this.malwareDetectionText.setText("Malware detectado.");
+
+                int numMatchedRules = this.analysisOutcome.getInt("numMatchedRules");
+                JSONArray matchedRules = analysisOutcome.getJSONArray("matchedRules");
+
+                String outcomeMatchedRules = "El programa analizado coincide con las siguientes reglas: \n\n";
+                for(int i = 0; i < numMatchedRules; i++){
+                    outcomeMatchedRules += i + 1 + ". " + matchedRules.get(i) + "\n";
+                }
+                this.ruleCoincidenceText.setText(outcomeMatchedRules);
+
                 this.malwareDetectionText.setTextColor(Color.parseColor("#A62424"));
+                this.ruleCoincidenceText.setTextColor(Color.parseColor("#A62424"));
             }
             else{
                 this.malwareDetectionText.setText("Malware no detectado");
+                this.ruleCoincidenceText.setText("No hay coincidencias con ninguna regla.");
                 this.malwareDetectionText.setTextColor(Color.parseColor("#4CAF50"));
+                this.ruleCoincidenceText.setTextColor(Color.parseColor("#4CAF50"));
             }
         } catch (JSONException e) {
             e.printStackTrace();
