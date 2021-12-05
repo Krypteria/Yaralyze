@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.yaralyze01.MainActivity;
 import com.example.yaralyze01.R;
 import com.example.yaralyze01.ui.analysis.appDetails.AppDetailsFragment;
 import com.example.yaralyze01.ui.analysis.appDetails.AppDetails;
