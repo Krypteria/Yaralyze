@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/app/src/main/res/layout/activity_main.xml" value="0.35104166666666664" />
+        <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/app/src/main/res/layout/activity_static_analysis.xml" value="0.2222222222222222" />
+        <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/app/src/main/res/layout/apps_list.xml" value="0.5" />
+        <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/app/src/main/res/layout/fragment_analysis_outcome.xml" value="0.35104166666666664" />
+        <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/app/src/main/res/layout/fragment_app_details.xml" value="0.36666666666666664" />
+        <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/app/src/main/res/layout/fragment_app_details_fragments.xml" value="0.35966149506346967" />
+        <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/app/src/main/res/layout/fragment_installed_apps.xml" value="0.35104166666666664" />
+        <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/app/src/main/res/layout/fragment_main_menu.xml" value="0.35104166666666664" />
+        <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/app/src/main/res/layout/fragment_static_analysis_main_menu.xml" value="0.2222222222222222" />
+        <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/app/src/main/res/layout/fragment_static_analysis_outcome.xml" value="0.36666666666666664" />
+      </map>
+    </option>
+  </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_14_PREVIEW" project-jdk-name="14" project-jdk-type="JavaSDK" />
+</project>
