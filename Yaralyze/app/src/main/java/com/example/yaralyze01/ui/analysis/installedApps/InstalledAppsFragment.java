@@ -53,7 +53,7 @@ public class InstalledAppsFragment extends Fragment implements OnAppListener{
     public void onAppClick(int position) {
         AppDetailsFragment fragment = new AppDetailsFragment(this.installedApps.get(position));
         FragmentManager manager = getParentFragmentManager();
-        manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack(null).commit();
+        manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack("InstalledAppsFragment").commit();
     }
 
     @Override

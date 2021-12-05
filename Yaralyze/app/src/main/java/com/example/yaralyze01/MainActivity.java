@@ -2,15 +2,22 @@ package com.example.yaralyze01;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
 
+import com.example.yaralyze01.ui.analysis.installedApps.InstalledAppsFragment;
 import com.example.yaralyze01.ui.home.HomeFragment;
 
 public class MainActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
+    private boolean onLoadOperation;
+
+    public MainActivity(){
+        this.onLoadOperation = false;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,16 +36,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed(){
         int numFragments = getSupportFragmentManager().getBackStackEntryCount();
+
         if(numFragments == 1){
             finishAffinity();
             System.exit(0);
         }
         else{
-            getSupportFragmentManager().popBackStackImmediate();
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+            if(!(fragment instanceof InstalledAppsFragment) || (fragment instanceof InstalledAppsFragment && !onLoadOperation)) {
+                getSupportFragmentManager().popBackStackImmediate();
+            }
         }
     }
 
-    public void prueba(){
-
+    public void setOnLoadOperationt(boolean onLoad){
+        this.onLoadOperation = onLoad;
     }
 }

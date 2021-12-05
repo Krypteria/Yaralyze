@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.example.yaralyze01.MainActivity;
 import com.example.yaralyze01.R;
 import com.example.yaralyze01.ui.analysis.installedApps.InstalledAppsFragment;
 
@@ -24,18 +25,20 @@ public class HomeFragment extends Fragment {
 
         this.analyzeAppsButton = view.findViewById(R.id.analyzeAppsButton);
         this.analyzeAppsButton.setOnClickListener(new View.OnClickListener() {
+            private HomeFragment homeFragment;
             private PackageManager packageManager;
 
             @Override
             public void onClick(View v) {
                 InstalledAppsFragment fragment = new InstalledAppsFragment();
-                new GetInstalledAppsTask(fragment, this.packageManager).startOnBackground();
+                new GetInstalledAppsTask((MainActivity) this.homeFragment.getActivity(), fragment, this.packageManager).startOnBackground();
 
                 FragmentManager manager = getParentFragmentManager();
                 manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack(null).commit();
             }
 
             private View.OnClickListener getPackageManager(HomeFragment fragment){
+                this.homeFragment = fragment;
                 this.packageManager = fragment.getActivity().getPackageManager();
                 return this;
             }

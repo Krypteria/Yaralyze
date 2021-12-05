@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.util.Pair;
 
 import com.example.yaralyze01.BackgroundTask;
+import com.example.yaralyze01.MainActivity;
 import com.example.yaralyze01.ui.analysis.appDetails.AppDetails;
 import com.example.yaralyze01.ui.analysis.installedApps.InstalledAppsFragment;
 import com.example.yaralyze01.ui.home.HomeFragment;
@@ -20,16 +21,19 @@ import java.util.ArrayList;
 
 public class GetInstalledAppsTask extends BackgroundTask {
 
+    private MainActivity activity;
     private InstalledAppsFragment fragment;
     private PackageManager packageManager;
 
-    public GetInstalledAppsTask(InstalledAppsFragment fragment, PackageManager packageManager){
+    public GetInstalledAppsTask(MainActivity activity, InstalledAppsFragment fragment, PackageManager packageManager){
         super(fragment);
         this.fragment = fragment;
         this.packageManager = packageManager;
+        this.activity = activity;
     }
 
     public void startOnBackground(){
+        this.activity.setOnLoadOperationt(true);
         this.startBackground();
     }
 
@@ -48,7 +52,7 @@ public class GetInstalledAppsTask extends BackgroundTask {
     }
 
     @Override
-    public void onPostExecute() {}
+    public void onPostExecute() {this.activity.setOnLoadOperationt(false);}
 
     private void getInstalledAppsIntent(boolean getSysPackages){
         for(PackageInfo packageInfo : this.packageManager.getInstalledPackages(0)){
@@ -64,15 +68,17 @@ public class GetInstalledAppsTask extends BackgroundTask {
     }
 
     private void getAppHashesIntent(AppDetails app){
-        File apk = new File(app.getAppSrc());
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Pair<String, String> hashes = getAppHash(apk);
-                app.setSha256hash(hashes.first);
-                app.setMd5hash(hashes.second);
-            }
-        }).start();
+        if(app.getSha256hash() == null || app.getMd5hash() == null){
+            File apk = new File(app.getAppSrc());
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Pair<String, String> hashes = getAppHash(apk);
+                    app.setSha256hash(hashes.first);
+                    app.setMd5hash(hashes.second);
+                }
+            }).start();
+        }
     }
 
     private Pair<String, String> getAppHash(File apk){

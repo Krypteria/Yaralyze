@@ -39,6 +39,8 @@ public class AppDetails {
 
         this.firstTimeInstalledDate = getDateFormated(packageInfo.firstInstallTime);
         this.lastTimeUpdatedDate = getDateFormated(packageInfo.lastUpdateTime);
+        this.sha256hash = null;
+        this.md5hash = null;
     }
 
 
