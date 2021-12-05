@@ -24,8 +24,8 @@ public class InstalledAppsFragment extends Fragment implements OnAppListener{
     private RecyclerView recyclerApps;
     private AppsAdapter appsAdapter;
 
-    public InstalledAppsFragment(ArrayList<AppDetails> installedApps ){
-        this.installedApps = installedApps;
+    public InstalledAppsFragment(){
+        this.installedApps = new ArrayList<>();
     }
 
     @Override
@@ -44,7 +44,6 @@ public class InstalledAppsFragment extends Fragment implements OnAppListener{
         this.recyclerApps.setAdapter(appsAdapter);
 
         this.appsAdapter.updateData(this.installedApps);
-        this.appsAdapter.notifyDataSetChanged();
 
         return view;
     }
@@ -60,6 +59,9 @@ public class InstalledAppsFragment extends Fragment implements OnAppListener{
     public void onResume() {
         super.onResume();
         this.appsAdapter.updateData(this.installedApps);
-        this.appsAdapter.notifyDataSetChanged();
+    }
+
+    public void onStepUpdateInstalledAppsList(AppDetails installedApp){
+        this.appsAdapter.addItem(installedApp);
     }
 }

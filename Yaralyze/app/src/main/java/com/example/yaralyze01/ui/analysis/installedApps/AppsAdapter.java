@@ -14,16 +14,22 @@ import java.util.ArrayList;
 
 public class AppsAdapter extends RecyclerView.Adapter<AppsViewHolder> {
 
-    private ArrayList<AppDetails> apps;
+    private ArrayList<AppDetails> installedApps;
     private OnAppListener onAppListener;
 
     public AppsAdapter(OnAppListener onAppListener){
         this.onAppListener = onAppListener;
-        this.apps = new ArrayList<>();
+        this.installedApps = new ArrayList<>();
     }
 
-    public void updateData(ArrayList<AppDetails> apps){
-        this.apps = apps;
+    public void updateData(ArrayList<AppDetails> installedApps){
+        this.installedApps = installedApps;
+        notifyDataSetChanged();
+    }
+
+    public void addItem(AppDetails installedApp){
+        this.installedApps.add(installedApp);
+        notifyItemChanged(this.getItemCount() - 1);
     }
 
     @NonNull
@@ -35,12 +41,16 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull AppsViewHolder holder, int position) {
-        holder.getAppName().setText(this.apps.get(position).getAppName());
-        holder.getAppIcon().setImageDrawable(this.apps.get(position).getAppIcon());
+        holder.getAppName().setText(this.installedApps.get(position).getAppName());
+        holder.getAppIcon().setImageDrawable(this.installedApps.get(position).getAppIcon());
     }
 
     @Override
     public int getItemCount() {
-        return this.apps.size();
+        if(this.installedApps == null){
+            return 0;
+        }
+
+        return this.installedApps.size();
     }
 }

@@ -6,6 +6,7 @@ import android.util.Pair;
 
 import com.example.yaralyze01.BackgroundTask;
 import com.example.yaralyze01.ui.analysis.appDetails.AppDetails;
+import com.example.yaralyze01.ui.analysis.installedApps.InstalledAppsFragment;
 import com.example.yaralyze01.ui.home.HomeFragment;
 
 import java.io.File;
@@ -18,15 +19,14 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 public class GetInstalledAppsTask extends BackgroundTask {
-    private HomeFragment fragment;
-    private ArrayList<AppDetails> installedApps;
+
+    private InstalledAppsFragment fragment;
     private PackageManager packageManager;
 
-    public GetInstalledAppsTask(HomeFragment fragment){
+    public GetInstalledAppsTask(InstalledAppsFragment fragment, PackageManager packageManager){
         super(fragment);
         this.fragment = fragment;
-        this.installedApps = new ArrayList<>();
-        this.packageManager = this.fragment.getActivity().getPackageManager();
+        this.packageManager = packageManager;
     }
 
     public void startOnBackground(){
@@ -38,10 +38,17 @@ public class GetInstalledAppsTask extends BackgroundTask {
         this.getInstalledAppsIntent(false);
     }
 
-    @Override
-    public void onPostExecute() {
-        this.fragment.installedAppsTaskCallback(this.installedApps);
+    private void onStep(AppDetails installedApp) {
+        fragment.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                fragment.onStepUpdateInstalledAppsList(installedApp);
+            }
+        });
     }
+
+    @Override
+    public void onPostExecute() {}
 
     private void getInstalledAppsIntent(boolean getSysPackages){
         for(PackageInfo packageInfo : this.packageManager.getInstalledPackages(0)){
@@ -49,9 +56,9 @@ public class GetInstalledAppsTask extends BackgroundTask {
                 if((!getSysPackages) && (packageInfo.versionName == null)){
                     continue;
                 }
-                AppDetails app = new AppDetails(packageInfo, this.packageManager);
-                this.getAppHashesIntent(app);
-                this.installedApps.add(app);
+                AppDetails installedApp = new AppDetails(packageInfo, this.packageManager);
+                this.getAppHashesIntent(installedApp);
+                this.onStep(installedApp);
             }
         }
     }

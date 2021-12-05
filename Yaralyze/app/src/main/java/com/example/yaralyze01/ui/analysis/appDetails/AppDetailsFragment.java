@@ -23,6 +23,7 @@ public class AppDetailsFragment extends Fragment {
     private final int COMPLETE = 2;
 
     private AppDetails appDetails;
+
     private ImageView appIcon;
     private TextView appName;
     private TextView appVersion;
@@ -72,7 +73,7 @@ public class AppDetailsFragment extends Fragment {
         this.staticAnalysisButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AnalysisOutcomeManagerFragment fragment = new AnalysisOutcomeManagerFragment(STATIC);
+                AnalysisOutcomeManagerFragment fragment = new AnalysisOutcomeManagerFragment(appDetails, STATIC);
                 new Thread(new Client(fragment, appDetails.getAppName(), appDetails.getAppSrc())).start();
 
                 FragmentManager manager = getParentFragmentManager();
