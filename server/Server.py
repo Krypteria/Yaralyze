@@ -8,10 +8,17 @@ from Analyzer import Analyzer
 from datetime import datetime
 
 CLIENT_SAMPLES_PATH = ".\\AnalysisSamples\\ClientSamples\\"
+MALWARE_HASHES_PATH = ".\\AnalysisSamples\\MalwareHashes\\hashes.txt"
 LOGS_DIRECTORY_PATH = ".\\Logs\\"
 LOGS_PATH = ".\\Logs\\serverLogs.log"
 
-BUFFERSIZE = 2048
+EXTENSION = ".apk"
+
+#Comunicacion con el cliente
+STATIC_ANALYSIS_QUERY = 0;
+UPDATE_DB_QUERY = 1;
+
+BUFFERSIZE = 8192
 PORT = 2020
 
 class Server:
@@ -22,7 +29,6 @@ class Server:
         self.__setupLogConfig()
 
         self.__analyzer = Analyzer()
-        self.__endServerActivity = False;
         self.__startServer()
         self.__waitForConnections()
 
@@ -71,26 +77,40 @@ class Server:
         except socket.error as e:
             print(str(e))
             self.__logger.error(str(e))
-
-    def __endServerActivity(self) -> None:
-        self.__endServerActivity = True
     
     def __waitForConnections(self) -> None:
-        while(not self.__endServerActivity):
+        while(1):
             self.__serverSocket.listen(1)
             print("Servidor esperando peticiones en: " + str(self.__host) + ":" + str(PORT))
             self.__logger.info("Servidor esperando peticiones en: " + str(self.__host) + ":" + str(PORT))
             clientConnection, clientAddress = self.__serverSocket.accept()  
-            self.__proccessClientRequest(clientConnection, clientAddress)
+            self.__logger.info("Gestionando petición proveniente de " + str(clientAddress[0]) + ":" + str(clientAddress[1]))
+            self.__proccessClientRequest(clientConnection)
     
-    def __proccessClientRequest(self, clientConnection, clientAddress) -> None:
-        self.__logger.info("Gestionando petición proveniente de " + str(clientAddress[0]) + ":" + str(clientAddress[1]))
-        clientSamplePath = self.__receiveSample(clientConnection)
-        self.__sendAnalysisOutcome(clientConnection, self.__requestStaticAnalysis(clientSamplePath))
-        self.__removeClientSample(clientSamplePath)
-        self.__analyzer.cleanAnalysisOutcome()
-    
-    def __receiveSample(self, clientConnection) -> str:
+    def __proccessClientRequest(self, clientConnection) -> None:
+        request = self.__receiveRequestType(clientConnection)
+        
+        if request == STATIC_ANALYSIS_QUERY:
+            self.__logger.info("Tramitando petición de análisis estático")
+
+            clientSamplePath = self.__proccessSample(clientConnection)
+            self.__sendAnalysisOutcome(clientConnection, self.__requestStaticAnalysis(clientSamplePath))
+            self.__removeClientSample(clientSamplePath)
+            self.__analyzer.cleanAnalysisOutcome()
+        elif request == UPDATE_DB_QUERY:
+            self.__logger.info("Tramitando petición de actualización de base de datos")
+
+            self.__sendMalwareHashes(clientConnection)
+        
+
+    def __receiveRequestType(self, clientConnection):
+        requestType = clientConnection.recv(1024)
+        return int.from_bytes(requestType, "big")
+
+    # Métodos relacionados con peticiones de análisis estático
+    # --------------------------------------------------------
+
+    def __proccessSample(self, clientConnection) -> str:
         header = self.__receiveSampleHeader(clientConnection)
         print("[!] El header recibido es: ", header) #Quitar luego cuando esté todo perfecto
         clientSamplePath = self.__receiveSampleFile(clientConnection, header)
@@ -103,7 +123,7 @@ class Server:
     def __receiveSampleFile(self, clientConnection, header) -> str:
         sampleName, sampleSize = header[0:header.find("-")], int(header[header.find("-") + 1:])
 
-        with open(CLIENT_SAMPLES_PATH + sampleName + ".apk", "wb") as sampleFile:
+        with open(CLIENT_SAMPLES_PATH + sampleName + EXTENSION, "wb") as sampleFile:
             while True:
                 bytes_readed = clientConnection.recv(min(BUFFERSIZE, sampleSize))
                 if not bytes_readed:
@@ -118,19 +138,31 @@ class Server:
     
     def __requestStaticAnalysis(self, clientSamplePath) -> bool:
         print("[!] Iniciando análisis estático en el sample del cliente")
-        return self.__analyzer.executeStaticAnalysis(clientSamplePath + ".apk")
+        return self.__analyzer.executeStaticAnalysis(clientSamplePath + EXTENSION)
 
     def __sendAnalysisOutcome(self, clientConnection, analysisOutcome):
         print("Enviando resultado del análisis al cliente")
         self.__logger.info("Enviando resultado del análisis al cliente")
             
         analysisOutcome = json.dumps(analysisOutcome)
-        clientConnection.sendall(bytes(analysisOutcome, encoding="utf-8"))
+        clientConnection.sendall(bytes(analysisOutcome + "\n", encoding="utf-8"))
         clientConnection.close()
 
     def __removeClientSample(self, clientSamplePath):
-        os.remove(clientSamplePath + ".apk")
-            
+        os.remove(clientSamplePath + EXTENSION)
+
+    # Métodos relacionados con peticiones de actualización de la base de datos
+    # ------------------------------------------------------------------------
+    
+    def __sendMalwareHashes(self, clientConnection):
+        malwareHashesFile = open(MALWARE_HASHES_PATH, "r")
+        lines = malwareHashesFile.readlines()
+
+        for line in lines:
+            clientConnection.sendall(bytes(line, encoding="utf-8"))
+
+        clientConnection.close()
+
 
 
 if __name__ == "__main__":

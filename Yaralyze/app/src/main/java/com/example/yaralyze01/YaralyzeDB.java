@@ -35,17 +35,27 @@ public class YaralyzeDB extends SQLiteOpenHelper {
     private static final String COLUMN_ID_APP_LAST_ANALYZED_APPS = "id_app";
     private static final String COLUMN_APP_NAME_LAST_ANALYZED_APPS = "app_name";
 
-    public YaralyzeDB(@Nullable Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    private static YaralyzeDB dbInstance;
+    private Context context;
 
+    public static YaralyzeDB getInstance(Context context){
+        if(dbInstance == null){
+            dbInstance = new YaralyzeDB(context.getApplicationContext());
+        }
+
+        return dbInstance;
+    }
+
+    private YaralyzeDB(@Nullable Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     //Se llama la primera vez que se requiere la base de datos
     @Override
     public void onCreate(SQLiteDatabase db) {
         String malwareHashes = "CREATE TABLE " + MALWARE_HASHES +
-                "(" + COLUMN_ID_MALWARE_HASHES + "INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_HASH_MALWARE_HASHES + "TEXT NOT NULL UNIQUE);";
+                "(" + COLUMN_ID_MALWARE_HASHES + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_HASH_MALWARE_HASHES + " TEXT NOT NULL UNIQUE);";
 
         /*String analysisOutcomes = "CREATE TABLE " + ANALYSIS_OUTCOMES +
                 "(" + COLUMN_ID_OUTCOME_ANALYSIS_OUTCOMES + "INTEGER PRIMARY KEY AUTOINCREMENT, " +

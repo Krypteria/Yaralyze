@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
 
+import com.example.yaralyze01.client.Client;
 import com.example.yaralyze01.ui.analysis.installedApps.InstalledAppsFragment;
 import com.example.yaralyze01.ui.home.HomeFragment;
 
@@ -27,6 +28,9 @@ public class MainActivity extends AppCompatActivity {
         //this.toolbar = findViewById(R.id.toolbar);
         //setSupportActionBar(this.toolbar);
 
+        //Inicializo la base de datos
+        YaralyzeDB.getInstance(MainActivity.this);
+        new Thread(new Client(MainActivity.this)).start();
 
         HomeFragment fragment = new HomeFragment();
         FragmentManager manager = getSupportFragmentManager();

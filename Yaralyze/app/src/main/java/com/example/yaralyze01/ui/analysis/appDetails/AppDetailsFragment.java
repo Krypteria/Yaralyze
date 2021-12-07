@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.yaralyze01.MainActivity;
 import com.example.yaralyze01.R;
 import com.example.yaralyze01.client.Client;
 import com.example.yaralyze01.ui.analysis.outcome.AnalysisOutcomeManagerFragment;
