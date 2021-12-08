@@ -95,11 +95,11 @@ public class GetInstalledAppsTask extends BackgroundTask {
 
             //Leo todos los bytes del fichero y computo el checksum
             byte[] buffer = new byte[8192];
-            int readedBytes;
+            int readBytes;
 
-            while((readedBytes = fileReader.read(buffer)) > 0) {
-                md5digest.update(buffer, 0, readedBytes);
-                sha256digest.update(buffer, 0, readedBytes);
+            while((readBytes = fileReader.read(buffer)) > 0) {
+                md5digest.update(buffer, 0, readBytes);
+                sha256digest.update(buffer, 0, readBytes);
             }
 
             //Convierto el checksum en el hash

@@ -12,11 +12,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.yaralyze01.MainActivity;
 import com.example.yaralyze01.R;
 import com.example.yaralyze01.YaralyzeDB;
 import com.example.yaralyze01.client.Client;
-import com.example.yaralyze01.ui.analysis.outcome.AnalysisOutcomeManagerFragment;
+import com.example.yaralyze01.ui.analysis.outcomes.AnalysisOutcome;
+import com.example.yaralyze01.ui.analysis.outcomes.AnalysisOutcomeManagerFragment;
 
 public class AppDetailsFragment extends Fragment {
 
@@ -87,13 +87,13 @@ public class AppDetailsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 YaralyzeDB db = YaralyzeDB.getInstance(getContext());
-                boolean coincidence = db.getCoincidence(appDetails.getMd5hash());
+                AnalysisOutcome analysisOutcome = db.getCoincidence(appDetails.getAppName(), appDetails.getSha256hash());
 
                 AnalysisOutcomeManagerFragment fragment = new AnalysisOutcomeManagerFragment(getParentFragmentManager(), appDetails, HASH);
                 FragmentManager manager = getParentFragmentManager();
                 manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack(null).commit();
 
-                fragment.showAnalysisOutcome(null, coincidence);
+                fragment.showAnalysisOutcome(analysisOutcome);
             }
         });
 

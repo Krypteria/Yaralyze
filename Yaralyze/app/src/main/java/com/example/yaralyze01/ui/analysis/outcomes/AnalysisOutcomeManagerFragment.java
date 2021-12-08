@@ -1,4 +1,4 @@
-package com.example.yaralyze01.ui.analysis.outcome;
+package com.example.yaralyze01.ui.analysis.outcomes;
 
 import android.os.Bundle;
 
@@ -15,11 +15,10 @@ import android.widget.TextView;
 import com.example.yaralyze01.R;
 import com.example.yaralyze01.ui.analysis.appDetails.AppDetails;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 
-public class AnalysisOutcomeManagerFragment extends Fragment implements AnalysisOutcome{
+public class AnalysisOutcomeManagerFragment extends Fragment implements AnalysisOutcomeManagement {
 
     private final int HASH = 0;
     private final int STATIC = 1;
@@ -64,10 +63,10 @@ public class AnalysisOutcomeManagerFragment extends Fragment implements Analysis
     }
 
     @Override
-    public void showAnalysisOutcome(JSONObject analysisOutcome, boolean hashCoincidence) {
+    public void showAnalysisOutcome(AnalysisOutcome analysisOutcome) {
         switch (this.analysisType){
             case(HASH):
-                HashAnalysisOutcomeFragment hashFragment = new HashAnalysisOutcomeFragment(this.appDetails, hashCoincidence);
+                HashAnalysisOutcomeFragment hashFragment = new HashAnalysisOutcomeFragment(this.appDetails, analysisOutcome);
                 this.manager.beginTransaction().replace(R.id.fragmentContainer, hashFragment, hashFragment.getTag()).addToBackStack(null).commit();
                 break;
             case(STATIC):

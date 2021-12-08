@@ -2,11 +2,13 @@ package com.example.yaralyze01.client;
 
 
 import android.content.Context;
+import android.graphics.Color;
 
-import com.example.yaralyze01.MainActivity;
 import com.example.yaralyze01.YaralyzeDB;
-import com.example.yaralyze01.ui.analysis.outcome.AnalysisOutcome;
+import com.example.yaralyze01.ui.analysis.outcomes.AnalysisOutcome;
+import com.example.yaralyze01.ui.analysis.outcomes.AnalysisOutcomeManagement;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class Client implements Runnable{
 
@@ -44,10 +47,10 @@ public class Client implements Runnable{
     private byte[] buffer;
 
     private Context context;
-    private AnalysisOutcome analysisOutcome;
+    private AnalysisOutcomeManagement analysisOutcomeManagement;
 
-    public Client(AnalysisOutcome analysisOutcome, String apkName, String apkPath){
-        this.analysisOutcome = analysisOutcome;
+    public Client(AnalysisOutcomeManagement analysisOutcomeManagement, String apkName, String apkPath){
+        this.analysisOutcomeManagement = analysisOutcomeManagement;
         this.buffer = new byte[this.BUFFERSIZE];
         this.apkPath = apkPath;
         this.apkName = apkName;
@@ -155,12 +158,12 @@ public class Client implements Runnable{
             integerMaxValueExceeded = false;
         }
 
-        int readedBytes;
-        while(integerFileSizeValue > 0 && (readedBytes = this.bytesInput.read(this.buffer, 0, Math.min(this.BUFFERSIZE, integerFileSizeValue))) >= 0){
-            this.bytesOutput.write(this.buffer, 0, readedBytes);
+        int readBytes;
+        while(integerFileSizeValue > 0 && (readBytes = this.bytesInput.read(this.buffer, 0, Math.min(this.BUFFERSIZE, integerFileSizeValue))) >= 0){
+            this.bytesOutput.write(this.buffer, 0, readBytes);
             this.bytesOutput.flush();
 
-            fileSize -= readedBytes;
+            fileSize -= readBytes;
             if(integerMaxValueExceeded && fileSize < Integer.MAX_VALUE){
                 integerFileSizeValue = (int)fileSize;
                 integerMaxValueExceeded = false;
@@ -172,10 +175,25 @@ public class Client implements Runnable{
         this.textInput = new BufferedReader(new InputStreamReader(this.clientSocket.getInputStream()));
         String outcome = this.textInput.readLine();
 
-        JSONObject analysisOutcome = new JSONObject(outcome);
-        this.analysisOutcome.showAnalysisOutcome(analysisOutcome, false);
+        JSONObject analysisOutcomeJSON = new JSONObject(outcome);
+
+        this.analysisOutcomeManagement.showAnalysisOutcome(this.buildAnalysisOutcomeObject(analysisOutcomeJSON));
 
         this.textInput.close();
         this.clientSocket.close();
+    }
+
+    private AnalysisOutcome buildAnalysisOutcomeObject(JSONObject analysisOutcomeJSON) throws JSONException {
+        ArrayList<String> matchedRules = new ArrayList<>();
+
+        int numMatchedRules = analysisOutcomeJSON.getInt("numMatchedRules");
+        JSONArray matchedRulesJSON = analysisOutcomeJSON.getJSONArray("matchedRules");
+
+        String outcomeMatchedRules = "El programa analizado coincide con las siguientes reglas: \n\n";
+        for(int i = 0; i < numMatchedRules; i++){
+           matchedRules.add(matchedRulesJSON.get(i).toString());
+        }
+
+        return new AnalysisOutcome(1, this.apkName, analysisOutcomeJSON.getBoolean("detected"), matchedRules);
     }
 }

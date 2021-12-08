@@ -8,6 +8,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+import com.example.yaralyze01.ui.analysis.outcomes.AnalysisOutcome;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class YaralyzeDB extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "Yaralyze.db";
@@ -59,7 +65,7 @@ public class YaralyzeDB extends SQLiteOpenHelper {
                 "(" + COLUMN_ID_MALWARE_HASHES + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_HASH_MALWARE_HASHES + " TEXT UNIQUE NOT NULL);";
 
-        /*String analysisOutcomes = "CREATE TABLE " + ANALYSIS_OUTCOMES +
+        String analysisOutcomes = "CREATE TABLE " + ANALYSIS_OUTCOMES +
                 "(" + COLUMN_ID_OUTCOME_ANALYSIS_OUTCOMES + "INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_ID_APP_ANALYSIS_OUTCOMES + "INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_ANALYSIS_TYPE_ANALYSIS_OUTCOMES + "TEXT NOT NULL, " +
@@ -78,17 +84,17 @@ public class YaralyzeDB extends SQLiteOpenHelper {
                 "FOREIGN KEY (" + COLUMN_ID_OUTCOME_LAST_OUTCOMES_DATE + ") REFERENCES " + ANALYSIS_OUTCOMES +
                 "(" + COLUMN_ID_OUTCOME_ANALYSIS_OUTCOMES + "));";
 
-        String lastAnalyzedApps = "CREATE TABLE " + LAST_ANALYZED_APPS +
+        /*String lastAnalyzedApps = "CREATE TABLE " + LAST_ANALYZED_APPS +
                 "(" + COLUMN_ID_APP_LAST_ANALYZED_APPS + "INTEGER PRIMARY KEY, " +
                 COLUMN_APP_NAME_LAST_ANALYZED_APPS + "TEXT NOT NULL," +
                 "FOREIGN KEY (" + COLUMN_ID_APP_LAST_ANALYZED_APPS + ") REFERENCES " + ANALYSIS_OUTCOMES +
                 "(" + COLUMN_ID_APP_ANALYSIS_OUTCOMES + "));";*/
 
         db.execSQL(malwareHashes);
-        /*db.execSQL(analysisOutcomes);
+        db.execSQL(analysisOutcomes);
         db.execSQL(coincidences);
         db.execSQL(lastOutcomesDate);
-        db.execSQL(lastAnalyzedApps);*/
+        //db.execSQL(lastAnalyzedApps);
     }
 
     //Se llama a este método cuando la versión de la base de datos cambia
@@ -104,6 +110,7 @@ public class YaralyzeDB extends SQLiteOpenHelper {
         cv.put(COLUMN_HASH_MALWARE_HASHES, hash);
 
         long insert = db.replace(MALWARE_HASHES, null, cv);
+
         if(insert == -1){
             return false;
         }
@@ -111,26 +118,97 @@ public class YaralyzeDB extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean getCoincidence(String hash){
+    public AnalysisOutcome getCoincidence(String appName, String hash){
         SQLiteDatabase db = this.getReadableDatabase();
+
         String sql = "SELECT * FROM " + MALWARE_HASHES + " WHERE " + COLUMN_HASH_MALWARE_HASHES +
                         " = " + "'" + hash + "'";
-
         Cursor cursor = db.rawQuery(sql, null);
 
+        AnalysisOutcome analysisOutcome;
         if(cursor.moveToFirst()){
-            db.close();
             cursor.close();
-            return true;
+            analysisOutcome = new AnalysisOutcome(2, appName, true, null);
         }
         else{
-            db.close();
             cursor.close();
-            return false;
+            analysisOutcome = new AnalysisOutcome(2, appName, false, null);
         }
+
+        return analysisOutcome;
     }
 
-    public void deleteDB(){
-        context.deleteDatabase(DATABASE_NAME);
+    public boolean insertAnalysisOutcome(AnalysisOutcome analysisOutcome){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //Inserto la app analizada si no estuviese en la base de datos y obtengo su id
+        int app_id = insertLastAnalyzedApp(analysisOutcome.getAnalyzedAppName());
+
+        //Inserto un nuevo analysis_outcome
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_ID_APP_ANALYSIS_OUTCOMES, app_id);
+        cv.put(COLUMN_ANALYSIS_TYPE_ANALYSIS_OUTCOMES, analysisOutcome.getAnalysisType());
+        cv.put(COLUMN_MALWARE_DETECTED_ANALYSIS_OUTCOMES, analysisOutcome.isMalwareDetected());
+
+        long insert = db.insert(ANALYSIS_OUTCOMES, null, cv);
+
+        if(insert == -1){
+            return false;
+        }
+
+        //Obtengo el id_outcome de la fila insertada e inserto su información asociada
+        int id_outcome = this.getLastIndexFrom(ANALYSIS_OUTCOMES, COLUMN_ID_OUTCOME_ANALYSIS_OUTCOMES);
+
+        if(analysisOutcome.getMatchedRules() != null){
+            for(String rule: analysisOutcome.getMatchedRules()){
+                cv.clear();
+                cv.put(COLUMN_ID_OUTCOME_COINCIDENCES, id_outcome);
+                cv.put(COLUMN_MATCHED_RULE_COINCIDENCES, rule);
+                db.insert(COINCIDENCES, null, cv);
+            }
+        }
+
+        this.insertLastAnalysisDate(app_id, analysisOutcome.getAnalysisDate());
+
+        return true;
+    }
+
+    private int insertLastAnalyzedApp(String appName){
+        return 1;
+    }
+
+    public boolean insertLastAnalysisDate(int outcome_id, String dateTime){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(LAST_OUTCOMES_DATE, null, null);
+
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_ID_OUTCOME_LAST_OUTCOMES_DATE, outcome_id);
+        cv.put(COLUMN_ANALYSIS_DATE_LAST_OUTCOMES_DATE, dateTime);
+
+        long insert = db.insert(LAST_OUTCOMES_DATE, null, cv);
+
+        if(insert == -1){
+            return false;
+        }
+
+        return true;
+    }
+
+    private int getLastIndexFrom(String tableName, String idColumnName){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String sql = "SELECT MAX(" + idColumnName + ") FROM " + tableName;
+        Cursor cursor = db.rawQuery(sql, null);
+
+        int index;
+        if(cursor.moveToFirst()){
+            index = cursor.getInt(0);
+        }
+        else{
+            index = -1;
+        }
+
+        cursor.close();
+        return index;
     }
 }
