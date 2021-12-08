@@ -38,9 +38,12 @@ public class YaralyzeDB extends SQLiteOpenHelper {
     private static final String COLUMN_ID_OUTCOME_LAST_OUTCOMES_DATE = "id_analysis_outcome";
     private static final String COLUMN_ANALYSIS_DATE_LAST_OUTCOMES_DATE = "analysis_date";
 
+    private static final String ANALYZED_APPS = "analyzed_apps";
+    private static final String COLUMN_ID_APP_ANALYZED_APPS = "id_app";
+    private static final String COLUMN_APP_NAME_ANALYZED_APPS = "app_name";
+
     private static final String LAST_ANALYZED_APPS = "last_analyzed_apps";
     private static final String COLUMN_ID_APP_LAST_ANALYZED_APPS = "id_app";
-    private static final String COLUMN_APP_NAME_LAST_ANALYZED_APPS = "app_name";
 
     private static YaralyzeDB dbInstance;
     private Context context;
@@ -58,20 +61,29 @@ public class YaralyzeDB extends SQLiteOpenHelper {
         this.context = context;
     }
 
-    //Se llama la primera vez que se requiere la base de datos
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         String malwareHashes = "CREATE TABLE " + MALWARE_HASHES +
                 "(" + COLUMN_ID_MALWARE_HASHES + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_HASH_MALWARE_HASHES + " TEXT UNIQUE NOT NULL);";
 
+        String analyzedApps = "CREATE TABLE " + ANALYZED_APPS +
+                "(" + COLUMN_ID_APP_ANALYZED_APPS + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                COLUMN_APP_NAME_ANALYZED_APPS + " TEXT NOT NULL);";
+
+        String lastAnalyzedApps = "CREATE TABLE " + LAST_ANALYZED_APPS +
+                "(" + COLUMN_ID_APP_LAST_ANALYZED_APPS + " INTEGER PRIMARY KEY, " +
+                "FOREIGN KEY (" + COLUMN_ID_APP_LAST_ANALYZED_APPS + ") REFERENCES " + ANALYZED_APPS +
+                "(" + COLUMN_ID_APP_ANALYZED_APPS + "));";
+
         String analysisOutcomes = "CREATE TABLE " + ANALYSIS_OUTCOMES +
                 "(" + COLUMN_ID_OUTCOME_ANALYSIS_OUTCOMES + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_ID_APP_ANALYSIS_OUTCOMES + " INTEGER NOT NULL, " +
                 COLUMN_ANALYSIS_TYPE_ANALYSIS_OUTCOMES + " TEXT NOT NULL, " +
                 COLUMN_MALWARE_DETECTED_ANALYSIS_OUTCOMES + " INTEGER NOT NULL," +
-                "FOREIGN KEY (" + COLUMN_ID_APP_ANALYSIS_OUTCOMES + ") REFERENCES " + LAST_ANALYZED_APPS +
-                "(" + COLUMN_ID_APP_LAST_ANALYZED_APPS + "));";
+                "FOREIGN KEY (" + COLUMN_ID_APP_ANALYSIS_OUTCOMES + ") REFERENCES " + ANALYZED_APPS +
+                "(" + COLUMN_ID_APP_ANALYZED_APPS + "));";
 
         String coincidences = "CREATE TABLE " + COINCIDENCES +
                 "(" + COLUMN_ID_COINCIDENCE_COINCIDENCES + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -86,18 +98,12 @@ public class YaralyzeDB extends SQLiteOpenHelper {
                 "FOREIGN KEY (" + COLUMN_ID_OUTCOME_LAST_OUTCOMES_DATE + ") REFERENCES " + ANALYSIS_OUTCOMES +
                 "(" + COLUMN_ID_OUTCOME_ANALYSIS_OUTCOMES + "));";
 
-        String lastAnalyzedApps = "CREATE TABLE " + LAST_ANALYZED_APPS +
-                "(" + COLUMN_ID_APP_LAST_ANALYZED_APPS + " INTEGER PRIMARY KEY, " +
-                COLUMN_APP_NAME_LAST_ANALYZED_APPS + " TEXT NOT NULL," +
-                "FOREIGN KEY (" + COLUMN_ID_APP_LAST_ANALYZED_APPS + ") REFERENCES " + ANALYSIS_OUTCOMES +
-                "(" + COLUMN_ID_APP_ANALYSIS_OUTCOMES + "));";
-
-        System.out.println("CARGO LA BASE DE DATOS");
         db.execSQL(malwareHashes);
+        db.execSQL(analyzedApps);
+        db.execSQL(lastAnalyzedApps);
         db.execSQL(analysisOutcomes);
         db.execSQL(coincidences);
         db.execSQL(lastOutcomesDate);
-        db.execSQL(lastAnalyzedApps);
         System.out.println("DB CARGADA");
     }
 
@@ -109,6 +115,7 @@ public class YaralyzeDB extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + LAST_OUTCOMES_DATE);
         db.execSQL("DROP TABLE IF EXISTS " + ANALYSIS_OUTCOMES);
         db.execSQL("DROP TABLE IF EXISTS " + LAST_ANALYZED_APPS);
+        db.execSQL("DROP TABLE IF EXISTS " + ANALYZED_APPS);
         onCreate(db);
     }
 
@@ -155,56 +162,116 @@ public class YaralyzeDB extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         //Inserto la app analizada si no estuviese en la base de datos y obtengo su id
-        int app_id = insertLastAnalyzedApp(analysisOutcome.getAnalyzedAppName());
+        int app_id = this.insertAnalyzedApp(analysisOutcome.getAnalyzedAppName());
 
-        //Inserto un nuevo analysis_outcome
-        ContentValues cv = new ContentValues();
-        cv.put(COLUMN_ID_APP_ANALYSIS_OUTCOMES, app_id);
-        cv.put(COLUMN_ANALYSIS_TYPE_ANALYSIS_OUTCOMES, analysisOutcome.getAnalysisType());
-        cv.put(COLUMN_MALWARE_DETECTED_ANALYSIS_OUTCOMES, analysisOutcome.isMalwareDetected());
+        if(app_id != -1){
+            //Añado la app a la tabla de ultimos analisis
+            boolean inserted = this.insertLastAnalyzedApp(app_id);
+            if(inserted) {
+                //Inserto un nuevo analysis_outcome
+                ContentValues cv = new ContentValues();
+                cv.put(COLUMN_ID_APP_ANALYSIS_OUTCOMES, app_id);
+                cv.put(COLUMN_ANALYSIS_TYPE_ANALYSIS_OUTCOMES, analysisOutcome.getAnalysisType());
+                cv.put(COLUMN_MALWARE_DETECTED_ANALYSIS_OUTCOMES, analysisOutcome.isMalwareDetected());
 
-        long insert = db.insert(ANALYSIS_OUTCOMES, null, cv);
+                long insert = db.insert(ANALYSIS_OUTCOMES, null, cv);
 
-        if(insert == -1){
-            return false;
-        }
+                if(insert != -1){
+                    //Obtengo el id_outcome de la fila insertada e inserto su información asociada
+                    int id_outcome = this.getLastIndexFrom(ANALYSIS_OUTCOMES, COLUMN_ID_OUTCOME_ANALYSIS_OUTCOMES);
 
-        //Obtengo el id_outcome de la fila insertada e inserto su información asociada
-        int id_outcome = this.getLastIndexFrom(ANALYSIS_OUTCOMES, COLUMN_ID_OUTCOME_ANALYSIS_OUTCOMES);
+                    if(analysisOutcome.getMatchedRules() != null){
+                        for(String rule: analysisOutcome.getMatchedRules()){
+                            cv.clear();
+                            cv.put(COLUMN_ID_OUTCOME_COINCIDENCES, id_outcome);
+                            cv.put(COLUMN_MATCHED_RULE_COINCIDENCES, rule);
+                            db.insert(COINCIDENCES, null, cv);
+                        }
+                    }
 
-        if(analysisOutcome.getMatchedRules() != null){
-            for(String rule: analysisOutcome.getMatchedRules()){
-                cv.clear();
-                cv.put(COLUMN_ID_OUTCOME_COINCIDENCES, id_outcome);
-                cv.put(COLUMN_MATCHED_RULE_COINCIDENCES, rule);
-                db.insert(COINCIDENCES, null, cv);
+                    //Inserto la fecha del analisis
+                    this.insertLastAnalysisDate(id_outcome, analysisOutcome.getAnalysisDate());
+
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+            else{
+                return false;
             }
         }
-
-        //Inserto la fecha del analisis
-        this.insertLastAnalysisDate(id_outcome, analysisOutcome.getAnalysisDate());
-
-        return true;
+        else{
+            return false;
+        }
     }
 
-    private int insertLastAnalyzedApp(String appName){
+    private int insertAnalyzedApp(String appName){
+        Cursor cursor = this.getIndexFrom(ANALYZED_APPS, COLUMN_APP_NAME_ANALYZED_APPS, appName);
+        if(cursor == null){
+            SQLiteDatabase db = this.getWritableDatabase();
+
+            ContentValues cv = new ContentValues();
+            cv.put(COLUMN_APP_NAME_ANALYZED_APPS, appName);
+
+            long insert = db.insert(ANALYZED_APPS, null, cv);
+            if(insert == -1){
+                return -1;
+            }
+            return getLastIndexFrom(ANALYZED_APPS, COLUMN_ID_APP_ANALYZED_APPS);
+        }
+        else{
+            int index = cursor.getInt(0);
+            cursor.close();
+            return index;
+        }
+    }
+
+    private boolean insertLastAnalyzedApp(int app_id){
         SQLiteDatabase db = this.getWritableDatabase();
 
-        ContentValues cv = new ContentValues();
-        cv.put(COLUMN_APP_NAME_LAST_ANALYZED_APPS, appName);
+        Cursor cursor = this.getIndexFrom(LAST_ANALYZED_APPS, COLUMN_ID_APP_LAST_ANALYZED_APPS, ""+app_id);
+        if(cursor == null){
+            String sql = "SELECT COUNT(*) FROM " + LAST_ANALYZED_APPS;
+            cursor = db.rawQuery(sql, null);
 
-        long insert = db.insert(LAST_ANALYZED_APPS, null, cv);
+            if(cursor.moveToFirst() && cursor.getInt(0) >= 10){
+                sql = "SELECT MIN(" + COLUMN_ID_APP_LAST_ANALYZED_APPS + ") FROM " + LAST_ANALYZED_APPS;
+                cursor = db.rawQuery(sql, null);
 
-        if(insert == -1){
-            return -1;
+                String where = COLUMN_ID_APP_LAST_ANALYZED_APPS + " = " + cursor.getInt(0);
+                db.delete(LAST_ANALYZED_APPS, where , null);
+                cursor.close();
+            }
+
+            ContentValues cv = new ContentValues();
+            cv.put(COLUMN_ID_APP_LAST_ANALYZED_APPS, app_id);
+
+            long insert = db.insert(LAST_ANALYZED_APPS, null, cv);
+
+            if(insert == -1){
+                return false;
+            }
+
+            return true;
         }
-
-        return this.getLastIndexFrom(LAST_ANALYZED_APPS, COLUMN_ID_APP_LAST_ANALYZED_APPS);
+        cursor.close();
+        return true;
     }
 
     private boolean insertLastAnalysisDate(int outcome_id, String dateTime){
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(LAST_OUTCOMES_DATE, null, null);
+
+        String sql = "SELECT COUNT(*) FROM " + LAST_OUTCOMES_DATE;
+        Cursor cursor = db.rawQuery(sql, null);
+
+        if(cursor.moveToFirst() && cursor.getInt(0) > 0){
+            sql = "DELETE FROM sqlite_sequence WHERE name = " + LAST_OUTCOMES_DATE;
+            cursor = db.rawQuery(sql, null);
+            cursor.close();
+        }
 
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_ID_OUTCOME_LAST_OUTCOMES_DATE, outcome_id);
@@ -217,6 +284,21 @@ public class YaralyzeDB extends SQLiteOpenHelper {
         }
 
         return true;
+    }
+
+
+    private Cursor getIndexFrom(String tableName, String idColumnName, String item){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String sql = "SELECT * FROM " + tableName + " WHERE " + idColumnName + " = " + "'" + item + "'";
+        Cursor cursor = db.rawQuery(sql, null);
+
+        if(cursor.moveToFirst()){
+            return cursor;
+        }
+        else{
+            return null;
+        }
     }
 
     private int getLastIndexFrom(String tableName, String idColumnName){
