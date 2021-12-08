@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
 
         //Inicializo la base de datos
         YaralyzeDB db = YaralyzeDB.getInstance(MainActivity.this);
+        db.deleteDB();
+        YaralyzeDB.getInstance(MainActivity.this);
         new Thread(new Client(MainActivity.this)).start();
 
         HomeFragment fragment = new HomeFragment();

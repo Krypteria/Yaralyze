@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class AnalysisOutcome {
 
@@ -23,7 +24,8 @@ public class AnalysisOutcome {
     }
 
     private String getCurrentDateTime(){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd - MM - yyyy  HH:mm:ss", Locale.getDefault());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd - MM - yyyy  HH:mm:ss");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("Europe/Madrid"));
         return dateFormat.format(new Date());
     }
 

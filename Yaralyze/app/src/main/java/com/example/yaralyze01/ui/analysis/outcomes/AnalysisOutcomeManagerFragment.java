@@ -13,6 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.yaralyze01.R;
+import com.example.yaralyze01.YaralyzeDB;
 import com.example.yaralyze01.ui.analysis.appDetails.AppDetails;
 
 import org.json.JSONObject;
@@ -64,6 +65,7 @@ public class AnalysisOutcomeManagerFragment extends Fragment implements Analysis
 
     @Override
     public void showAnalysisOutcome(AnalysisOutcome analysisOutcome) {
+        insertIntoDB(analysisOutcome);
         switch (this.analysisType){
             case(HASH):
                 HashAnalysisOutcomeFragment hashFragment = new HashAnalysisOutcomeFragment(this.appDetails, analysisOutcome);
@@ -77,6 +79,17 @@ public class AnalysisOutcomeManagerFragment extends Fragment implements Analysis
                 System.out.println("Completo");
             default:
                 break;
+        }
+    }
+
+    private void insertIntoDB(AnalysisOutcome analysisOutcome){
+        YaralyzeDB db = YaralyzeDB.getInstance(getContext());
+        boolean insert = db.insertAnalysisOutcome(analysisOutcome);
+        if(insert){
+            System.out.println("Insertado correctamente");
+        }
+        else{
+            System.out.println("Error al insertar");
         }
     }
 }

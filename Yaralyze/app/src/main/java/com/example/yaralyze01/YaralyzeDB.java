@@ -47,7 +47,6 @@ public class YaralyzeDB extends SQLiteOpenHelper {
 
     public static YaralyzeDB getInstance(Context context){
         if(dbInstance == null){
-            System.out.println("ENTRO");
             dbInstance = new YaralyzeDB(context.getApplicationContext());
         }
 
@@ -56,6 +55,7 @@ public class YaralyzeDB extends SQLiteOpenHelper {
 
     private YaralyzeDB(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     //Se llama la primera vez que se requiere la base de datos
@@ -66,41 +66,54 @@ public class YaralyzeDB extends SQLiteOpenHelper {
                 COLUMN_HASH_MALWARE_HASHES + " TEXT UNIQUE NOT NULL);";
 
         String analysisOutcomes = "CREATE TABLE " + ANALYSIS_OUTCOMES +
-                "(" + COLUMN_ID_OUTCOME_ANALYSIS_OUTCOMES + "INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_ID_APP_ANALYSIS_OUTCOMES + "INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_ANALYSIS_TYPE_ANALYSIS_OUTCOMES + "TEXT NOT NULL, " +
-                COLUMN_MALWARE_DETECTED_ANALYSIS_OUTCOMES + "INTEGER NOT NULL);";
+                "(" + COLUMN_ID_OUTCOME_ANALYSIS_OUTCOMES + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_ID_APP_ANALYSIS_OUTCOMES + " INTEGER NOT NULL, " +
+                COLUMN_ANALYSIS_TYPE_ANALYSIS_OUTCOMES + " TEXT NOT NULL, " +
+                COLUMN_MALWARE_DETECTED_ANALYSIS_OUTCOMES + " INTEGER NOT NULL," +
+                "FOREIGN KEY (" + COLUMN_ID_APP_ANALYSIS_OUTCOMES + ") REFERENCES " + LAST_ANALYZED_APPS +
+                "(" + COLUMN_ID_APP_LAST_ANALYZED_APPS + "));";
 
         String coincidences = "CREATE TABLE " + COINCIDENCES +
-                "(" + COLUMN_ID_COINCIDENCE_COINCIDENCES + "INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_ID_OUTCOME_COINCIDENCES + "INTEGER PRIMARY KEY, " +
-                COLUMN_MATCHED_RULE_COINCIDENCES + "TEXT NOT NULL," +
+                "(" + COLUMN_ID_COINCIDENCE_COINCIDENCES + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_ID_OUTCOME_COINCIDENCES + " INTEGER NOT NULL, " +
+                COLUMN_MATCHED_RULE_COINCIDENCES + " TEXT NOT NULL," +
                 "FOREIGN KEY (" + COLUMN_ID_OUTCOME_COINCIDENCES + ") REFERENCES " + ANALYSIS_OUTCOMES +
                 "(" + COLUMN_ID_OUTCOME_ANALYSIS_OUTCOMES + "));";
 
         String lastOutcomesDate = "CREATE TABLE " + LAST_OUTCOMES_DATE +
-                "(" + COLUMN_ID_OUTCOME_LAST_OUTCOMES_DATE + "INTEGER PRIMARY KEY, " +
-                COLUMN_ANALYSIS_DATE_LAST_OUTCOMES_DATE + "DATETIME NOT NULL," +
+                "(" + COLUMN_ID_OUTCOME_LAST_OUTCOMES_DATE + " INTEGER PRIMARY KEY, " +
+                COLUMN_ANALYSIS_DATE_LAST_OUTCOMES_DATE + " DATETIME NOT NULL," +
                 "FOREIGN KEY (" + COLUMN_ID_OUTCOME_LAST_OUTCOMES_DATE + ") REFERENCES " + ANALYSIS_OUTCOMES +
                 "(" + COLUMN_ID_OUTCOME_ANALYSIS_OUTCOMES + "));";
 
-        /*String lastAnalyzedApps = "CREATE TABLE " + LAST_ANALYZED_APPS +
-                "(" + COLUMN_ID_APP_LAST_ANALYZED_APPS + "INTEGER PRIMARY KEY, " +
-                COLUMN_APP_NAME_LAST_ANALYZED_APPS + "TEXT NOT NULL," +
+        String lastAnalyzedApps = "CREATE TABLE " + LAST_ANALYZED_APPS +
+                "(" + COLUMN_ID_APP_LAST_ANALYZED_APPS + " INTEGER PRIMARY KEY, " +
+                COLUMN_APP_NAME_LAST_ANALYZED_APPS + " TEXT NOT NULL," +
                 "FOREIGN KEY (" + COLUMN_ID_APP_LAST_ANALYZED_APPS + ") REFERENCES " + ANALYSIS_OUTCOMES +
-                "(" + COLUMN_ID_APP_ANALYSIS_OUTCOMES + "));";*/
+                "(" + COLUMN_ID_APP_ANALYSIS_OUTCOMES + "));";
 
+        System.out.println("CARGO LA BASE DE DATOS");
         db.execSQL(malwareHashes);
         db.execSQL(analysisOutcomes);
         db.execSQL(coincidences);
         db.execSQL(lastOutcomesDate);
-        //db.execSQL(lastAnalyzedApps);
+        db.execSQL(lastAnalyzedApps);
+        System.out.println("DB CARGADA");
     }
 
     //Se llama a este método cuando la versión de la base de datos cambia
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + MALWARE_HASHES);
+        db.execSQL("DROP TABLE IF EXISTS " + COINCIDENCES);
+        db.execSQL("DROP TABLE IF EXISTS " + LAST_OUTCOMES_DATE);
+        db.execSQL("DROP TABLE IF EXISTS " + ANALYSIS_OUTCOMES);
+        db.execSQL("DROP TABLE IF EXISTS " + LAST_ANALYZED_APPS);
+        onCreate(db);
+    }
 
+    public void deleteDB(){
+        this.context.deleteDatabase(DATABASE_NAME);
     }
 
     public boolean insertHash(String hash){
@@ -168,16 +181,28 @@ public class YaralyzeDB extends SQLiteOpenHelper {
             }
         }
 
-        this.insertLastAnalysisDate(app_id, analysisOutcome.getAnalysisDate());
+        //Inserto la fecha del analisis
+        this.insertLastAnalysisDate(id_outcome, analysisOutcome.getAnalysisDate());
 
         return true;
     }
 
     private int insertLastAnalyzedApp(String appName){
-        return 1;
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_APP_NAME_LAST_ANALYZED_APPS, appName);
+
+        long insert = db.insert(LAST_ANALYZED_APPS, null, cv);
+
+        if(insert == -1){
+            return -1;
+        }
+
+        return this.getLastIndexFrom(LAST_ANALYZED_APPS, COLUMN_ID_APP_LAST_ANALYZED_APPS);
     }
 
-    public boolean insertLastAnalysisDate(int outcome_id, String dateTime){
+    private boolean insertLastAnalysisDate(int outcome_id, String dateTime){
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(LAST_OUTCOMES_DATE, null, null);
 

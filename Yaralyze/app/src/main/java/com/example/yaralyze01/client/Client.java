@@ -4,6 +4,7 @@ package com.example.yaralyze01.client;
 import android.content.Context;
 import android.graphics.Color;
 
+import com.example.yaralyze01.MainActivity;
 import com.example.yaralyze01.YaralyzeDB;
 import com.example.yaralyze01.ui.analysis.outcomes.AnalysisOutcome;
 import com.example.yaralyze01.ui.analysis.outcomes.AnalysisOutcomeManagement;
@@ -189,7 +190,6 @@ public class Client implements Runnable{
         int numMatchedRules = analysisOutcomeJSON.getInt("numMatchedRules");
         JSONArray matchedRulesJSON = analysisOutcomeJSON.getJSONArray("matchedRules");
 
-        String outcomeMatchedRules = "El programa analizado coincide con las siguientes reglas: \n\n";
         for(int i = 0; i < numMatchedRules; i++){
            matchedRules.add(matchedRulesJSON.get(i).toString());
         }
