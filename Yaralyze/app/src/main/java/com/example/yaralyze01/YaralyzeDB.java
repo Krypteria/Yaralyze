@@ -239,6 +239,7 @@ public class YaralyzeDB extends SQLiteOpenHelper {
             if(cursor.moveToFirst() && cursor.getInt(0) >= 10){
                 sql = "SELECT MIN(" + COLUMN_ID_APP_LAST_ANALYZED_APPS + ") FROM " + LAST_ANALYZED_APPS;
                 cursor = db.rawQuery(sql, null);
+                cursor.moveToFirst();
 
                 String where = COLUMN_ID_APP_LAST_ANALYZED_APPS + " = " + cursor.getInt(0);
                 db.delete(LAST_ANALYZED_APPS, where , null);
@@ -286,6 +287,33 @@ public class YaralyzeDB extends SQLiteOpenHelper {
         return true;
     }
 
+    public String getLastAnalysisDate(){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String sql = "SELECT * FROM " + LAST_OUTCOMES_DATE;
+        Cursor cursor = db.rawQuery(sql, null);
+
+        if(cursor.moveToFirst()){
+            return cursor.getString(1);
+        }
+        else{
+            return null;
+        }
+    }
+
+    public boolean hasMalwareHashes(){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String sql = "SELECT COUNT(*) FROM " + MALWARE_HASHES;
+        Cursor cursor = db.rawQuery(sql, null);
+
+        if(cursor.moveToFirst() && cursor.getInt(0) > 0){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
 
     private Cursor getIndexFrom(String tableName, String idColumnName, String item){
         SQLiteDatabase db = this.getReadableDatabase();
