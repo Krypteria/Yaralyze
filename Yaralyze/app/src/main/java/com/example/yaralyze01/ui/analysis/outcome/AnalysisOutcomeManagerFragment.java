@@ -33,8 +33,10 @@ public class AnalysisOutcomeManagerFragment extends Fragment implements Analysis
     private int analysisType;
 
     private ProgressBar analyzeProgressBar;
+    private FragmentManager manager;
 
-    public AnalysisOutcomeManagerFragment(AppDetails appDetails, int analysisType){
+    public AnalysisOutcomeManagerFragment(FragmentManager manager, AppDetails appDetails, int analysisType){
+        this.manager = manager;
         this.analysisType = analysisType;
         this.appDetails = appDetails;
     }
@@ -62,15 +64,15 @@ public class AnalysisOutcomeManagerFragment extends Fragment implements Analysis
     }
 
     @Override
-    public void showAnalysisOutcome(JSONObject analysisOutcome) {
+    public void showAnalysisOutcome(JSONObject analysisOutcome, boolean hashCoincidence) {
         switch (this.analysisType){
             case(HASH):
-                System.out.println("hash");
+                HashAnalysisOutcomeFragment hashFragment = new HashAnalysisOutcomeFragment(this.appDetails, hashCoincidence);
+                this.manager.beginTransaction().replace(R.id.fragmentContainer, hashFragment, hashFragment.getTag()).addToBackStack(null).commit();
                 break;
             case(STATIC):
-                StaticAnalysisOutcomeFragment fragment = new StaticAnalysisOutcomeFragment(this.appDetails, analysisOutcome);
-                FragmentManager manager = getParentFragmentManager();
-                manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack(null).commit();
+                StaticAnalysisOutcomeFragment staticFragment = new StaticAnalysisOutcomeFragment(this.appDetails, analysisOutcome);
+                this.manager.beginTransaction().replace(R.id.fragmentContainer, staticFragment, staticFragment.getTag()).addToBackStack(null).commit();
                 break;
             case(COMPLETE):
                 System.out.println("Completo");

@@ -2,6 +2,7 @@ package com.example.yaralyze01;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -40,6 +41,7 @@ public class YaralyzeDB extends SQLiteOpenHelper {
 
     public static YaralyzeDB getInstance(Context context){
         if(dbInstance == null){
+            System.out.println("ENTRO");
             dbInstance = new YaralyzeDB(context.getApplicationContext());
         }
 
@@ -55,7 +57,7 @@ public class YaralyzeDB extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String malwareHashes = "CREATE TABLE " + MALWARE_HASHES +
                 "(" + COLUMN_ID_MALWARE_HASHES + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_HASH_MALWARE_HASHES + " TEXT NOT NULL UNIQUE);";
+                COLUMN_HASH_MALWARE_HASHES + " TEXT UNIQUE NOT NULL);";
 
         /*String analysisOutcomes = "CREATE TABLE " + ANALYSIS_OUTCOMES +
                 "(" + COLUMN_ID_OUTCOME_ANALYSIS_OUTCOMES + "INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -101,11 +103,34 @@ public class YaralyzeDB extends SQLiteOpenHelper {
 
         cv.put(COLUMN_HASH_MALWARE_HASHES, hash);
 
-        long insert = db.insert(MALWARE_HASHES, null, cv);
+        long insert = db.replace(MALWARE_HASHES, null, cv);
         if(insert == -1){
             return false;
         }
 
         return true;
+    }
+
+    public boolean getCoincidence(String hash){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT * FROM " + MALWARE_HASHES + " WHERE " + COLUMN_HASH_MALWARE_HASHES +
+                        " = " + "'" + hash + "'";
+
+        Cursor cursor = db.rawQuery(sql, null);
+
+        if(cursor.moveToFirst()){
+            db.close();
+            cursor.close();
+            return true;
+        }
+        else{
+            db.close();
+            cursor.close();
+            return false;
+        }
+    }
+
+    public void deleteDB(){
+        context.deleteDatabase(DATABASE_NAME);
     }
 }

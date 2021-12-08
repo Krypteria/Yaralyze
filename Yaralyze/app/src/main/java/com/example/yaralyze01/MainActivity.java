@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         //setSupportActionBar(this.toolbar);
 
         //Inicializo la base de datos
-        YaralyzeDB.getInstance(MainActivity.this);
+        YaralyzeDB db = YaralyzeDB.getInstance(MainActivity.this);
         new Thread(new Client(MainActivity.this)).start();
 
         HomeFragment fragment = new HomeFragment();

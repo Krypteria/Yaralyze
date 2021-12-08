@@ -88,8 +88,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
         android:textColor="#646464"
-        android:textSize="15dp"
-        android:text="Resultado del análisis estático" />
+        android:textSize="15dp" />
 
     <View
         android:id="@+id/ruleCoincidenceSeparator"

@@ -173,7 +173,7 @@ public class Client implements Runnable{
         String outcome = this.textInput.readLine();
 
         JSONObject analysisOutcome = new JSONObject(outcome);
-        this.analysisOutcome.showAnalysisOutcome(analysisOutcome);
+        this.analysisOutcome.showAnalysisOutcome(analysisOutcome, false);
 
         this.textInput.close();
         this.clientSocket.close();

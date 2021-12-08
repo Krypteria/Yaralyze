@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.yaralyze01.MainActivity;
 import com.example.yaralyze01.R;
+import com.example.yaralyze01.YaralyzeDB;
 import com.example.yaralyze01.client.Client;
 import com.example.yaralyze01.ui.analysis.outcome.AnalysisOutcomeManagerFragment;
 
@@ -74,11 +75,25 @@ public class AppDetailsFragment extends Fragment {
         this.staticAnalysisButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AnalysisOutcomeManagerFragment fragment = new AnalysisOutcomeManagerFragment(appDetails, STATIC);
+                AnalysisOutcomeManagerFragment fragment = new AnalysisOutcomeManagerFragment(getParentFragmentManager(), appDetails, STATIC);
                 new Thread(new Client(fragment, appDetails.getAppName(), appDetails.getAppSrc())).start();
 
                 FragmentManager manager = getParentFragmentManager();
                 manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack(null).commit();
+            }
+        });
+
+        this.hashAnalysisButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                YaralyzeDB db = YaralyzeDB.getInstance(getContext());
+                boolean coincidence = db.getCoincidence(appDetails.getMd5hash());
+
+                AnalysisOutcomeManagerFragment fragment = new AnalysisOutcomeManagerFragment(getParentFragmentManager(), appDetails, HASH);
+                FragmentManager manager = getParentFragmentManager();
+                manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack(null).commit();
+
+                fragment.showAnalysisOutcome(null, coincidence);
             }
         });
 
