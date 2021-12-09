@@ -33,7 +33,7 @@ public class GetInstalledAppsTask extends BackgroundTask {
     }
 
     public void startOnBackground(){
-        this.activity.setOnLoadOperationt(true);
+        this.activity.setOnLoadOperation(true);
         this.startBackground();
     }
 
@@ -52,7 +52,7 @@ public class GetInstalledAppsTask extends BackgroundTask {
     }
 
     @Override
-    public void onPostExecute() {this.activity.setOnLoadOperationt(false);}
+    public void onPostExecute() {this.activity.setOnLoadOperation(false);}
 
     private void getInstalledAppsIntent(boolean getSysPackages){
         for(PackageInfo packageInfo : this.packageManager.getInstalledPackages(0)){

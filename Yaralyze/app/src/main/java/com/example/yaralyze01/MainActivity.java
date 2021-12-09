@@ -5,11 +5,23 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.app.Dialog;
+import android.content.Context;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.view.View;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.yaralyze01.client.Client;
 import com.example.yaralyze01.ui.analysis.installedApps.InstalledAppsFragment;
 import com.example.yaralyze01.ui.home.HomeFragment;
+
+import java.net.InetAddress;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,9 +40,11 @@ public class MainActivity extends AppCompatActivity {
         //this.toolbar = findViewById(R.id.toolbar);
         //setSupportActionBar(this.toolbar);
 
-        //Inicializo la base de datos
         YaralyzeDB db = YaralyzeDB.getInstance(MainActivity.this);
         if(!db.hasMalwareHashes()){
+            if(!this.isInternetAvailable()){
+                this.showNoInternetAvalaibleDialog();
+            }
             new Thread(new Client(MainActivity.this)).start();
         }
 
@@ -55,7 +69,36 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void setOnLoadOperationt(boolean onLoad){
+    public void setOnLoadOperation(boolean onLoad){
         this.onLoadOperation = onLoad;
+    }
+
+    //No parece que detecte muy bien cuando hay internet y cuando no, hacer pruebas
+    private boolean isInternetAvailable() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
+    }
+
+    private void showNoInternetAvalaibleDialog(){
+        Dialog dialog = new Dialog(MainActivity.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog_no_internet_avalaible);
+
+        Button retryButton = dialog.findViewById(R.id.retryButton);
+        retryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!isInternetAvailable()){
+                    Toast.makeText(getApplicationContext(), "No hay conexión a internet", Toast.LENGTH_LONG).show();
+                }
+                else{
+                    Toast.makeText(getApplicationContext(), "Actualizando la base de datos", Toast.LENGTH_LONG).show();
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        dialog.show();
     }
 }

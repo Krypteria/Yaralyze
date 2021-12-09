@@ -31,7 +31,7 @@ public class Client implements Runnable{
     private final int STATIC_ANALYSIS_QUERY = 0;
     private final int UPDATE_DB_QUERY = 1;
 
-    private final String serverIP = "192.168.1.35"; //192.168.56.102 placeholder
+    private final String serverIP = "192.168.1.37"; // placeholder
     private final int BUFFERSIZE = 8192;
     private final int PORT = 2020;
 
