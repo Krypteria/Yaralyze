@@ -82,7 +82,7 @@
     </View>
 
     <Button
-        android:id="@+id/outcomeLogButton"
+        android:id="@+id/reportsButton"
         android:layout_width="match_parent"
         android:layout_height="98dp"
         android:drawableLeft="@drawable/outcomes_logo"

@@ -16,10 +16,12 @@ import com.example.yaralyze01.MainActivity;
 import com.example.yaralyze01.R;
 import com.example.yaralyze01.YaralyzeDB;
 import com.example.yaralyze01.ui.analysis.installedApps.InstalledAppsFragment;
+import com.example.yaralyze01.ui.reports.ReportTabbedFragment;
 
 public class HomeFragment extends Fragment {
 
     private Button analyzeAppsButton;
+    private Button reportsButton;
     private TextView lastAnalysisDate;
 
     @Override
@@ -27,6 +29,7 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         this.analyzeAppsButton = view.findViewById(R.id.analyzeAppsButton);
+        this.reportsButton = view.findViewById(R.id.reportsButton);
         this.lastAnalysisDate = view.findViewById(R.id.lastAnalysisDate);
 
         YaralyzeDB db = YaralyzeDB.getInstance(getContext());
@@ -58,6 +61,16 @@ public class HomeFragment extends Fragment {
                 return this;
             }
         }.getPackageManager(this));
+
+        this.reportsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ReportTabbedFragment fragment = new ReportTabbedFragment();
+
+                FragmentManager manager = getParentFragmentManager();
+                manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack(null).commit();
+            }
+        });
 
         return view;
     }
