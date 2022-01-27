@@ -13,17 +13,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0160ba6b-57d3-4a86-acb0-2fc3ca671a96" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/reports/Report.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/reports/ReportListFragment.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/reports/ReportTabbedFragment.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/reports/ReportViewPageAdapter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_report_list.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_report_tabbed.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/reports/ReportsAdapter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/reports/ReportsViewHolder.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/report_item.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/client/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/home/HomeFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/home/HomeFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_home.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_home.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/reports/Report.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/reports/Report.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_report_list.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_report_list.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,7 +95,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="android-custom-viewC:/Users/Alejandro/AppData/Local/Android/Sdk/sources/android-31/android/widget/LinearLayout.java_LinearLayout_DIMENSIONS" value="1080&#10;1920" />
     <property name="android-custom-viewC:/Users/Alejandro/AppData/Local/Android/Sdk/sources/android-31/android/widget/LinearLayout.java_SELECTED" value="LinearLayout" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../../Escritorio" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/src/main/res/layout" />
     <property name="project.structure.last.edited" value="Suggestions" />
     <property name="project.structure.proportion" value="0.17" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -109,6 +105,10 @@
     <option name="LAST_EDITED_BUILD_TYPE" value="release" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Biblioteca\Documentos\Github\Yaralyze-TFG\Yaralyze\app\src\main\res\layout" />
+      <recent name="D:\Biblioteca\Documentos\Github\Yaralyze-TFG\Yaralyze\app\src\main\java\com\example\yaralyze01\ui\reports" />
+    </key>
     <key name="android.template.1079773847">
       <recent name="com.example.yaralyze01.ui.analysis.staticAnalysis" />
     </key>
