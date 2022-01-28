@@ -3,13 +3,22 @@ package com.example.yaralyze01.ui.reports;
 import android.graphics.drawable.Drawable;
 
 public class Report {
+
+    private final static String malwareDetectedString = "Malware detectado";
+    private final static String malwareNotDetectedString = "Malware no detectado";
+
+    private int idApp;
     private String appName;
     private Drawable appIcon;
     private String reportDate;
     private boolean reportDetection;
 
-    public Report(){
+    public Report( ){
 
+    }
+
+    public int getIdApp(){
+        return this.idApp;
     }
 
     public String getAppName(){
@@ -26,9 +35,9 @@ public class Report {
 
     public String getDetectionText(){
         if(this.reportDetection){
-            return "Malware detectado";
+            return malwareDetectedString;
         }
 
-        return "Malware no detectado";
+        return malwareNotDetectedString;
     }
 }
