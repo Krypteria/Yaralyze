@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.yaralyze01.R;
+import com.example.yaralyze01.YaralyzeDB;
 import com.example.yaralyze01.ui.analysis.appDetails.AppDetailsFragment;
 import com.example.yaralyze01.ui.analysis.installedApps.AppsAdapter;
 import com.example.yaralyze01.ui.analysis.installedApps.OnAppListener;
@@ -36,17 +38,17 @@ public class ReportListFragment extends Fragment implements OnAppListener {
         getReports();
     }
 
-    //Llamadas a la db para recuperar una lista de tipo report dependiendo del tipo de reporte
     private void getReports(){
+        YaralyzeDB db = YaralyzeDB.getInstance(getContext());
         switch(reportType){
             case HASH:
-                System.out.println("HASH");
+                this.reports = db.getReports(HASH);
                 break;
             case STATIC:
-                System.out.println("STATIC");
+                this.reports = db.getReports(STATIC);
                 break;
             case COMPLETE:
-                System.out.println("COMPLETE");
+                this.reports = db.getReports(COMPLETE);
                 break;
             default:
                 break;
@@ -65,9 +67,10 @@ public class ReportListFragment extends Fragment implements OnAppListener {
         this.recyclerApps = view.findViewById(R.id.recyclerViewReports);
 
         this.reportsAdapter = new ReportsAdapter(this);
-        this.recyclerApps.setLayoutManager(new GridLayoutManager(getActivity(), 3, RecyclerView.VERTICAL, false));
+        this.recyclerApps.setLayoutManager(new LinearLayoutManager(getActivity()));
         this.recyclerApps.setAdapter(reportsAdapter);
 
+        System.out.println(this.reports.size());
         this.reportsAdapter.updateData(this.reports);
 
         return view;

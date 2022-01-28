@@ -23,7 +23,6 @@ public class ReportTabbedFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -46,9 +45,10 @@ public class ReportTabbedFragment extends Fragment {
                     case 1:
                         tab.setText("Análisis estático");
                         break;
-
-                    default:
+                    case 2:
                         tab.setText("Análisis completo");
+                        break;
+                    default:
                         break;
                 }
             }

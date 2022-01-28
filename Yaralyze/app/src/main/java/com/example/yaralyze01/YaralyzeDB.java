@@ -2,6 +2,7 @@ package com.example.yaralyze01;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -9,8 +10,15 @@ import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.Nullable;
 
 import com.example.yaralyze01.ui.analysis.outcomes.AnalysisOutcome;
+import com.example.yaralyze01.ui.reports.Report;
+
+import java.util.ArrayList;
 
 public class YaralyzeDB extends SQLiteOpenHelper {
+
+    private final static int HASH = 0;
+    private final static int STATIC = 1;
+    private final static int COMPLETE = 2;
 
     private static final String DATABASE_NAME = "Yaralyze.db";
     private static final int DATABASE_VERSION = 1;
@@ -129,11 +137,11 @@ public class YaralyzeDB extends SQLiteOpenHelper {
 
         if(cursor.moveToFirst()){
             cursor.close();
-            AnalysisOutcome = new AnalysisOutcome(2, appName, true, null);
+            AnalysisOutcome = new AnalysisOutcome(0, appName, true, null);
         }
         else{
             cursor.close();
-            AnalysisOutcome = new AnalysisOutcome(2, appName, false, null);
+            AnalysisOutcome = new AnalysisOutcome(0, appName, false, null);
         }
 
         return AnalysisOutcome;
@@ -214,6 +222,43 @@ public class YaralyzeDB extends SQLiteOpenHelper {
         else{
             return null;
         }
+    }
+
+    private String getAppName(int appId){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String sql = "SELECT " + COLUMN_APP_NAME_ANALYZED_APPS + " FROM " + ANALYZED_APPS + " WHERE " + COLUMN_ID_APP_ANALYZED_APPS + " = " + appId;
+        Cursor cursor = db.rawQuery(sql, null);
+
+        if(cursor.moveToFirst()){
+            return cursor.getString(0);
+        }
+        else{
+            return null;
+        }
+    }
+
+    public ArrayList<Report> getReports(int reportType){
+        ArrayList<Report> reports = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String sql = "SELECT * FROM " + ANALYSIS_OUTCOME + " WHERE " + COLUMN_ANALYSIS_TYPE_ANALYSIS_OUTCOME + " = " + reportType;
+        Cursor cursor = db.rawQuery(sql, null);
+
+        if(cursor.moveToFirst()){
+
+
+            while(cursor.moveToNext()){
+                String appName = getAppName(cursor.getInt(1));
+                if(appName != null){
+                    Report report = new Report(cursor.getInt(0), appName, cursor.getString(4), cursor.getInt(3));
+                    reports.add(report);
+                }
+            }
+        }
+
+        return reports;
     }
 
     public boolean hasMalwareHashes(){

@@ -7,18 +7,25 @@ public class Report {
     private final static String malwareDetectedString = "Malware detectado";
     private final static String malwareNotDetectedString = "Malware no detectado";
 
-    private int idApp;
+    private int idOutcome;
     private String appName;
     private Drawable appIcon;
     private String reportDate;
     private boolean reportDetection;
 
-    public Report( ){
+    public Report(int idOutcome, String appName, String reportDate, int reportDetection){
+        this.idOutcome = idOutcome;
+        this.appName = appName;
+        this.reportDate = reportDate;
+        this.reportDetection = reportDetection == 1;
+    }
 
+    public void setAppIcon(Drawable appIcon) {
+        this.appIcon = appIcon;
     }
 
     public int getIdApp(){
-        return this.idApp;
+        return this.idOutcome;
     }
 
     public String getAppName(){
