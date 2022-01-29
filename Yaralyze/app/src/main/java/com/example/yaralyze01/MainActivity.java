@@ -27,11 +27,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class MainActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private boolean onLoadOperation;
-
-    public MainActivity(){
-        this.onLoadOperation = false;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,15 +58,8 @@ public class MainActivity extends AppCompatActivity {
             System.exit(0);
         }
         else{
-            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
-            if(!(fragment instanceof InstalledAppsFragment) || (fragment instanceof InstalledAppsFragment && !onLoadOperation)) {
-                getSupportFragmentManager().popBackStackImmediate();
-            }
+            getSupportFragmentManager().popBackStackImmediate();
         }
-    }
-
-    public void setOnLoadOperation(boolean onLoad){
-        this.onLoadOperation = onLoad;
     }
 
     //No parece que detecte muy bien cuando hay internet y cuando no, hacer pruebas

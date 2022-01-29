@@ -61,7 +61,7 @@ public class HomeFragment extends Fragment {
         this.reportsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ReportTabbedFragment fragment = new ReportTabbedFragment();
+                ReportTabbedFragment fragment = new ReportTabbedFragment(installedApps);
 
                 FragmentManager manager = getParentFragmentManager();
                 manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack(null).commit();

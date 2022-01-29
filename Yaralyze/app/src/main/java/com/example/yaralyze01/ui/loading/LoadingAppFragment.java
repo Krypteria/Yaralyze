@@ -28,7 +28,7 @@ public class LoadingAppFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_loading_app, container, false);
-        new GetInstalledAppsTask((MainActivity) this.getActivity(), this, this.getActivity().getPackageManager()).startOnBackground();
+        new GetInstalledAppsTask(this, this.getActivity().getPackageManager()).startOnBackground();
         return view;
     }
 

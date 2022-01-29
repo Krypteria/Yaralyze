@@ -9,16 +9,25 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 
 import com.example.yaralyze01.R;
+import com.example.yaralyze01.ui.analysis.appDetails.AppDetails;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+
+import java.util.ArrayList;
 
 
 public class ReportTabbedFragment extends Fragment {
 
+    private ArrayList<AppDetails> installedApps;
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
+
+    public ReportTabbedFragment(ArrayList<AppDetails> installedApps){
+        this.installedApps = installedApps;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,6 +42,8 @@ public class ReportTabbedFragment extends Fragment {
         this.viewPager2 = view.findViewById(R.id.view_pager);
 
         ReportViewPageAdapter adapter = new ReportViewPageAdapter(getActivity());
+        adapter.setInstalledApps(this.installedApps);
+
         this.viewPager2.setAdapter(adapter);
 
         new TabLayoutMediator(this.tabLayout, this.viewPager2, new TabLayoutMediator.TabConfigurationStrategy() {

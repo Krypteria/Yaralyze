@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.example.yaralyze01.R;
 import com.example.yaralyze01.YaralyzeDB;
+import com.example.yaralyze01.ui.analysis.appDetails.AppDetails;
 import com.example.yaralyze01.ui.analysis.appDetails.AppDetailsFragment;
 import com.example.yaralyze01.ui.analysis.installedApps.AppsAdapter;
 import com.example.yaralyze01.ui.analysis.installedApps.OnAppListener;
@@ -31,10 +32,13 @@ public class ReportListFragment extends Fragment implements OnAppListener {
 
     private int reportType;
     private ArrayList<Report> reports;
+    private ArrayList<AppDetails> installedApps;
 
-    public ReportListFragment(int reportType){
+    public ReportListFragment(int reportType, ArrayList<AppDetails> installedApps){
         this.reportType = reportType;
         this.reports = new ArrayList<>();
+        this.installedApps = installedApps;
+
         getReports();
     }
 
@@ -78,10 +82,34 @@ public class ReportListFragment extends Fragment implements OnAppListener {
 
     @Override
     public void onAppClick(int position) {
+        AppDetails appDetails = findAppDetailsByReport(this.reports.get(position));
+        switch(this.reportType){
+            case HASH:
+                break;
+            case STATIC:
+                break;
+            case COMPLETE:
+                break;
+            default:
+                break;
+        }
         //Crear página con detailed report
 
         /*AppDetailsFragment fragment = new AppDetailsFragment(this.installedApps.get(position));
         FragmentManager manager = getParentFragmentManager();
         manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack("InstalledAppsFragment").commit();*/
+    }
+
+    private AppDetails findAppDetailsByReport(Report report){
+        AppDetails selectedAppDetails = null;
+
+        for(AppDetails appDetails : this.installedApps){
+            if(report.getAppPackage().equals(appDetails.getPackageName())){
+                selectedAppDetails = appDetails;
+                break;
+            }
+        }
+
+        return selectedAppDetails;
     }
 }
