@@ -76,7 +76,7 @@ public class AppDetailsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 AnalysisOutcomeManagerFragment fragment = new AnalysisOutcomeManagerFragment(getParentFragmentManager(), appDetails, STATIC);
-                new Thread(new Client(fragment, appDetails.getAppName(), appDetails.getAppSrc())).start();
+                new Thread(new Client(fragment, appDetails)).start();
 
                 FragmentManager manager = getParentFragmentManager();
                 manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack(null).commit();
@@ -87,7 +87,7 @@ public class AppDetailsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 YaralyzeDB db = YaralyzeDB.getInstance(getContext());
-                AnalysisOutcome analysisOutcome = db.getCoincidence(appDetails.getAppName(), appDetails.getSha256hash());
+                AnalysisOutcome analysisOutcome = db.getCoincidence(appDetails.getAppName(), appDetails.getPackageName(), appDetails.getSha256hash());
 
                 AnalysisOutcomeManagerFragment fragment = new AnalysisOutcomeManagerFragment(getParentFragmentManager(), appDetails, HASH);
                 FragmentManager manager = getParentFragmentManager();

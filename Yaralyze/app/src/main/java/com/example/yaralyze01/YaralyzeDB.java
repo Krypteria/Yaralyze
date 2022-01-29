@@ -42,6 +42,7 @@ public class YaralyzeDB extends SQLiteOpenHelper {
     private static final String ANALYZED_APPS = "analyzed_apps";
     private static final String COLUMN_ID_APP_ANALYZED_APPS = "id_app";
     private static final String COLUMN_APP_NAME_ANALYZED_APPS = "app_name";
+    private static final String COLUMN_APP_PACKAGE_ANALYZED_APPS = "app_package";
 
 
     private static YaralyzeDB dbInstance;
@@ -69,7 +70,8 @@ public class YaralyzeDB extends SQLiteOpenHelper {
 
         String analyzedApps = "CREATE TABLE " + ANALYZED_APPS +
                 "(" + COLUMN_ID_APP_ANALYZED_APPS + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                COLUMN_APP_NAME_ANALYZED_APPS + " TEXT NOT NULL);";
+                COLUMN_APP_NAME_ANALYZED_APPS + " TEXT NOT NULL," +
+                COLUMN_APP_PACKAGE_ANALYZED_APPS + " TEXT NOT NULL);";
 
 
         String AnalysisOutcomes = "CREATE TABLE " + ANALYSIS_OUTCOME +
@@ -126,7 +128,7 @@ public class YaralyzeDB extends SQLiteOpenHelper {
         return true;
     }
 
-    public AnalysisOutcome getCoincidence(String appName, String hash){
+    public AnalysisOutcome getCoincidence(String appName, String packageName, String hash){
         SQLiteDatabase db = this.getReadableDatabase();
 
         String sql = "SELECT * FROM " + MALWARE_HASHES + " WHERE " + COLUMN_HASH_MALWARE_HASHES +
@@ -137,11 +139,11 @@ public class YaralyzeDB extends SQLiteOpenHelper {
 
         if(cursor.moveToFirst()){
             cursor.close();
-            AnalysisOutcome = new AnalysisOutcome(0, appName, true, null);
+            AnalysisOutcome = new AnalysisOutcome(0, appName, packageName,true, null);
         }
         else{
             cursor.close();
-            AnalysisOutcome = new AnalysisOutcome(0, appName, false, null);
+            AnalysisOutcome = new AnalysisOutcome(0, appName, packageName,false, null);
         }
 
         return AnalysisOutcome;
@@ -151,7 +153,7 @@ public class YaralyzeDB extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         //Inserto la app analizada si no estuviese en la base de datos y obtengo su id
-        int app_id = this.insertAnalyzedApp(AnalysisOutcome.getAnalyzedAppName());
+        int app_id = this.insertAnalyzedApp(AnalysisOutcome.getAnalyzedAppName(), AnalysisOutcome.getAnalyzedAppPackage());
 
         if(app_id != -1){
             //Inserto un nuevo analysis_outcome
@@ -187,19 +189,20 @@ public class YaralyzeDB extends SQLiteOpenHelper {
         }
     }
 
-    private int insertAnalyzedApp(String appName){
+    private int insertAnalyzedApp(String appName, String appPackage){
         Cursor cursor = this.getIndexFrom(ANALYZED_APPS, COLUMN_APP_NAME_ANALYZED_APPS, appName);
         if(cursor == null){
             SQLiteDatabase db = this.getWritableDatabase();
 
             ContentValues cv = new ContentValues();
             cv.put(COLUMN_APP_NAME_ANALYZED_APPS, appName);
+            cv.put(COLUMN_APP_PACKAGE_ANALYZED_APPS, appPackage);
 
             long insert = db.insert(ANALYZED_APPS, null, cv);
             if(insert == -1){
                 return -1;
             }
-            return getLastIndexFrom(ANALYZED_APPS, COLUMN_ID_APP_ANALYZED_APPS);
+            return getLastIndexFrom(ANALYZED_APPS, COLUMN_ID_APP_ANALYZED_APPS); //esto quizás se puede quitar y poner insert en su lugar
         }
         else{
             int index = cursor.getInt(0);
@@ -243,17 +246,28 @@ public class YaralyzeDB extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String sql = "SELECT * FROM " + ANALYSIS_OUTCOME + " WHERE " + COLUMN_ANALYSIS_TYPE_ANALYSIS_OUTCOME + " = " + reportType;
+        String sql = "SELECT * FROM " + ANALYSIS_OUTCOME + " WHERE " + COLUMN_ANALYSIS_TYPE_ANALYSIS_OUTCOME + " = " + reportType +
+                        " ORDER BY " + COLUMN_DATE_ANALYSIS_OUTCOME + " DESC";
+
         Cursor cursor = db.rawQuery(sql, null);
 
         if(cursor.moveToFirst()){
-
-
             while(cursor.moveToNext()){
                 String appName = getAppName(cursor.getInt(1));
                 if(appName != null){
-                    Report report = new Report(cursor.getInt(0), appName, cursor.getString(4), cursor.getInt(3));
-                    reports.add(report);
+                    sql = "SELECT * FROM " + ANALYZED_APPS + " WHERE " + COLUMN_ID_APP_ANALYZED_APPS + " = " + cursor.getInt(1);
+                    Cursor cursorAnalyzedApps = db.rawQuery(sql, null);
+
+                    if(cursorAnalyzedApps.moveToFirst()){
+                        try {
+                            Report report = new Report(cursor.getInt(0), appName, this.context.getPackageManager().getApplicationIcon(cursorAnalyzedApps.getString(2)),
+                                                            cursorAnalyzedApps.getString(2),cursor.getString(4),
+                                    cursor.getInt(3));
+                            reports.add(report);
+                        } catch (PackageManager.NameNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
         }

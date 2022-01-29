@@ -11,13 +11,15 @@ public class AnalysisOutcome {
     private int analysisType;
 
     private String analyzedAppName;
+    private String analyzedAppPackage;
     private boolean malwareDetected;
     private ArrayList<String> matchedRules;
     private String analysisDate;
 
-    public AnalysisOutcome(int analysisType, String analyzedAppName, boolean malwareDetected, ArrayList<String> matchedRules){
+    public AnalysisOutcome(int analysisType, String analyzedAppName, String analyzedAppPackage, boolean malwareDetected, ArrayList<String> matchedRules){
         this.analysisType = analysisType;
         this.analyzedAppName = analyzedAppName;
+        this.analyzedAppPackage = analyzedAppPackage;
         this.malwareDetected = malwareDetected;
         this.matchedRules = matchedRules;
         this.analysisDate = this.getCurrentDateTime();
@@ -36,6 +38,8 @@ public class AnalysisOutcome {
     public String getAnalyzedAppName() {
         return this.analyzedAppName;
     }
+
+    public String getAnalyzedAppPackage(){ return this.analyzedAppPackage; }
 
     public boolean isMalwareDetected() {
         return this.malwareDetected;

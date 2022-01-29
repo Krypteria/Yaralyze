@@ -6,6 +6,7 @@ import android.graphics.Color;
 
 import com.example.yaralyze01.MainActivity;
 import com.example.yaralyze01.YaralyzeDB;
+import com.example.yaralyze01.ui.analysis.appDetails.AppDetails;
 import com.example.yaralyze01.ui.analysis.outcomes.AnalysisOutcome;
 import com.example.yaralyze01.ui.analysis.outcomes.AnalysisOutcomeManagement;
 
@@ -47,14 +48,16 @@ public class Client implements Runnable{
     private String apkPath;
     private byte[] buffer;
 
+    private AppDetails appDetails;
     private Context context;
     private AnalysisOutcomeManagement analysisOutcomeManagement;
 
-    public Client(AnalysisOutcomeManagement analysisOutcomeManagement, String apkName, String apkPath){
+    public Client(AnalysisOutcomeManagement analysisOutcomeManagement, AppDetails appDetails){
         this.analysisOutcomeManagement = analysisOutcomeManagement;
         this.buffer = new byte[this.BUFFERSIZE];
-        this.apkPath = apkPath;
-        this.apkName = apkName;
+        this.appDetails = appDetails;
+        this.apkPath = appDetails.getAppSrc();
+        this.apkName = appDetails.getAppName();
         this.requestType = STATIC_ANALYSIS_QUERY;
     }
 
@@ -177,8 +180,12 @@ public class Client implements Runnable{
         String outcome = this.textInput.readLine();
 
         JSONObject analysisOutcomeJSON = new JSONObject(outcome);
+        AnalysisOutcome analysisOutcome = this.buildAnalysisOutcomeObject(analysisOutcomeJSON);
 
-        this.analysisOutcomeManagement.showAnalysisOutcome(this.buildAnalysisOutcomeObject(analysisOutcomeJSON));
+        YaralyzeDB db = YaralyzeDB.getInstance(this.context);
+        db.insertAnalysisOutcome(analysisOutcome);
+
+        this.analysisOutcomeManagement.showAnalysisOutcome(analysisOutcome);
 
         this.textInput.close();
         this.clientSocket.close();
@@ -194,6 +201,6 @@ public class Client implements Runnable{
            matchedRules.add(matchedRulesJSON.get(i).toString());
         }
 
-        return new AnalysisOutcome(1, this.apkName, analysisOutcomeJSON.getBoolean("detected"), matchedRules);
+        return new AnalysisOutcome(1, this.apkName, this.appDetails.getPackageName(), analysisOutcomeJSON.getBoolean("detected"), matchedRules);
     }
 }

@@ -6,6 +6,17 @@
     android:orientation="vertical"
     tools:context=".ui.reports.ReportListFragment">
 
+    <Space
+        android:layout_width="1dp"
+        android:layout_height="5dp">
+    </Space>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#C6C1C1">
+    </View>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewReports"
         android:layout_width="match_parent"

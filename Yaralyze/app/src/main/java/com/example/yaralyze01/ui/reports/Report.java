@@ -9,13 +9,16 @@ public class Report {
 
     private int idOutcome;
     private String appName;
+    private String appPackage;
     private Drawable appIcon;
     private String reportDate;
     private boolean reportDetection;
 
-    public Report(int idOutcome, String appName, String reportDate, int reportDetection){
+    public Report(int idOutcome, String appName, Drawable appIcon, String appPackage, String reportDate, int reportDetection){
         this.idOutcome = idOutcome;
+        this.appIcon = appIcon;
         this.appName = appName;
+        this.appPackage = appPackage;
         this.reportDate = reportDate;
         this.reportDetection = reportDetection == 1;
     }
@@ -31,6 +34,8 @@ public class Report {
     public String getAppName(){
         return this.appName;
     }
+
+    public String getAppPackage(){ return this.appPackage; }
 
     public Drawable getAppIcon(){
         return this.appIcon;

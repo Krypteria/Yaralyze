@@ -67,7 +67,7 @@ public class ReportListFragment extends Fragment implements OnAppListener {
         this.recyclerApps = view.findViewById(R.id.recyclerViewReports);
 
         this.reportsAdapter = new ReportsAdapter(this);
-        this.recyclerApps.setLayoutManager(new LinearLayoutManager(getActivity()));
+        this.recyclerApps.setLayoutManager(new GridLayoutManager(getActivity(), 1, RecyclerView.VERTICAL, false));
         this.recyclerApps.setAdapter(reportsAdapter);
 
         System.out.println(this.reports.size());

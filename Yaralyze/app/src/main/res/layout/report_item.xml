@@ -3,29 +3,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layout_marginTop="8dp"
     android:padding="4dp"
     xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
         android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/reportAppIcon"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
             android:layout_centerVertical="true"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_vertical" />
 
         <Space
-            android:layout_width="4dp"
+            android:layout_width="20dp"
             android:layout_height="20dp"></Space>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <TextView
@@ -35,7 +35,7 @@
                 android:layout_gravity="left"
                 android:layout_marginTop="4dp"
                 android:textColor="@color/black"
-                android:textSize="12dp"
+                android:textSize="17dp"
                 tools:text="Application name" />
 
             <TextView
@@ -45,7 +45,7 @@
                 android:layout_gravity="left"
                 android:layout_marginTop="1dp"
                 android:textColor="#646464"
-                android:textSize="10dp"
+                android:textSize="15dp"
                 tools:text="Date" />
 
             <TextView
@@ -55,7 +55,7 @@
                 android:layout_gravity="left"
                 android:layout_marginTop="1dp"
                 android:textColor="#646464"
-                android:textSize="10dp"
+                android:textSize="15dp"
                 tools:text="Malware no detectado" />
 
         </LinearLayout>
@@ -64,7 +64,18 @@
 
     <Space
         android:layout_width="1dp"
-        android:layout_height="10dp">
+        android:layout_height="5dp">
+    </Space>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#C6C1C1">
+    </View>
+
+    <Space
+        android:layout_width="1dp"
+        android:layout_height="5dp">
     </Space>
 
 </LinearLayout>
