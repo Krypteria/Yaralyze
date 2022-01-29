@@ -1,4 +1,4 @@
-package com.example.yaralyze01.ui.home;
+package com.example.yaralyze01.ui.loading;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;

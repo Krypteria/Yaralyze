@@ -157,30 +157,5 @@
             android:background="#C6C1C1">
         </View>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:textColor="@color/black"
-            android:textSize="18dp"
-            android:text="Informe del análisis" />
-
-        <TextView
-            android:id="@+id/outcomeLogText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:textColor="#646464"
-            android:textSize="15dp"
-            android:text="Informa del análisis generado" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_marginTop="10dp"
-            android:background="#C6C1C1">
-        </View>
-
-
     </LinearLayout>
 </ScrollView>

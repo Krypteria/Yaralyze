@@ -6,11 +6,11 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.drawable.Drawable;
 
 import androidx.annotation.Nullable;
 
 import com.example.yaralyze01.ui.analysis.outcomes.AnalysisOutcome;
-import com.example.yaralyze01.ui.reports.Report;
 
 import java.util.ArrayList;
 
@@ -139,11 +139,11 @@ public class YaralyzeDB extends SQLiteOpenHelper {
 
         if(cursor.moveToFirst()){
             cursor.close();
-            AnalysisOutcome = new AnalysisOutcome(0, appName, packageName,true, null);
+            AnalysisOutcome = new AnalysisOutcome(0, null, appName, packageName,true, null, null);
         }
         else{
             cursor.close();
-            AnalysisOutcome = new AnalysisOutcome(0, appName, packageName,false, null);
+            AnalysisOutcome = new AnalysisOutcome(0, null, appName, packageName,false, null, null);
         }
 
         return AnalysisOutcome;
@@ -241,8 +241,24 @@ public class YaralyzeDB extends SQLiteOpenHelper {
         }
     }
 
-    public ArrayList<Report> getReports(int reportType){
-        ArrayList<Report> reports = new ArrayList<>();
+    private ArrayList<String> getMatchedRules(int idOutcome){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String sql = "SELECT " + COLUMN_MATCHED_RULE_COINCIDENCES + " FROM " + COINCIDENCES + " WHERE " + COLUMN_ID_OUTCOME_COINCIDENCES + " = " + idOutcome;
+        Cursor cursor = db.rawQuery(sql, null);
+
+        ArrayList<String> matchedRules = new ArrayList<>();
+
+        while(cursor.moveToNext()){
+            matchedRules.add(cursor.getString(0));
+        }
+
+
+        return matchedRules;
+    }
+
+    public ArrayList<AnalysisOutcome> getReports(int reportType){
+        ArrayList<AnalysisOutcome> analysisOutcomes = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -251,28 +267,35 @@ public class YaralyzeDB extends SQLiteOpenHelper {
 
         Cursor cursor = db.rawQuery(sql, null);
 
-        if(cursor.moveToFirst()){
-            while(cursor.moveToNext()){
-                String appName = getAppName(cursor.getInt(1));
-                if(appName != null){
-                    sql = "SELECT * FROM " + ANALYZED_APPS + " WHERE " + COLUMN_ID_APP_ANALYZED_APPS + " = " + cursor.getInt(1);
-                    Cursor cursorAnalyzedApps = db.rawQuery(sql, null);
+        while(cursor.moveToNext()){
+            sql = "SELECT * FROM " + ANALYZED_APPS + " WHERE " + COLUMN_ID_APP_ANALYZED_APPS + " = " + cursor.getInt(1);
+            Cursor cursorAnalyzedApps = db.rawQuery(sql, null);
 
-                    if(cursorAnalyzedApps.moveToFirst()){
-                        try {
-                            Report report = new Report(cursor.getInt(0), appName, this.context.getPackageManager().getApplicationIcon(cursorAnalyzedApps.getString(2)),
-                                                            cursorAnalyzedApps.getString(2),cursor.getString(4),
-                                    cursor.getInt(3));
-                            reports.add(report);
-                        } catch (PackageManager.NameNotFoundException e) {
-                            e.printStackTrace();
-                        }
-                    }
+            if(cursorAnalyzedApps.moveToFirst()){
+                Drawable icon = null;
+                try {
+                    icon = this.context.getPackageManager().getApplicationIcon(cursorAnalyzedApps.getString(2));
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
                 }
+
+                ArrayList<String> matchedRules = null;
+                switch (reportType){
+                    case STATIC:
+                        matchedRules = this.getMatchedRules(cursor.getInt(0));
+                        break;
+                    case COMPLETE:
+                        break;
+                    default:
+                        break;
+                }
+                AnalysisOutcome analysisOutcome = new AnalysisOutcome(reportType, icon, getAppName(cursor.getInt(1)), cursorAnalyzedApps.getString(2),
+                                                            cursor.getInt(3) == 1, cursor.getString(4), matchedRules);
+                analysisOutcomes.add(analysisOutcome);
             }
         }
 
-        return reports;
+        return analysisOutcomes;
     }
 
     public boolean hasMalwareHashes(){

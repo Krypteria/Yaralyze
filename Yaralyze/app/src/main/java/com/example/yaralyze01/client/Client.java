@@ -201,6 +201,6 @@ public class Client implements Runnable{
            matchedRules.add(matchedRulesJSON.get(i).toString());
         }
 
-        return new AnalysisOutcome(1, this.apkName, this.appDetails.getPackageName(), analysisOutcomeJSON.getBoolean("detected"), matchedRules);
+        return new AnalysisOutcome(1, null, this.apkName, this.appDetails.getPackageName(), analysisOutcomeJSON.getBoolean("detected"), null, matchedRules);
     }
 }

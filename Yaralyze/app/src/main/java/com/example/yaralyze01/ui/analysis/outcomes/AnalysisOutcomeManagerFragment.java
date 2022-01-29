@@ -85,7 +85,7 @@ public class AnalysisOutcomeManagerFragment extends Fragment implements Analysis
     private void insertIntoDB(AnalysisOutcome analysisOutcome){
         YaralyzeDB db = YaralyzeDB.getInstance(getContext());
         boolean insert = db.insertAnalysisOutcome(analysisOutcome);
-        if(insert){
+        if(insert){ //MEJORAR
             System.out.println("Insertado correctamente");
         }
         else{

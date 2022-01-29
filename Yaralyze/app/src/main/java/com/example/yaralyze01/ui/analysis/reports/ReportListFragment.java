@@ -1,11 +1,10 @@
-package com.example.yaralyze01.ui.reports;
+package com.example.yaralyze01.ui.analysis.reports;
 
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -15,9 +14,10 @@ import android.view.ViewGroup;
 import com.example.yaralyze01.R;
 import com.example.yaralyze01.YaralyzeDB;
 import com.example.yaralyze01.ui.analysis.appDetails.AppDetails;
-import com.example.yaralyze01.ui.analysis.appDetails.AppDetailsFragment;
-import com.example.yaralyze01.ui.analysis.installedApps.AppsAdapter;
 import com.example.yaralyze01.ui.analysis.installedApps.OnAppListener;
+import com.example.yaralyze01.ui.analysis.outcomes.AnalysisOutcome;
+import com.example.yaralyze01.ui.analysis.outcomes.HashAnalysisOutcomeFragment;
+import com.example.yaralyze01.ui.analysis.outcomes.StaticAnalysisOutcomeFragment;
 
 import java.util.ArrayList;
 
@@ -31,12 +31,12 @@ public class ReportListFragment extends Fragment implements OnAppListener {
     private ReportsAdapter reportsAdapter;
 
     private int reportType;
-    private ArrayList<Report> reports;
+    private ArrayList<AnalysisOutcome> analysisOutcomes;
     private ArrayList<AppDetails> installedApps;
 
     public ReportListFragment(int reportType, ArrayList<AppDetails> installedApps){
         this.reportType = reportType;
-        this.reports = new ArrayList<>();
+        this.analysisOutcomes = new ArrayList<>();
         this.installedApps = installedApps;
 
         getReports();
@@ -46,13 +46,13 @@ public class ReportListFragment extends Fragment implements OnAppListener {
         YaralyzeDB db = YaralyzeDB.getInstance(getContext());
         switch(reportType){
             case HASH:
-                this.reports = db.getReports(HASH);
+                this.analysisOutcomes = db.getReports(HASH);
                 break;
             case STATIC:
-                this.reports = db.getReports(STATIC);
+                this.analysisOutcomes = db.getReports(STATIC);
                 break;
             case COMPLETE:
-                this.reports = db.getReports(COMPLETE);
+                this.analysisOutcomes = db.getReports(COMPLETE);
                 break;
             default:
                 break;
@@ -74,37 +74,36 @@ public class ReportListFragment extends Fragment implements OnAppListener {
         this.recyclerApps.setLayoutManager(new GridLayoutManager(getActivity(), 1, RecyclerView.VERTICAL, false));
         this.recyclerApps.setAdapter(reportsAdapter);
 
-        System.out.println(this.reports.size());
-        this.reportsAdapter.updateData(this.reports);
+        this.reportsAdapter.updateData(this.analysisOutcomes);
 
         return view;
     }
 
     @Override
     public void onAppClick(int position) {
-        AppDetails appDetails = findAppDetailsByReport(this.reports.get(position));
+        AppDetails appDetails = findAppDetailsByReport(this.analysisOutcomes.get(position));
+        FragmentManager manager = getParentFragmentManager();
         switch(this.reportType){
             case HASH:
+                HashAnalysisOutcomeFragment fragment = new HashAnalysisOutcomeFragment(appDetails, this.analysisOutcomes.get(position));
+                manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack(null).commit();
                 break;
             case STATIC:
+                StaticAnalysisOutcomeFragment staticFragment = new StaticAnalysisOutcomeFragment(appDetails, this.analysisOutcomes.get(position));
+                manager.beginTransaction().replace(R.id.fragmentContainer, staticFragment, staticFragment.getTag()).addToBackStack(null).commit();
                 break;
             case COMPLETE:
                 break;
             default:
                 break;
         }
-        //Crear página con detailed report
-
-        /*AppDetailsFragment fragment = new AppDetailsFragment(this.installedApps.get(position));
-        FragmentManager manager = getParentFragmentManager();
-        manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack("InstalledAppsFragment").commit();*/
     }
 
-    private AppDetails findAppDetailsByReport(Report report){
+    private AppDetails findAppDetailsByReport(AnalysisOutcome analysisOutcome){
         AppDetails selectedAppDetails = null;
 
         for(AppDetails appDetails : this.installedApps){
-            if(report.getAppPackage().equals(appDetails.getPackageName())){
+            if(analysisOutcome.getAnalyzedAppPackage().equals(appDetails.getPackageName())){
                 selectedAppDetails = appDetails;
                 break;
             }

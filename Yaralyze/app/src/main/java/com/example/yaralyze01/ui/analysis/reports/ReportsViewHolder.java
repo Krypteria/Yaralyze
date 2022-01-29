@@ -1,4 +1,4 @@
-package com.example.yaralyze01.ui.reports;
+package com.example.yaralyze01.ui.analysis.reports;
 
 import android.view.View;
 import android.widget.ImageView;

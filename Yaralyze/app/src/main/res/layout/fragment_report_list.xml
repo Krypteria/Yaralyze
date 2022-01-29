@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.reports.ReportListFragment">
+    tools:context=".ui.analysis.reports.ReportListFragment">
 
     <Space
         android:layout_width="1dp"
