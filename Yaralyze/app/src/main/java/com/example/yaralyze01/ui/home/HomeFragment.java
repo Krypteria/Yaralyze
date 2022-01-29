@@ -4,6 +4,8 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,16 +16,19 @@ import android.widget.TextView;
 import com.example.yaralyze01.R;
 import com.example.yaralyze01.YaralyzeDB;
 import com.example.yaralyze01.ui.analysis.appDetails.AppDetails;
+import com.example.yaralyze01.ui.analysis.installedApps.AppsAdapter;
 import com.example.yaralyze01.ui.analysis.installedApps.InstalledAppsFragment;
+import com.example.yaralyze01.ui.analysis.installedApps.OnAppListener;
 import com.example.yaralyze01.ui.analysis.reports.ReportTabbedFragment;
 
 import java.util.ArrayList;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements OnAppListener {
 
     private Button analyzeAppsButton;
     private Button reportsButton;
     private TextView lastAnalysisDate;
+    private RecyclerView lastAnalyzedApps;
     private ArrayList<AppDetails> installedApps;
 
     public HomeFragment(ArrayList<AppDetails> installedApps){
@@ -37,6 +42,7 @@ public class HomeFragment extends Fragment {
         this.analyzeAppsButton = view.findViewById(R.id.analyzeAppsButton);
         this.reportsButton = view.findViewById(R.id.reportsButton);
         this.lastAnalysisDate = view.findViewById(R.id.lastAnalysisDate);
+        this.lastAnalyzedApps = view.findViewById(R.id.lastAnalyzedApps);
 
         YaralyzeDB db = YaralyzeDB.getInstance(getContext());
         String date = db.getLastAnalysisDate();
@@ -47,6 +53,13 @@ public class HomeFragment extends Fragment {
         else{
             this.lastAnalysisDate.setText(date);
         }
+
+        LastAppsAdapter lastAppsAdapter = new LastAppsAdapter(this);
+        this.lastAnalyzedApps.setLayoutManager(new GridLayoutManager(getActivity(), 3, RecyclerView.VERTICAL, false));
+        this.lastAnalyzedApps.setNestedScrollingEnabled(false);
+        this.lastAnalyzedApps.setAdapter(lastAppsAdapter);
+
+        lastAppsAdapter.updateData(db.getLastAnalyzedAppsIcons());
 
         this.analyzeAppsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,5 +82,10 @@ public class HomeFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onAppClick(int position) {
+
     }
 }

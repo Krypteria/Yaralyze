@@ -27,11 +27,6 @@ public class AppsAdapter extends RecyclerView.Adapter<AppsViewHolder> {
         notifyDataSetChanged();
     }
 
-    public void addItem(AppDetails installedApp){
-        this.installedApps.add(installedApp);
-        notifyItemChanged(this.getItemCount() - 1);
-    }
-
     @NonNull
     @Override
     public AppsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

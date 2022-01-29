@@ -44,7 +44,6 @@ public class AnalysisOutcomeManagerFragment extends Fragment implements Analysis
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override

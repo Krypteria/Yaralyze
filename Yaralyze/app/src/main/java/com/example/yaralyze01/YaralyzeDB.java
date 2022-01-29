@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.drawable.Drawable;
+import android.util.Pair;
 
 import androidx.annotation.Nullable;
 
@@ -190,7 +191,7 @@ public class YaralyzeDB extends SQLiteOpenHelper {
     }
 
     private int insertAnalyzedApp(String appName, String appPackage){
-        Cursor cursor = this.getIndexFrom(ANALYZED_APPS, COLUMN_APP_NAME_ANALYZED_APPS, appName);
+        Cursor cursor = this.getIndexFrom(ANALYZED_APPS, COLUMN_APP_PACKAGE_ANALYZED_APPS, appPackage);
         if(cursor == null){
             SQLiteDatabase db = this.getWritableDatabase();
 
@@ -202,7 +203,7 @@ public class YaralyzeDB extends SQLiteOpenHelper {
             if(insert == -1){
                 return -1;
             }
-            return getLastIndexFrom(ANALYZED_APPS, COLUMN_ID_APP_ANALYZED_APPS); //esto quizás se puede quitar y poner insert en su lugar
+            return getLastIndexFrom(ANALYZED_APPS, COLUMN_ID_APP_ANALYZED_APPS);
         }
         else{
             int index = cursor.getInt(0);
@@ -296,6 +297,25 @@ public class YaralyzeDB extends SQLiteOpenHelper {
         }
 
         return analysisOutcomes;
+    }
+
+    public ArrayList<Pair<String, Drawable>> getLastAnalyzedAppsIcons(){
+        ArrayList<Pair<String, Drawable>> lastAnalyzedAppsIcons = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String sql = "SELECT DISTINCT * FROM " + ANALYZED_APPS + " ORDER BY " + COLUMN_ID_APP_ANALYZED_APPS + " DESC LIMIT 6";
+        Cursor cursor = db.rawQuery(sql, null);
+
+        while(cursor.moveToNext()){
+            try {
+                Drawable icon = this.context.getPackageManager().getApplicationIcon(cursor.getString(2));
+                lastAnalyzedAppsIcons.add(new Pair<String, Drawable>(cursor.getString(1), icon));
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return lastAnalyzedAppsIcons;
     }
 
     public boolean hasMalwareHashes(){
