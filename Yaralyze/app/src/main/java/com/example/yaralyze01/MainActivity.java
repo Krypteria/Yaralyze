@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.example.yaralyze01.client.Client;
 import com.example.yaralyze01.ui.analysis.installedApps.InstalledAppsFragment;
 import com.example.yaralyze01.ui.home.HomeFragment;
+import com.example.yaralyze01.ui.loading.LoadingAppFragment;
 
 import java.net.InetAddress;
 import java.util.concurrent.Callable;
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
             new Thread(new Client(MainActivity.this)).start();
         }
 
-        HomeFragment fragment = new HomeFragment();
+        LoadingAppFragment fragment = new LoadingAppFragment();
         FragmentManager manager = getSupportFragmentManager();
         manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack(null).commit();
     }

@@ -9,6 +9,7 @@ import com.example.yaralyze01.MainActivity;
 import com.example.yaralyze01.ui.analysis.appDetails.AppDetails;
 import com.example.yaralyze01.ui.analysis.installedApps.InstalledAppsFragment;
 import com.example.yaralyze01.ui.home.HomeFragment;
+import com.example.yaralyze01.ui.loading.LoadingAppFragment;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,18 +23,22 @@ import java.util.ArrayList;
 public class GetInstalledAppsTask extends BackgroundTask {
 
     private MainActivity activity;
-    private InstalledAppsFragment fragment;
+    private LoadingAppFragment fragment;
     private PackageManager packageManager;
 
-    public GetInstalledAppsTask(MainActivity activity, InstalledAppsFragment fragment, PackageManager packageManager){
+    private ArrayList<AppDetails> installedApps;
+
+    public GetInstalledAppsTask(MainActivity activity, LoadingAppFragment fragment, PackageManager packageManager){
         super(fragment);
+        this.installedApps = new ArrayList<>();
+
+        this.activity = activity;
         this.fragment = fragment;
         this.packageManager = packageManager;
-        this.activity = activity;
     }
 
     public void startOnBackground(){
-        this.activity.setOnLoadOperation(true);
+        this.activity.setOnLoadOperation(true); //Hacer que se muestre un toast diciendo que tiene que esperar
         this.startBackground();
     }
 
@@ -42,17 +47,20 @@ public class GetInstalledAppsTask extends BackgroundTask {
         this.getInstalledAppsIntent(false);
     }
 
-    private void onStep(AppDetails installedApp) {
+    /*private void onStep(AppDetails installedApp) { //ahora me interesa actualizar de golpe, no el onstep
         fragment.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 fragment.onStepUpdateInstalledAppsList(installedApp);
             }
         });
-    }
+    }*/
 
     @Override
-    public void onPostExecute() {this.activity.setOnLoadOperation(false);}
+    public void onPostExecute() {
+        this.fragment.loadingComplete(this.installedApps);
+        this.activity.setOnLoadOperation(false);
+    }
 
     private void getInstalledAppsIntent(boolean getSysPackages){
         for(PackageInfo packageInfo : this.packageManager.getInstalledPackages(0)){
@@ -62,7 +70,8 @@ public class GetInstalledAppsTask extends BackgroundTask {
                 }
                 AppDetails installedApp = new AppDetails(packageInfo, this.packageManager);
                 this.getAppHashesIntent(installedApp);
-                this.onStep(installedApp);
+                this.installedApps.add(installedApp);
+                //this.onStep(installedApp); //fuera
             }
         }
     }

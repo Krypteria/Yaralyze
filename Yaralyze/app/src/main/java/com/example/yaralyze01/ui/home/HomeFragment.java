@@ -1,6 +1,5 @@
 package com.example.yaralyze01.ui.home;
 
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,17 +11,24 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.yaralyze01.MainActivity;
 import com.example.yaralyze01.R;
 import com.example.yaralyze01.YaralyzeDB;
+import com.example.yaralyze01.ui.analysis.appDetails.AppDetails;
 import com.example.yaralyze01.ui.analysis.installedApps.InstalledAppsFragment;
 import com.example.yaralyze01.ui.reports.ReportTabbedFragment;
+
+import java.util.ArrayList;
 
 public class HomeFragment extends Fragment {
 
     private Button analyzeAppsButton;
     private Button reportsButton;
     private TextView lastAnalysisDate;
+    private ArrayList<AppDetails> installedApps;
+
+    public HomeFragment(ArrayList<AppDetails> installedApps){
+        this.installedApps = installedApps;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -43,24 +49,14 @@ public class HomeFragment extends Fragment {
         }
 
         this.analyzeAppsButton.setOnClickListener(new View.OnClickListener() {
-            private HomeFragment homeFragment;
-            private PackageManager packageManager;
-
             @Override
             public void onClick(View v) {
-                InstalledAppsFragment fragment = new InstalledAppsFragment();
-                new GetInstalledAppsTask((MainActivity) this.homeFragment.getActivity(), fragment, this.packageManager).startOnBackground();
+                InstalledAppsFragment fragment = new InstalledAppsFragment(installedApps);
 
                 FragmentManager manager = getParentFragmentManager();
                 manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack(null).commit();
             }
-
-            private View.OnClickListener getPackageManager(HomeFragment fragment){
-                this.homeFragment = fragment;
-                this.packageManager = fragment.getActivity().getPackageManager();
-                return this;
-            }
-        }.getPackageManager(this));
+        });
 
         this.reportsButton.setOnClickListener(new View.OnClickListener() {
             @Override
