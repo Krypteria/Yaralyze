@@ -9,9 +9,12 @@ import android.app.Dialog;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.yaralyze01.client.Client;
@@ -33,8 +36,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //this.toolbar = findViewById(R.id.toolbar);
-        //setSupportActionBar(this.toolbar);
+        this.toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(this.toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+
 
         YaralyzeDB db = YaralyzeDB.getInstance(MainActivity.this);
         if(!db.hasMalwareHashes()){
@@ -61,6 +66,28 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().popBackStackImmediate();
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        return true;
+    }
+
+    /*@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            System.out.println("ESTOY PULSANDO");
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }*/
 
     //No parece que detecte muy bien cuando hay internet y cuando no, hacer pruebas
     private boolean isInternetAvailable() {

@@ -9,6 +9,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.yaralyze01.R;
 import com.example.yaralyze01.ui.analysis.appDetails.AppDetails;
@@ -65,5 +66,12 @@ public class ReportTabbedFragment extends Fragment {
         }).attach();
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        TextView toolbarText = getActivity().findViewById(R.id.toolbarText);
+        toolbarText.setText("Informes");
     }
 }

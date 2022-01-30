@@ -74,4 +74,11 @@ public class HashAnalysisOutcomeFragment extends Fragment {
 
         return view;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        TextView toolbarText = getActivity().findViewById(R.id.toolbarText);
+        toolbarText.setText("Resultado del análisis");
+    }
 }

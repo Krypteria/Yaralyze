@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.yaralyze01.MainActivity;
 import com.example.yaralyze01.R;
 import com.example.yaralyze01.YaralyzeDB;
 import com.example.yaralyze01.ui.analysis.appDetails.AppDetails;
@@ -85,7 +86,12 @@ public class HomeFragment extends Fragment implements OnAppListener {
     }
 
     @Override
-    public void onAppClick(int position) {
-
+    public void onResume() {
+        super.onResume();
+        TextView toolbarText = getActivity().findViewById(R.id.toolbarText);
+        toolbarText.setText("Menú principal");
     }
+
+    @Override
+    public void onAppClick(int position) { }
 }

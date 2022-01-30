@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.yaralyze01.MainActivity;
 import com.example.yaralyze01.R;
@@ -59,6 +60,7 @@ public class InstalledAppsFragment extends Fragment implements OnAppListener{
     @Override
     public void onResume() {
         super.onResume();
-        this.appsAdapter.updateData(this.installedApps);
+        TextView toolbarText = getActivity().findViewById(R.id.toolbarText);
+        toolbarText.setText("Analizar");
     }
 }
