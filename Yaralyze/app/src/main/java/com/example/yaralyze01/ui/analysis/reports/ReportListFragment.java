@@ -18,14 +18,11 @@ import com.example.yaralyze01.ui.analysis.installedApps.OnAppListener;
 import com.example.yaralyze01.ui.analysis.outcomes.AnalysisOutcome;
 import com.example.yaralyze01.ui.analysis.outcomes.HashAnalysisOutcomeFragment;
 import com.example.yaralyze01.ui.analysis.outcomes.StaticAnalysisOutcomeFragment;
+import com.example.yaralyze01.ui.common.AnalysisType;
 
 import java.util.ArrayList;
 
 public class ReportListFragment extends Fragment implements OnAppListener {
-
-    private final static int HASH = 0;
-    private final static int STATIC = 1;
-    private final static int COMPLETE = 2;
 
     private RecyclerView recyclerApps;
     private ReportsAdapter reportsAdapter;
@@ -45,14 +42,14 @@ public class ReportListFragment extends Fragment implements OnAppListener {
     private void getReports(){
         YaralyzeDB db = YaralyzeDB.getInstance(getContext());
         switch(reportType){
-            case HASH:
-                this.analysisOutcomes = db.getReports(HASH);
+            case AnalysisType.HASH:
+                this.analysisOutcomes = db.getReports(AnalysisType.HASH);
                 break;
-            case STATIC:
-                this.analysisOutcomes = db.getReports(STATIC);
+            case AnalysisType.STATIC:
+                this.analysisOutcomes = db.getReports(AnalysisType.STATIC);
                 break;
-            case COMPLETE:
-                this.analysisOutcomes = db.getReports(COMPLETE);
+            case AnalysisType.COMPLETE:
+                this.analysisOutcomes = db.getReports(AnalysisType.COMPLETE);
                 break;
             default:
                 break;
@@ -84,15 +81,15 @@ public class ReportListFragment extends Fragment implements OnAppListener {
         AppDetails appDetails = findAppDetailsByReport(this.analysisOutcomes.get(position));
         FragmentManager manager = getParentFragmentManager();
         switch(this.reportType){
-            case HASH:
+            case AnalysisType.HASH:
                 HashAnalysisOutcomeFragment fragment = new HashAnalysisOutcomeFragment(appDetails, this.analysisOutcomes.get(position));
                 manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack(null).commit();
                 break;
-            case STATIC:
+            case AnalysisType.STATIC:
                 StaticAnalysisOutcomeFragment staticFragment = new StaticAnalysisOutcomeFragment(appDetails, this.analysisOutcomes.get(position));
                 manager.beginTransaction().replace(R.id.fragmentContainer, staticFragment, staticFragment.getTag()).addToBackStack(null).commit();
                 break;
-            case COMPLETE:
+            case AnalysisType.COMPLETE:
                 break;
             default:
                 break;

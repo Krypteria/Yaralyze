@@ -71,7 +71,6 @@ public class HashAnalysisOutcomeFragment extends Fragment {
             this.malwareDetectionText.setTextColor(Color.parseColor("#4CAF50"));
         }
 
-
         return view;
     }
 

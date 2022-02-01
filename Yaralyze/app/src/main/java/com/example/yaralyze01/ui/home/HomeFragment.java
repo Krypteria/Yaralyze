@@ -13,11 +13,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.yaralyze01.MainActivity;
 import com.example.yaralyze01.R;
 import com.example.yaralyze01.YaralyzeDB;
 import com.example.yaralyze01.ui.analysis.appDetails.AppDetails;
-import com.example.yaralyze01.ui.analysis.installedApps.AppsAdapter;
 import com.example.yaralyze01.ui.analysis.installedApps.InstalledAppsFragment;
 import com.example.yaralyze01.ui.analysis.installedApps.OnAppListener;
 import com.example.yaralyze01.ui.analysis.reports.ReportTabbedFragment;

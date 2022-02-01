@@ -2,7 +2,6 @@ package com.example.yaralyze01;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.app.Dialog;
@@ -10,22 +9,14 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.yaralyze01.client.Client;
-import com.example.yaralyze01.ui.analysis.installedApps.InstalledAppsFragment;
-import com.example.yaralyze01.ui.home.HomeFragment;
 import com.example.yaralyze01.ui.loading.LoadingAppFragment;
 
-import java.net.InetAddress;
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainActivity extends AppCompatActivity {
 

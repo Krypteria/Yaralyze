@@ -6,14 +6,11 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.yaralyze01.ui.analysis.appDetails.AppDetails;
+import com.example.yaralyze01.ui.common.AnalysisType;
 
 import java.util.ArrayList;
 
 public class ReportViewPageAdapter extends FragmentStateAdapter {
-
-    private final static int HASH = 0;
-    private final static int STATIC = 1;
-    private final static int COMPLETE = 2;
 
     private ArrayList<AppDetails> installedApps;
 
@@ -31,14 +28,14 @@ public class ReportViewPageAdapter extends FragmentStateAdapter {
         Fragment fragment = null;
 
         switch(position) {
-            case HASH:
-                fragment = new ReportListFragment(HASH, this.installedApps);
+            case AnalysisType.HASH:
+                fragment = new ReportListFragment(AnalysisType.HASH, this.installedApps);
                 break;
-            case STATIC:
-                fragment = new ReportListFragment(STATIC, this.installedApps);
+            case AnalysisType.STATIC:
+                fragment = new ReportListFragment(AnalysisType.STATIC, this.installedApps);
                 break;
-            case COMPLETE:
-                fragment = new ReportListFragment(COMPLETE, this.installedApps);
+            case AnalysisType.COMPLETE:
+                fragment = new ReportListFragment(AnalysisType.COMPLETE, this.installedApps);
                 break;
         }
 

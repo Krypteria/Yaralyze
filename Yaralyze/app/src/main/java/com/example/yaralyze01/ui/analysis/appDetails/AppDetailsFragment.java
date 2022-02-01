@@ -17,13 +17,9 @@ import com.example.yaralyze01.YaralyzeDB;
 import com.example.yaralyze01.client.Client;
 import com.example.yaralyze01.ui.analysis.outcomes.AnalysisOutcome;
 import com.example.yaralyze01.ui.analysis.outcomes.AnalysisOutcomeManagerFragment;
+import com.example.yaralyze01.ui.common.AnalysisType;
 
 public class AppDetailsFragment extends Fragment {
-
-    private final int HASH = 0;
-    private final int STATIC = 1;
-    private final int COMPLETE = 2;
-
     private AppDetails appDetails;
 
     private ImageView appIcon;
@@ -75,7 +71,7 @@ public class AppDetailsFragment extends Fragment {
         this.staticAnalysisButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AnalysisOutcomeManagerFragment fragment = new AnalysisOutcomeManagerFragment(getParentFragmentManager(), appDetails, STATIC);
+                AnalysisOutcomeManagerFragment fragment = new AnalysisOutcomeManagerFragment(getParentFragmentManager(), appDetails, AnalysisType.STATIC);
                 new Thread(new Client(fragment, appDetails)).start();
 
                 FragmentManager manager = getParentFragmentManager();
@@ -89,7 +85,7 @@ public class AppDetailsFragment extends Fragment {
                 YaralyzeDB db = YaralyzeDB.getInstance(getContext());
                 AnalysisOutcome analysisOutcome = db.getCoincidence(appDetails.getAppName(), appDetails.getPackageName(), appDetails.getSha256hash());
 
-                AnalysisOutcomeManagerFragment fragment = new AnalysisOutcomeManagerFragment(getParentFragmentManager(), appDetails, HASH);
+                AnalysisOutcomeManagerFragment fragment = new AnalysisOutcomeManagerFragment(getParentFragmentManager(), appDetails, AnalysisType.HASH);
                 FragmentManager manager = getParentFragmentManager();
                 manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack(null).commit();
 

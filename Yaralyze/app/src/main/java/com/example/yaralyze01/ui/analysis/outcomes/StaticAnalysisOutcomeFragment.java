@@ -14,11 +14,6 @@ import android.widget.TextView;
 import com.example.yaralyze01.R;
 import com.example.yaralyze01.ui.analysis.appDetails.AppDetails;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-
 public class StaticAnalysisOutcomeFragment extends Fragment{
 
     private AppDetails appDetails;
@@ -30,7 +25,6 @@ public class StaticAnalysisOutcomeFragment extends Fragment{
     private AnalysisOutcome analysisOutcome;
     private TextView malwareDetectionText;
     private TextView ruleCoincidenceText;
-    private TextView outcomeLogText;
 
     public StaticAnalysisOutcomeFragment(AppDetails appDetails, AnalysisOutcome analysisOutcome){
         this.analysisOutcome = analysisOutcome;

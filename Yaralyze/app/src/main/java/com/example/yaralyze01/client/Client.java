@@ -2,13 +2,12 @@ package com.example.yaralyze01.client;
 
 
 import android.content.Context;
-import android.graphics.Color;
 
-import com.example.yaralyze01.MainActivity;
 import com.example.yaralyze01.YaralyzeDB;
 import com.example.yaralyze01.ui.analysis.appDetails.AppDetails;
 import com.example.yaralyze01.ui.analysis.outcomes.AnalysisOutcome;
 import com.example.yaralyze01.ui.analysis.outcomes.AnalysisOutcomeManagement;
+import com.example.yaralyze01.ui.common.AnalysisType;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,8 +32,8 @@ public class Client implements Runnable{
     private final int UPDATE_DB_QUERY = 1;
 
     private final String serverIP = "192.168.1.34"; // placeholder
-    private final int BUFFERSIZE = 8192;
     private final int PORT = 2020;
+    private final int BUFFER_SIZE = 8192;
 
     private Socket clientSocket;
     private DataOutputStream bytesOutput;
@@ -54,7 +53,7 @@ public class Client implements Runnable{
 
     public Client(AnalysisOutcomeManagement analysisOutcomeManagement, AppDetails appDetails){
         this.analysisOutcomeManagement = analysisOutcomeManagement;
-        this.buffer = new byte[this.BUFFERSIZE];
+        this.buffer = new byte[this.BUFFER_SIZE];
         this.appDetails = appDetails;
         this.apkPath = appDetails.getAppSrc();
         this.apkName = appDetails.getAppName();
@@ -135,16 +134,18 @@ public class Client implements Runnable{
             this.sendAPKHeader(apkName, apk.length());
             this.sendAPK(apk);
         }
-        catch(IOException e){ //MEJORAR LAS EXCEPCIONES -> TOAST
+        catch(IOException | JSONException e){ //MEJORAR LAS EXCEPCIONES -> TOAST
             e.printStackTrace();
         }
     }
 
-    private void sendAPKHeader(String apkName, long apkLength) throws IOException {
-        String header = apkName + "-" + apkLength;
+    private void sendAPKHeader(String apkName, long apkLength) throws IOException, JSONException {
+        JSONObject headerJSON = new JSONObject();
+        headerJSON.put("name", apkName);
+        headerJSON.put("size", apkLength);
 
         this.bytesOutput = new DataOutputStream(new BufferedOutputStream(this.clientSocket.getOutputStream()));
-        this.bytesOutput.writeUTF(header);
+        this.bytesOutput.writeUTF(headerJSON.toString());
         this.bytesOutput.flush();
     }
 
@@ -163,7 +164,7 @@ public class Client implements Runnable{
         }
 
         int readBytes;
-        while(integerFileSizeValue > 0 && (readBytes = this.bytesInput.read(this.buffer, 0, Math.min(this.BUFFERSIZE, integerFileSizeValue))) >= 0){
+        while(integerFileSizeValue > 0 && (readBytes = this.bytesInput.read(this.buffer, 0, Math.min(this.BUFFER_SIZE, integerFileSizeValue))) >= 0){
             this.bytesOutput.write(this.buffer, 0, readBytes);
             this.bytesOutput.flush();
 
@@ -182,9 +183,6 @@ public class Client implements Runnable{
         JSONObject analysisOutcomeJSON = new JSONObject(outcome);
         AnalysisOutcome analysisOutcome = this.buildAnalysisOutcomeObject(analysisOutcomeJSON);
 
-        YaralyzeDB db = YaralyzeDB.getInstance(this.context);
-        db.insertAnalysisOutcome(analysisOutcome);
-
         this.analysisOutcomeManagement.showAnalysisOutcome(analysisOutcome);
 
         this.textInput.close();
@@ -201,6 +199,6 @@ public class Client implements Runnable{
            matchedRules.add(matchedRulesJSON.get(i).toString());
         }
 
-        return new AnalysisOutcome(1, null, this.apkName, this.appDetails.getPackageName(), analysisOutcomeJSON.getBoolean("detected"), null, matchedRules);
+        return new AnalysisOutcome(AnalysisType.STATIC, null, this.apkName, this.appDetails.getPackageName(), analysisOutcomeJSON.getBoolean("detected"), null, matchedRules);
     }
 }

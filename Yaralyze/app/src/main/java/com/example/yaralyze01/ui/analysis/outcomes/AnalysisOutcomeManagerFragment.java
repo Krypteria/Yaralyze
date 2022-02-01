@@ -15,16 +15,9 @@ import android.widget.TextView;
 import com.example.yaralyze01.R;
 import com.example.yaralyze01.YaralyzeDB;
 import com.example.yaralyze01.ui.analysis.appDetails.AppDetails;
-
-import org.json.JSONObject;
-
+import com.example.yaralyze01.ui.common.AnalysisType;
 
 public class AnalysisOutcomeManagerFragment extends Fragment implements AnalysisOutcomeManagement {
-
-    private final int HASH = 0;
-    private final int STATIC = 1;
-    private final int COMPLETE = 2;
-
     private AppDetails appDetails;
 
     private ImageView appIcon;
@@ -66,15 +59,15 @@ public class AnalysisOutcomeManagerFragment extends Fragment implements Analysis
     public void showAnalysisOutcome(AnalysisOutcome analysisOutcome) {
         insertIntoDB(analysisOutcome);
         switch (this.analysisType){
-            case(HASH):
+            case(AnalysisType.HASH):
                 HashAnalysisOutcomeFragment hashFragment = new HashAnalysisOutcomeFragment(this.appDetails, analysisOutcome);
                 this.manager.beginTransaction().replace(R.id.fragmentContainer, hashFragment, hashFragment.getTag()).addToBackStack(null).commit();
                 break;
-            case(STATIC):
+            case(AnalysisType.STATIC):
                 StaticAnalysisOutcomeFragment staticFragment = new StaticAnalysisOutcomeFragment(this.appDetails, analysisOutcome);
                 this.manager.beginTransaction().replace(R.id.fragmentContainer, staticFragment, staticFragment.getTag()).addToBackStack(null).commit();
                 break;
-            case(COMPLETE):
+            case(AnalysisType.COMPLETE):
                 System.out.println("Completo");
             default:
                 break;

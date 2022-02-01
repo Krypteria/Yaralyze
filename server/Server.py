@@ -111,8 +111,7 @@ class Server:
     # --------------------------------------------------------
 
     def __proccessSample(self, clientConnection) -> str:
-        header = self.__receiveSampleHeader(clientConnection)
-        print("[!] El header recibido es: ", header) #Quitar luego cuando esté todo perfecto
+        header = json.loads(self.__receiveSampleHeader(clientConnection))
         clientSamplePath = self.__receiveSampleFile(clientConnection, header)
         return clientSamplePath
     
@@ -121,7 +120,7 @@ class Server:
         return header[2:]
 
     def __receiveSampleFile(self, clientConnection, header) -> str:
-        sampleName, sampleSize = header[0:header.find("-")], int(header[header.find("-") + 1:])
+        sampleName, sampleSize = header["name"], header["size"]
 
         with open(CLIENT_SAMPLES_PATH + sampleName + EXTENSION, "wb") as sampleFile:
             while True:

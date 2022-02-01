@@ -3,15 +3,7 @@ package com.example.yaralyze01.ui.analysis.appDetails;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
-import android.util.Pair;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -37,8 +29,8 @@ public class AppDetails {
 
         this.appSrc = packageInfo.applicationInfo.sourceDir;
 
-        this.firstTimeInstalledDate = getDateFormated(packageInfo.firstInstallTime);
-        this.lastTimeUpdatedDate = getDateFormated(packageInfo.lastUpdateTime);
+        this.firstTimeInstalledDate = getDateFormatted(packageInfo.firstInstallTime);
+        this.lastTimeUpdatedDate = getDateFormatted(packageInfo.lastUpdateTime);
         this.sha256hash = null;
         this.md5hash = null;
     }
@@ -74,7 +66,7 @@ public class AppDetails {
 
     public String getMd5hash(){ return this.md5hash; }
 
-    private String getDateFormated(long ms){
+    private String getDateFormatted(long ms){
         Date date = new Date(ms);
         DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         format.setTimeZone(TimeZone.getTimeZone("Spain/Madrid"));

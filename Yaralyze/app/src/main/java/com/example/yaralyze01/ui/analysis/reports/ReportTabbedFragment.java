@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.yaralyze01.R;
 import com.example.yaralyze01.ui.analysis.appDetails.AppDetails;
+import com.example.yaralyze01.ui.common.AnalysisType;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -50,14 +51,14 @@ public class ReportTabbedFragment extends Fragment {
             @Override
             public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
                 switch(position){
-                    case 0:
-                        tab.setText("Análisis del hash");
+                    case AnalysisType.COMPLETE:
+                        tab.setText("Análisis completo");
                         break;
-                    case 1:
+                    case AnalysisType.STATIC:
                         tab.setText("Análisis estático");
                         break;
-                    case 2:
-                        tab.setText("Análisis completo");
+                    case AnalysisType.HASH:
+                        tab.setText("Análisis del hash");
                         break;
                     default:
                         break;

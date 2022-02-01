@@ -12,14 +12,11 @@ import android.util.Pair;
 import androidx.annotation.Nullable;
 
 import com.example.yaralyze01.ui.analysis.outcomes.AnalysisOutcome;
+import com.example.yaralyze01.ui.common.AnalysisType;
 
 import java.util.ArrayList;
 
 public class YaralyzeDB extends SQLiteOpenHelper {
-
-    private final static int HASH = 0;
-    private final static int STATIC = 1;
-    private final static int COMPLETE = 2;
 
     private static final String DATABASE_NAME = "Yaralyze.db";
     private static final int DATABASE_VERSION = 1;
@@ -140,17 +137,18 @@ public class YaralyzeDB extends SQLiteOpenHelper {
 
         if(cursor.moveToFirst()){
             cursor.close();
-            AnalysisOutcome = new AnalysisOutcome(0, null, appName, packageName,true, null, null);
+            AnalysisOutcome = new AnalysisOutcome(AnalysisType.HASH, null, appName, packageName,true, null, null);
         }
         else{
             cursor.close();
-            AnalysisOutcome = new AnalysisOutcome(0, null, appName, packageName,false, null, null);
+            AnalysisOutcome = new AnalysisOutcome(AnalysisType.HASH, null, appName, packageName,false, null, null);
         }
 
         return AnalysisOutcome;
     }
 
     public boolean insertAnalysisOutcome(AnalysisOutcome AnalysisOutcome){
+        System.out.println("Escribo");
         SQLiteDatabase db = this.getWritableDatabase();
 
         //Inserto la app analizada si no estuviese en la base de datos y obtengo su id
@@ -282,10 +280,10 @@ public class YaralyzeDB extends SQLiteOpenHelper {
 
                 ArrayList<String> matchedRules = null;
                 switch (reportType){
-                    case STATIC:
+                    case AnalysisType.STATIC:
                         matchedRules = this.getMatchedRules(cursor.getInt(0));
                         break;
-                    case COMPLETE:
+                    case AnalysisType.COMPLETE:
                         break;
                     default:
                         break;
