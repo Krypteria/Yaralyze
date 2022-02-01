@@ -75,7 +75,7 @@ public class AppDetailsFragment extends Fragment {
                 new Thread(new Client(fragment, appDetails)).start();
 
                 FragmentManager manager = getParentFragmentManager();
-                manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack(null).commit();
+                manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack("waiting").commit();
             }
         });
 
@@ -87,7 +87,7 @@ public class AppDetailsFragment extends Fragment {
 
                 AnalysisOutcomeManagerFragment fragment = new AnalysisOutcomeManagerFragment(getParentFragmentManager(), appDetails, AnalysisType.HASH);
                 FragmentManager manager = getParentFragmentManager();
-                manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack(null).commit();
+                manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack("waiting").commit();
 
                 fragment.showAnalysisOutcome(analysisOutcome);
             }

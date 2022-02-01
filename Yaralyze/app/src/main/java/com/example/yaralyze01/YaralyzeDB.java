@@ -148,7 +148,6 @@ public class YaralyzeDB extends SQLiteOpenHelper {
     }
 
     public boolean insertAnalysisOutcome(AnalysisOutcome AnalysisOutcome){
-        System.out.println("Escribo");
         SQLiteDatabase db = this.getWritableDatabase();
 
         //Inserto la app analizada si no estuviese en la base de datos y obtengo su id

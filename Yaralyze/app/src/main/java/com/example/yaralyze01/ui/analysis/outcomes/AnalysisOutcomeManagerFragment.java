@@ -61,10 +61,12 @@ public class AnalysisOutcomeManagerFragment extends Fragment implements Analysis
         switch (this.analysisType){
             case(AnalysisType.HASH):
                 HashAnalysisOutcomeFragment hashFragment = new HashAnalysisOutcomeFragment(this.appDetails, analysisOutcome);
+                this.manager.popBackStackImmediate();
                 this.manager.beginTransaction().replace(R.id.fragmentContainer, hashFragment, hashFragment.getTag()).addToBackStack(null).commit();
                 break;
             case(AnalysisType.STATIC):
                 StaticAnalysisOutcomeFragment staticFragment = new StaticAnalysisOutcomeFragment(this.appDetails, analysisOutcome);
+                this.manager.popBackStack("waiting", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 this.manager.beginTransaction().replace(R.id.fragmentContainer, staticFragment, staticFragment.getTag()).addToBackStack(null).commit();
                 break;
             case(AnalysisType.COMPLETE):
