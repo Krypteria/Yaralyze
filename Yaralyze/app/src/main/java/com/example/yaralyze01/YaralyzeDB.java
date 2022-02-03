@@ -42,6 +42,10 @@ public class YaralyzeDB extends SQLiteOpenHelper {
     private static final String COLUMN_APP_NAME_ANALYZED_APPS = "app_name";
     private static final String COLUMN_APP_PACKAGE_ANALYZED_APPS = "app_package";
 
+    private static final String COMPLETE_ANALYSIS = "complete_analysis";
+    private static final String COLUMN_ID_COMPLETE_ANALYSIS = "id_complete_analysis";
+    private static final String COLUMN_ID_STATIC_ANALYSIS = "id_static_analysis";
+    private static final String COLUMN_ID_HASH_ANALYSIS = "id_hash_analysis";
 
     private static YaralyzeDB dbInstance;
     private Context context;
@@ -78,7 +82,6 @@ public class YaralyzeDB extends SQLiteOpenHelper {
                 COLUMN_ANALYSIS_TYPE_ANALYSIS_OUTCOME + " TEXT NOT NULL, " +
                 COLUMN_MALWARE_DETECTED_ANALYSIS_OUTCOME + " INTEGER NOT NULL," +
                 COLUMN_DATE_ANALYSIS_OUTCOME + " DATETIME NOT NULL," +
-                "UNIQUE (" + COLUMN_ID_OUTCOME_ANALYSIS_OUTCOME + "," + COLUMN_ID_APP_ANALYSIS_OUTCOME + ")," +
                 "FOREIGN KEY (" + COLUMN_ID_APP_ANALYSIS_OUTCOME + ") REFERENCES " + ANALYZED_APPS +
                 "(" + COLUMN_ID_APP_ANALYZED_APPS + "));";
 
@@ -86,24 +89,33 @@ public class YaralyzeDB extends SQLiteOpenHelper {
                 "(" + COLUMN_ID_COINCIDENCE_COINCIDENCES + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_ID_OUTCOME_COINCIDENCES + " INTEGER NOT NULL, " +
                 COLUMN_MATCHED_RULE_COINCIDENCES + " TEXT NOT NULL," +
-                "UNIQUE (" + COLUMN_ID_COINCIDENCE_COINCIDENCES + "," + COLUMN_ID_OUTCOME_COINCIDENCES + ")," +
                 "FOREIGN KEY (" + COLUMN_ID_OUTCOME_COINCIDENCES + ") REFERENCES " + ANALYSIS_OUTCOME +
+                "(" + COLUMN_ID_OUTCOME_ANALYSIS_OUTCOME + "));";
+
+        String completeAnalysis = "CREATE TABLE " + COMPLETE_ANALYSIS +
+                "(" + COLUMN_ID_COMPLETE_ANALYSIS + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_ID_STATIC_ANALYSIS + " INTEGER NOT NULL, " +
+                COLUMN_ID_HASH_ANALYSIS + " INTEGER NOT NULL, " +
+                "FOREIGN KEY (" + COLUMN_ID_STATIC_ANALYSIS + ") REFERENCES " + ANALYSIS_OUTCOME +
+                "(" + COLUMN_ID_OUTCOME_ANALYSIS_OUTCOME + ")," +
+                "FOREIGN KEY (" + COLUMN_ID_HASH_ANALYSIS + ") REFERENCES " + ANALYSIS_OUTCOME +
                 "(" + COLUMN_ID_OUTCOME_ANALYSIS_OUTCOME + "));";
 
 
         db.execSQL(malwareHashes);
         db.execSQL(analyzedApps);
         db.execSQL(AnalysisOutcomes);
+        db.execSQL(completeAnalysis);
         db.execSQL(coincidences);
     }
 
-    //Se llama a este método cuando la versión de la base de datos cambia
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + MALWARE_HASHES);
         db.execSQL("DROP TABLE IF EXISTS " + COINCIDENCES);
         db.execSQL("DROP TABLE IF EXISTS " + ANALYSIS_OUTCOME);
         db.execSQL("DROP TABLE IF EXISTS " + ANALYZED_APPS);
+        db.execSQL("DROP TABLE IF EXISTS " + COMPLETE_ANALYSIS);
         onCreate(db);
     }
 
@@ -147,7 +159,7 @@ public class YaralyzeDB extends SQLiteOpenHelper {
         return AnalysisOutcome;
     }
 
-    public boolean insertAnalysisOutcome(AnalysisOutcome AnalysisOutcome){
+    public void insertAnalysisOutcome(AnalysisOutcome AnalysisOutcome){
         SQLiteDatabase db = this.getWritableDatabase();
 
         //Inserto la app analizada si no estuviese en la base de datos y obtengo su id
@@ -175,16 +187,24 @@ public class YaralyzeDB extends SQLiteOpenHelper {
                         db.insert(COINCIDENCES, null, cv);
                     }
                 }
+            }
+        }
+    }
 
-                return true;
-            }
-            else{
-                return false;
-            }
-        }
-        else{
-            return false;
-        }
+    public void insertCompleteAnalysisOutcome(AnalysisOutcome staticAnalysisOutcome, AnalysisOutcome hashAnalysisOutcome){
+        this.insertAnalysisOutcome(staticAnalysisOutcome);
+        int idStaticAnalysis = this.getLastIndexFrom(ANALYSIS_OUTCOME, COLUMN_ID_OUTCOME_ANALYSIS_OUTCOME);
+        this.insertAnalysisOutcome(hashAnalysisOutcome);
+        int idHashAnalysis = this.getLastIndexFrom(ANALYSIS_OUTCOME, COLUMN_ID_OUTCOME_ANALYSIS_OUTCOME);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //Inserto un nuevo analysis_outcome
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_ID_STATIC_ANALYSIS, idStaticAnalysis);
+        cv.put(COLUMN_ID_HASH_ANALYSIS, idHashAnalysis);
+
+        db.insert(COMPLETE_ANALYSIS, null, cv);
     }
 
     private int insertAnalyzedApp(String appName, String appPackage){

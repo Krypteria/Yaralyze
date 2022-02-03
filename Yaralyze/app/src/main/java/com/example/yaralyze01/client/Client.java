@@ -28,9 +28,6 @@ import java.util.ArrayList;
 
 public class Client implements Runnable{
 
-    //En vez que llamar al manager en cada metodo lo suyo es crear diferentes métodos para los diferentes tipos de analisis y dependiendo del contructor
-    //usar uno u otro
-
     private final int STATIC_ANALYSIS_QUERY = 0;
     private final int HASH_ANALYSIS_QUERY = 1;
     private final int COMPLETE_ANALYSIS_QUERY = 2;
@@ -168,15 +165,13 @@ public class Client implements Runnable{
     // --------------------------------------------------------
 
     private void performCompleteAnalysis() throws IOException, JSONException { //MEJORAR
-        System.out.println("HOLA");
         this.requestType = STATIC_ANALYSIS_QUERY;
         this.sendRequestType();
         this.sendStaticAnalysisRequest();
-        System.out.println("HOLA2");
+
+
         AnalysisOutcome staticAnalysisOutcome = this.receiveServerAnalysisOutcome();
-        System.out.println("HOLA3");
         AnalysisOutcome hashAnalysisOutcome = this.receiveHashAnalysisOutcome(); //añadir logica del server
-        System.out.println("HOLA4");
 
         this.sendCompleteAnalysisOutcomeToView(staticAnalysisOutcome, hashAnalysisOutcome);
     }

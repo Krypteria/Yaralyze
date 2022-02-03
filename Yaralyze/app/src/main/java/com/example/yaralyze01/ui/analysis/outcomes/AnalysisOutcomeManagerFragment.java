@@ -57,7 +57,7 @@ public class AnalysisOutcomeManagerFragment extends Fragment implements Analysis
 
     @Override
     public void showAnalysisOutcome(AnalysisOutcome analysisOutcome) {
-        insertIntoDB(analysisOutcome);
+        insertSimpleAnalysisIntoDB(analysisOutcome);
         switch (this.analysisType){
             case(AnalysisType.HASH):
                 HashAnalysisOutcomeFragment hashFragment = new HashAnalysisOutcomeFragment(this.appDetails, analysisOutcome);
@@ -77,20 +77,20 @@ public class AnalysisOutcomeManagerFragment extends Fragment implements Analysis
     @Override
     public void showAnalysisOutcome(AnalysisOutcome staticOutcome, AnalysisOutcome hashOutcome) {
          if(this.analysisType == AnalysisType.COMPLETE){
+             insertCompleteAnalysisIntoDB(staticOutcome, hashOutcome);
              CompleteAnalysisOutcome completeFragment = new CompleteAnalysisOutcome(this.appDetails, staticOutcome, hashOutcome);
              this.manager.popBackStack("waiting", FragmentManager.POP_BACK_STACK_INCLUSIVE);
              this.manager.beginTransaction().replace(R.id.fragmentContainer, completeFragment, completeFragment.getTag()).addToBackStack(null).commit();
          }
     }
 
-    private void insertIntoDB(AnalysisOutcome analysisOutcome){
+    private void insertSimpleAnalysisIntoDB(AnalysisOutcome analysisOutcome){
         YaralyzeDB db = YaralyzeDB.getInstance(getContext());
-        boolean insert = db.insertAnalysisOutcome(analysisOutcome);
-        if(insert){ //MEJORAR
-            System.out.println("Insertado correctamente");
-        }
-        else{
-            System.out.println("Error al insertar");
-        }
+        db.insertAnalysisOutcome(analysisOutcome);
+    }
+
+    private void insertCompleteAnalysisIntoDB(AnalysisOutcome staticAnalysisOutcome, AnalysisOutcome hashAnalysisOutcome){
+        YaralyzeDB db = YaralyzeDB.getInstance(getContext());
+        db.insertCompleteAnalysisOutcome(staticAnalysisOutcome, hashAnalysisOutcome);
     }
 }
