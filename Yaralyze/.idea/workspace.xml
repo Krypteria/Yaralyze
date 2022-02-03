@@ -13,23 +13,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0160ba6b-57d3-4a86-acb0-2fc3ca671a96" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/common/AnalysisType.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/outcomes/CompleteAnalysisOutcome.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/app_header.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_complete_analysis_outcome.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/hash_outcome.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/hashes.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/static_outcome.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/YaralyzeDB.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/YaralyzeDB.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/client/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/appDetails/AppDetails.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/appDetails/AppDetails.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/appDetails/AppDetailsFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/appDetails/AppDetailsFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/installedApps/InstalledAppsFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/installedApps/InstalledAppsFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/outcomes/AnalysisOutcome.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/outcomes/AnalysisOutcome.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/outcomes/AnalysisOutcomeManagerFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/outcomes/AnalysisOutcomeManagerFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/outcomes/HashAnalysisOutcomeFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/outcomes/HashAnalysisOutcomeFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/reports/ReportListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/reports/ReportListFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/reports/ReportTabbedFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/reports/ReportTabbedFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/reports/ReportViewPageAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/reports/ReportViewPageAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/home/HomeFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/home/HomeFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/home/LastAppsAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/home/LastAppsAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/Server.py" beforeDir="false" afterPath="$PROJECT_DIR$/../server/Server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_analysis_outcome.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_analysis_outcome.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_app_details.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_app_details.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_hash_analysis_outcome.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_hash_analysis_outcome.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_static_analysis_outcome.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_static_analysis_outcome.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,7 +101,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="android-custom-viewC:/Users/Alejandro/AppData/Local/Android/Sdk/sources/android-31/android/widget/LinearLayout.java_LinearLayout_DIMENSIONS" value="1080&#10;1920" />
     <property name="android-custom-viewC:/Users/Alejandro/AppData/Local/Android/Sdk/sources/android-31/android/widget/LinearLayout.java_SELECTED" value="LinearLayout" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../../Escritorio" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/src/main/res/layout" />
     <property name="project.structure.last.edited" value="Suggestions" />
     <property name="project.structure.proportion" value="0.17" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -117,8 +112,8 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\Biblioteca\Documentos\Github\Yaralyze-TFG\Yaralyze\app\src\main\res\menu" />
       <recent name="D:\Biblioteca\Documentos\Github\Yaralyze-TFG\Yaralyze\app\src\main\res\layout" />
+      <recent name="D:\Biblioteca\Documentos\Github\Yaralyze-TFG\Yaralyze\app\src\main\res\menu" />
       <recent name="D:\Biblioteca\Documentos\Github\Yaralyze-TFG\Yaralyze\app\src\main\java\com\example\yaralyze01\ui\home" />
       <recent name="D:\Biblioteca\Documentos\Github\Yaralyze-TFG\Yaralyze\app\src\main\java\com\example\yaralyze01\ui\reports" />
     </key>

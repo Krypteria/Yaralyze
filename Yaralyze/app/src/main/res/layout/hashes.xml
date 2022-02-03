@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="4dp"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/appHashLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/black"
+        android:background="#C6C1C1"
+        android:textSize="18dp"
+        android:text="HASH" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/black"
+        android:textSize="15dp"
+        android:text="Sha256" />
+
+    <TextView
+        android:id="@+id/appSha256Hash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#646464"
+        android:textSize="15dp"
+        tools:text="ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="16dp"
+        android:background="#C6C1C1">
+    </View>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/black"
+        android:textSize="15dp"
+        android:text="MD5" />
+
+
+    <TextView
+        android:id="@+id/appMd5Hash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:textColor="#646464"
+        android:textSize="15dp"
+        tools:text="552E6A97297C53E592208CF97FBB3B60" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_marginTop="10dp"
+        android:background="#C6C1C1">
+    </View>
+</LinearLayout>

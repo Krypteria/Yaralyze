@@ -12,68 +12,10 @@
     android:padding="4dp"
     tools:context=".ui.analysis.appDetails.AppDetailsFragment">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="20dp"
-        android:padding="4dp">
-
-        <ImageView
-            android:id="@+id/appIcon"
-            android:layout_width="85dp"
-            android:layout_height="85dp"
-            android:layout_gravity="left"
-            android:layout_marginRight="5dp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/appName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:layout_marginTop="4dp"
-                android:textColor="@color/black"
-                android:textSize="20dp"
-                android:textStyle="bold"
-                tools:text="Application name" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="left">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#646464"
-                    android:textSize="18dp"
-                    android:text="Versión: " />
-
-                <TextView
-                    android:id="@+id/appVersion"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#646464"
-                    android:textSize="18dp"
-                    tools:text="1.0" />
-            </LinearLayout>
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:layout_marginTop="10dp"
-        android:background="#C6C1C1">
-    </View>
+    <include
+        layout="@layout/app_header"
+        android:id="@+id/appHeader">
+    </include>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -209,88 +151,11 @@
         tools:text="20/10/2021 17:33:10" />
 
 
-    <TextView
-        android:id="@+id/appHashLabel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:textColor="@color/black"
-        android:background="#C6C1C1"
-        android:textSize="18dp"
-        android:text="HASH" />
+    <include
+        layout="@layout/hashes"
+        android:id="@+id/hashes">
+    </include>
 
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:textColor="@color/black"
-        android:textSize="15dp"
-        android:text="Sha256" />
-
-    <TextView
-        android:id="@+id/appSha256Hash"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#646464"
-        android:textSize="15dp"
-        tools:text="ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginTop="16dp"
-        android:background="#C6C1C1">
-    </View>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:textColor="@color/black"
-        android:textSize="15dp"
-        android:text="MD5" />
-
-
-    <TextView
-        android:id="@+id/appMd5Hash"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:textColor="#646464"
-        android:textSize="15dp"
-        tools:text="552E6A97297C53E592208CF97FBB3B60" />
-
-    <!-- <ProgressBar
-        android:id="@+id/analyzeProgressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:layout_gravity="bottom"
-        android:visibility="invisible"/>
-
-    <TextView
-        android:id="@+id/analyzeOutcomeText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textColor="@color/black"
-        android:layout_gravity="bottom"
-        android:textSize="20dp"
-        tools:text="Resultado análisis"
-        android:visibility="invisible" />
-
-    <Button
-        android:id="@+id/analyzeButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_gravity="bottom"
-        android:text="Analizar" />
-
-    -->
 </LinearLayout>
 
 </ScrollView>

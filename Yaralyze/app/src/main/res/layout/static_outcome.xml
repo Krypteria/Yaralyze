@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="4dp"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/black"
+        android:textSize="18dp"
+        android:text="Resultado del análisis estático" />
+
+    <TextView
+        android:id="@+id/malwareDetectionText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:textColor="#646464"
+        android:textSize="15dp" />
+
+    <View
+        android:id="@+id/ruleCoincidenceSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="10dp"
+        android:background="#C6C1C1">
+    </View>
+
+    <TextView
+        android:id="@+id/ruleCoincidenceLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/black"
+        android:textSize="18dp"
+        android:text="Coincidencia con las siguiente reglas" />
+
+    <TextView
+        android:id="@+id/ruleCoincidenceText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:lineSpacingMultiplier="1.5"
+        android:textColor="#A62424"
+        android:textSize="15dp"
+        tools:text="Android_custom1 \n\nAndroid_custom2" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="10dp"
+        android:background="#C6C1C1">
+    </View>
+
+</merge>

@@ -9,17 +9,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="4dp">
+    android:padding="4dp"
+    tools:context=".ui.analysis.outcomes.CompleteAnalysisOutcome">
 
     <include
-        layout="@layout/app_header"
-        android:id="@+id/appHeader">
+        android:id="@+id/completeAnalysis_static"
+        layout="@layout/fragment_static_analysis_outcome">
     </include>
 
     <include
-        layout="@layout/static_outcome"
-        android:id="@+id/staticOutcome">
+        android:id="@+id/completeAnalysis_hash"
+        layout="@layout/fragment_hash_analysis_outcome">
     </include>
+
+    <!-- MODULARIZAR MEJOR LAS VISTAS DE OUTCOME PARA FACILITARME LA VIDA -->
 
 </LinearLayout>
 </ScrollView>
