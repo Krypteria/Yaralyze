@@ -44,7 +44,7 @@ public class StaticAnalysisOutcomeFragment extends Fragment{
         this.appName = view.findViewById(R.id.appName);
         this.appVersion = view.findViewById(R.id.appVersion);
 
-        this.malwareDetectionText = view.findViewById(R.id.malwareDetectionText);
+        this.malwareDetectionText = view.findViewById(R.id.staticMalwareDetectionText);
         this.ruleCoincidenceText = view.findViewById(R.id.ruleCoincidenceText);
 
         this.appIcon.setImageDrawable(this.appDetails.getAppIcon());

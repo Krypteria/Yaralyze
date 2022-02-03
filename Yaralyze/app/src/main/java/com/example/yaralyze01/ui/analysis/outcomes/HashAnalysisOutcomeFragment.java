@@ -29,8 +29,6 @@ public class HashAnalysisOutcomeFragment extends Fragment {
     private TextView md5;
     private TextView malwareDetectionText;
 
-    private TextView outcomeLogText;
-
     private boolean hashCoincidence;
 
     public HashAnalysisOutcomeFragment(AppDetails appDetails, AnalysisOutcome analysisOutcome) {
@@ -54,7 +52,7 @@ public class HashAnalysisOutcomeFragment extends Fragment {
         this.sha256 = view.findViewById(R.id.appSha256Hash);
         this.md5 = view.findViewById(R.id.appMd5Hash);
 
-        this.malwareDetectionText = view.findViewById(R.id.malwareDetectionText);
+        this.malwareDetectionText = view.findViewById(R.id.hashMalwareDetectionText);
 
         this.appIcon.setImageDrawable(this.appDetails.getAppIcon());
         this.appName.setText(this.appDetails.getAppName());

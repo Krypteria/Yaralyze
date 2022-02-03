@@ -15,7 +15,7 @@
         android:text="Resultado del análisis del hash" />
 
     <TextView
-        android:id="@+id/malwareDetectionText"
+        android:id="@+id/hashMalwareDetectionText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"

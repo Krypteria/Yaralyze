@@ -16,7 +16,7 @@ EXTENSION = ".apk"
 
 #Comunicacion con el cliente
 STATIC_ANALYSIS_QUERY = 0;
-UPDATE_DB_QUERY = 1;
+UPDATE_DB_QUERY = 3;
 
 BUFFERSIZE = 8192
 PORT = 2020
@@ -89,7 +89,7 @@ class Server:
     
     def __proccessClientRequest(self, clientConnection) -> None:
         request = self.__receiveRequestType(clientConnection)
-        
+        print(request)
         if request == STATIC_ANALYSIS_QUERY:
             self.__logger.info("Tramitando petición de análisis estático")
 

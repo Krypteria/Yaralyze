@@ -13,16 +13,59 @@
     tools:context=".ui.analysis.outcomes.CompleteAnalysisOutcome">
 
     <include
-        android:id="@+id/completeAnalysis_static"
-        layout="@layout/fragment_static_analysis_outcome">
+        layout="@layout/app_header"
+        android:id="@+id/appHeader">
     </include>
 
     <include
-        android:id="@+id/completeAnalysis_hash"
-        layout="@layout/fragment_hash_analysis_outcome">
+        layout="@layout/hashes"
+        android:id="@+id/hashes">
     </include>
 
-    <!-- MODULARIZAR MEJOR LAS VISTAS DE OUTCOME PARA FACILITARME LA VIDA -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/black"
+        android:background="#C6C1C1"
+        android:textSize="18dp"
+        android:text="RESULTADO DEL ANALISIS" />
+
+    <TextView
+        android:id="@+id/completeMalwareDetectionText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:textColor="#646464"
+        android:textSize="15dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/black"
+        android:background="#C6C1C1"
+        android:textSize="18dp"
+        android:text="ANALISIS ESTÁTICO" />
+
+    <include
+        layout="@layout/static_outcome"
+        android:id="@+id/staticOutcome">
+    </include>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/black"
+        android:background="#C6C1C1"
+        android:textSize="18dp"
+        android:text="ANALISIS DEL HASH" />
+
+    <include
+        layout="@layout/hash_outcome"
+        android:id="@+id/hashesOutcome">
+    </include>
 
 </LinearLayout>
 </ScrollView>

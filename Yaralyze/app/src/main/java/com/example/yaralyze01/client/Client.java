@@ -28,8 +28,13 @@ import java.util.ArrayList;
 
 public class Client implements Runnable{
 
+    //En vez que llamar al manager en cada metodo lo suyo es crear diferentes métodos para los diferentes tipos de analisis y dependiendo del contructor
+    //usar uno u otro
+
     private final int STATIC_ANALYSIS_QUERY = 0;
-    private final int UPDATE_DB_QUERY = 1;
+    private final int HASH_ANALYSIS_QUERY = 1;
+    private final int COMPLETE_ANALYSIS_QUERY = 2;
+    private final int UPDATE_DB_QUERY = 3;
 
     private final String serverIP = "192.168.1.34"; // placeholder
     private final int PORT = 2020;
@@ -43,38 +48,72 @@ public class Client implements Runnable{
 
     private int requestType;
 
-    private String apkName;
-    private String apkPath;
+    private String appName;
+    private String appPath;
+    private String appHash;
+
     private byte[] buffer;
 
     private AppDetails appDetails;
     private Context context;
-    private AnalysisOutcomeManagement analysisOutcomeManagement;
+    private AnalysisOutcomeManagement analysisOutcomeManager;
 
-    public Client(AnalysisOutcomeManagement analysisOutcomeManagement, AppDetails appDetails){
-        this.analysisOutcomeManagement = analysisOutcomeManagement;
+    //Constructor -> Analisis
+    public Client(AnalysisOutcomeManagement analysisOutcomeManager, AppDetails appDetails, int analysisType){
+        this.analysisOutcomeManager = analysisOutcomeManager;
         this.buffer = new byte[this.BUFFER_SIZE];
         this.appDetails = appDetails;
-        this.apkPath = appDetails.getAppSrc();
-        this.apkName = appDetails.getAppName();
-        this.requestType = STATIC_ANALYSIS_QUERY;
+
+        switch (analysisType){
+            case AnalysisType.STATIC:
+                this.appPath = appDetails.getAppSrc();
+                this.appName = appDetails.getAppName();
+                this.requestType = STATIC_ANALYSIS_QUERY;
+                break;
+            case AnalysisType.HASH:
+                this.appHash = this.appDetails.getSha256hash();
+                this.requestType = HASH_ANALYSIS_QUERY;
+                break;
+            case AnalysisType.COMPLETE:
+                this.appPath = appDetails.getAppSrc();
+                this.appName = appDetails.getAppName();
+                this.appHash = this.appDetails.getSha256hash();
+                this.requestType = COMPLETE_ANALYSIS_QUERY;
+            default:
+                break;
+        }
     }
 
+    //Constructor -> actualizar DB
     public Client(Context context){
         this.context = context;
         this.requestType = UPDATE_DB_QUERY;
     }
 
+
     @Override
     public void run(){
         this.connectSocket();
-        this.sendRequestType();
         switch (this.requestType){
             case STATIC_ANALYSIS_QUERY:
+                this.sendRequestType();
                 this.sendStaticAnalysisRequest();
                 try {
-                    this.receiveServerAnalysisOutcome();
+                    this.sendSimpleAnalysisOutcomeToView(this.receiveServerAnalysisOutcome());
                 } catch (IOException | JSONException e) { //MEJORAR LAS EXCEPCIONES -> TOAST
+                    e.printStackTrace();
+                }
+                break;
+            case HASH_ANALYSIS_QUERY:
+                this.sendRequestType();
+                this.sendSimpleAnalysisOutcomeToView(this.receiveHashAnalysisOutcome());
+                break;
+            case COMPLETE_ANALYSIS_QUERY:
+                try {
+                    this.performCompleteAnalysis();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 break;
@@ -125,13 +164,45 @@ public class Client implements Runnable{
         this.clientSocket.close();
     }
 
+    // Métodos relacionados con peticiones de análisis completo
+    // --------------------------------------------------------
+
+    private void performCompleteAnalysis() throws IOException, JSONException { //MEJORAR
+        System.out.println("HOLA");
+        this.requestType = STATIC_ANALYSIS_QUERY;
+        this.sendRequestType();
+        this.sendStaticAnalysisRequest();
+        System.out.println("HOLA2");
+        AnalysisOutcome staticAnalysisOutcome = this.receiveServerAnalysisOutcome();
+        System.out.println("HOLA3");
+        AnalysisOutcome hashAnalysisOutcome = this.receiveHashAnalysisOutcome(); //añadir logica del server
+        System.out.println("HOLA4");
+
+        this.sendCompleteAnalysisOutcomeToView(staticAnalysisOutcome, hashAnalysisOutcome);
+    }
+
+    // Métodos relacionados con peticiones de análisis de hash
+    // -------------------------------------------------------
+
+    private AnalysisOutcome receiveHashAnalysisOutcome(){
+        YaralyzeDB db = YaralyzeDB.getInstance(this.context);
+        AnalysisOutcome analysisOutcome = db.getCoincidence(this.appName, appDetails.getPackageName(), this.appHash);
+        /*if(!analysisOutcome.isMalwareDetected()){
+            //lanzariamos una petición al servidor
+        }*/
+
+        //Hay que crear nuevos metodos de comunicacion con el servidor y ver si puedo centralizar el receive simple
+
+        return analysisOutcome;
+    }
+
     // Métodos relacionados con peticiones de análisis estático
     // --------------------------------------------------------
 
     private void sendStaticAnalysisRequest(){
-        File apk = new File(apkPath);
+        File apk = new File(appPath);
         try{
-            this.sendAPKHeader(apkName, apk.length());
+            this.sendAPKHeader(appName, apk.length());
             this.sendAPK(apk);
         }
         catch(IOException | JSONException e){ //MEJORAR LAS EXCEPCIONES -> TOAST
@@ -176,17 +247,17 @@ public class Client implements Runnable{
         }
     }
 
-    private void receiveServerAnalysisOutcome() throws IOException, JSONException {
+    private AnalysisOutcome receiveServerAnalysisOutcome() throws IOException, JSONException {
         this.textInput = new BufferedReader(new InputStreamReader(this.clientSocket.getInputStream()));
         String outcome = this.textInput.readLine();
 
         JSONObject analysisOutcomeJSON = new JSONObject(outcome);
         AnalysisOutcome analysisOutcome = this.buildAnalysisOutcomeObject(analysisOutcomeJSON);
 
-        this.analysisOutcomeManagement.showAnalysisOutcome(analysisOutcome);
-
         this.textInput.close();
         this.clientSocket.close();
+
+        return analysisOutcome;
     }
 
     private AnalysisOutcome buildAnalysisOutcomeObject(JSONObject analysisOutcomeJSON) throws JSONException {
@@ -199,6 +270,17 @@ public class Client implements Runnable{
            matchedRules.add(matchedRulesJSON.get(i).toString());
         }
 
-        return new AnalysisOutcome(AnalysisType.STATIC, null, this.apkName, this.appDetails.getPackageName(), analysisOutcomeJSON.getBoolean("detected"), null, matchedRules);
+        return new AnalysisOutcome(AnalysisType.STATIC, null, this.appName, this.appDetails.getPackageName(), analysisOutcomeJSON.getBoolean("detected"), null, matchedRules);
+    }
+
+    // Métodos para mostrar el outcome de los diferentes análsis
+    // ---------------------------------------------------------
+
+    private void sendSimpleAnalysisOutcomeToView(AnalysisOutcome analysisOutcome){
+        this.analysisOutcomeManager.showAnalysisOutcome(analysisOutcome);
+    }
+
+    private void sendCompleteAnalysisOutcomeToView(AnalysisOutcome staticOutcome, AnalysisOutcome hashOutcome){
+        this.analysisOutcomeManager.showAnalysisOutcome(staticOutcome, hashOutcome);
     }
 }

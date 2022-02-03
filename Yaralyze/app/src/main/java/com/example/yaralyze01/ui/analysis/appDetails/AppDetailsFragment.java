@@ -68,11 +68,22 @@ public class AppDetailsFragment extends Fragment {
         this.staticAnalysisButton = view.findViewById(R.id.staticAnalysisButton);
         this.hashAnalysisButton = view.findViewById(R.id.hashAnalysisButton);
 
+        this.completeAnalysisButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AnalysisOutcomeManagerFragment fragment = new AnalysisOutcomeManagerFragment(getParentFragmentManager(), appDetails, AnalysisType.COMPLETE);
+                new Thread(new Client(fragment, appDetails, AnalysisType.COMPLETE)).start();
+
+                FragmentManager manager = getParentFragmentManager();
+                manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack("waiting").commit();
+            }
+        });
+
         this.staticAnalysisButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AnalysisOutcomeManagerFragment fragment = new AnalysisOutcomeManagerFragment(getParentFragmentManager(), appDetails, AnalysisType.STATIC);
-                new Thread(new Client(fragment, appDetails)).start();
+                new Thread(new Client(fragment, appDetails, AnalysisType.STATIC)).start();
 
                 FragmentManager manager = getParentFragmentManager();
                 manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack("waiting").commit();
@@ -82,14 +93,11 @@ public class AppDetailsFragment extends Fragment {
         this.hashAnalysisButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                YaralyzeDB db = YaralyzeDB.getInstance(getContext());
-                AnalysisOutcome analysisOutcome = db.getCoincidence(appDetails.getAppName(), appDetails.getPackageName(), appDetails.getSha256hash());
-
                 AnalysisOutcomeManagerFragment fragment = new AnalysisOutcomeManagerFragment(getParentFragmentManager(), appDetails, AnalysisType.HASH);
+                new Thread(new Client(fragment, appDetails, AnalysisType.HASH)).start();
+
                 FragmentManager manager = getParentFragmentManager();
                 manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack("waiting").commit();
-
-                fragment.showAnalysisOutcome(analysisOutcome);
             }
         });
 
