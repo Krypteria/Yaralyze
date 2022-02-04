@@ -3,11 +3,13 @@ package com.example.yaralyze01.client;
 
 import android.content.Context;
 
+import com.example.yaralyze01.MainActivity;
 import com.example.yaralyze01.YaralyzeDB;
 import com.example.yaralyze01.ui.analysis.appDetails.AppDetails;
 import com.example.yaralyze01.ui.analysis.outcomes.AnalysisOutcome;
 import com.example.yaralyze01.ui.analysis.outcomes.AnalysisOutcomeManagement;
 import com.example.yaralyze01.ui.common.AnalysisType;
+import com.example.yaralyze01.ui.loading.LoadingAppFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 
 public class Client implements Runnable{
@@ -52,6 +55,8 @@ public class Client implements Runnable{
     private byte[] buffer;
 
     private AppDetails appDetails;
+
+    private LoadingAppFragment loadingAppFragment;
     private Context context;
     private AnalysisOutcomeManagement analysisOutcomeManager;
 
@@ -82,11 +87,11 @@ public class Client implements Runnable{
     }
 
     //Constructor -> actualizar DB
-    public Client(Context context){
+    public Client(Context context, LoadingAppFragment fragment){
         this.context = context;
+        this.loadingAppFragment = fragment;
         this.requestType = UPDATE_DB_QUERY;
     }
-
 
     @Override
     public void run(){
@@ -97,8 +102,10 @@ public class Client implements Runnable{
                 this.sendStaticAnalysisRequest();
                 try {
                     this.sendSimpleAnalysisOutcomeToView(this.receiveServerAnalysisOutcome());
-                } catch (IOException | JSONException e) { //MEJORAR LAS EXCEPCIONES -> TOAST
-                    e.printStackTrace();
+                } catch (IOException e) {
+                    this.analysisOutcomeManager.showAnalysisException("Ha ocurrido un error al recibir el resultado del análisis estático.");
+                } catch (JSONException e) {
+                    this.analysisOutcomeManager.showAnalysisException("Ha ocurrido un error al procesar el resultado del análisis estático.");
                 }
                 break;
             case HASH_ANALYSIS_QUERY:
@@ -109,16 +116,18 @@ public class Client implements Runnable{
                 try {
                     this.performCompleteAnalysis();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    this.analysisOutcomeManager.showAnalysisException("Ha ocurrido un error al recibir el resultado del análisis completo.");
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    this.analysisOutcomeManager.showAnalysisException("Ha ocurrido un error al procesar el resultado del análisis completo.");
                 }
                 break;
             case UPDATE_DB_QUERY:
                 try {
+                    this.sendRequestType();
                     this.receiveServerDBHashes();
+                    this.loadingAppFragment.malwareHashesLoaded();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    this.loadingAppFragment.showClientExceptionDialog("Ha ocurrido un error al actualizar la base de datos de hashes.");
                 }
                 break;
             default:
@@ -126,12 +135,25 @@ public class Client implements Runnable{
         }
     }
 
-    private void connectSocket(){
+    private void connectSocket() {
         this.clientSocket = new Socket();
+        try {
+            this.clientSocket.setSoTimeout(5000);
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+
         try {
             this.clientSocket.connect(new InetSocketAddress(this.serverIP, this.PORT));
         } catch (IOException e) {
-            e.printStackTrace(); //MEJORAR LAS EXCEPCIONES -> TOAST
+            switch (this.requestType){
+                case UPDATE_DB_QUERY:
+                    this.loadingAppFragment.showClientExceptionDialog("Ha ocurrido un error al conectarse al servidor para actualizar la base de datos.");
+                    break;
+                default:
+                    this.analysisOutcomeManager.showAnalysisException("Ha ocurrido un error al conectarse al servidor.");
+                    break;
+            }
         }
     }
 
@@ -141,7 +163,7 @@ public class Client implements Runnable{
             this.bytesOutput.writeInt(this.requestType);
             this.bytesOutput.flush();
         } catch (IOException e) {
-            e.printStackTrace(); //MEJORAR LAS EXCEPCIONES -> TOAST
+            this.analysisOutcomeManager.showAnalysisException("Ha ocurrido un error al enviar la petición al servidor.");
         }
     }
 
@@ -164,14 +186,13 @@ public class Client implements Runnable{
     // Métodos relacionados con peticiones de análisis completo
     // --------------------------------------------------------
 
-    private void performCompleteAnalysis() throws IOException, JSONException { //MEJORAR
+    private void performCompleteAnalysis() throws IOException, JSONException {
         this.requestType = STATIC_ANALYSIS_QUERY;
         this.sendRequestType();
         this.sendStaticAnalysisRequest();
 
-
         AnalysisOutcome staticAnalysisOutcome = this.receiveServerAnalysisOutcome();
-        AnalysisOutcome hashAnalysisOutcome = this.receiveHashAnalysisOutcome(); //añadir logica del server
+        AnalysisOutcome hashAnalysisOutcome = this.receiveHashAnalysisOutcome();
 
         this.sendCompleteAnalysisOutcomeToView(staticAnalysisOutcome, hashAnalysisOutcome);
     }
@@ -200,8 +221,8 @@ public class Client implements Runnable{
             this.sendAPKHeader(appName, apk.length());
             this.sendAPK(apk);
         }
-        catch(IOException | JSONException e){ //MEJORAR LAS EXCEPCIONES -> TOAST
-            e.printStackTrace();
+        catch(IOException | JSONException e){
+            this.analysisOutcomeManager.showAnalysisException("Ha ocurrido un error al enviar los datos al servidor para realizar el análisis estático.");
         }
     }
 

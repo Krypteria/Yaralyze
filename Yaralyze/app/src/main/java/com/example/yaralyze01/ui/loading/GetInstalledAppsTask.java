@@ -45,7 +45,7 @@ public class GetInstalledAppsTask extends BackgroundTask {
 
     @Override
     public void onPostExecute() {
-        this.fragment.loadingComplete(this.installedApps);
+        this.fragment.installedAppsLoaded(this.installedApps);
     }
 
     private void getInstalledAppsIntent(boolean getSysPackages){

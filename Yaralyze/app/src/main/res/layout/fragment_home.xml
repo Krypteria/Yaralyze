@@ -42,19 +42,11 @@
             android:textStyle="bold"
             android:textColor="#252424"
             android:layout_gravity="center_vertical"
-            android:text="Yaralize">
+            android:text="Yaralyze">
         </TextView>
 
     </LinearLayout>
 
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s">
-    </TextView>
 
     <View
         android:layout_width="match_parent"

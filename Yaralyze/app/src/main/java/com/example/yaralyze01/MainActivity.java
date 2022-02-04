@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.yaralyze01.client.Client;
@@ -31,16 +32,19 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(this.toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
 
+        LoadingAppFragment fragment = new LoadingAppFragment();
 
         YaralyzeDB db = YaralyzeDB.getInstance(MainActivity.this);
         if(!db.hasMalwareHashes()){
             if(!this.isInternetAvailable()){
-                this.showNoInternetAvalaibleDialog();
+                this.showNoInternetAvailableDialog();
             }
-            new Thread(new Client(MainActivity.this)).start();
+            new Thread(new Client(MainActivity.this, fragment)).start();
+        }
+        else{
+            fragment.malwareHashesLoaded();
         }
 
-        LoadingAppFragment fragment = new LoadingAppFragment();
         FragmentManager manager = getSupportFragmentManager();
         manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack(null).commit();
     }
@@ -64,29 +68,13 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    /*@Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            System.out.println("ESTOY PULSANDO");
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }*/
-
     //No parece que detecte muy bien cuando hay internet y cuando no, hacer pruebas
     private boolean isInternetAvailable() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
     }
 
-    private void showNoInternetAvalaibleDialog(){
+    private void showNoInternetAvailableDialog(){
         Dialog dialog = new Dialog(MainActivity.this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);

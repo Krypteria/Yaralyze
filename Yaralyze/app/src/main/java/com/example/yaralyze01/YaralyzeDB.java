@@ -360,8 +360,6 @@ public class YaralyzeDB extends SQLiteOpenHelper {
                     case AnalysisType.STATIC:
                         matchedRules = this.getMatchedRules(cursor.getInt(0));
                         break;
-                    case AnalysisType.COMPLETE:
-                        break;
                     default:
                         break;
                 }

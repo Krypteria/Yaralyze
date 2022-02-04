@@ -13,9 +13,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0160ba6b-57d3-4a86-acb0-2fc3ca671a96" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/dialog_client_exception.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/MainActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/YaralyzeDB.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/YaralyzeDB.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/reports/ReportListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/reports/ReportListFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/client/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/outcomes/AnalysisOutcomeManagement.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/outcomes/AnalysisOutcomeManagement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/outcomes/AnalysisOutcomeManagerFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/outcomes/AnalysisOutcomeManagerFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/loading/GetInstalledAppsTask.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/loading/GetInstalledAppsTask.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/loading/LoadingAppFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/loading/LoadingAppFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_home.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_home.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_installed_apps.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_installed_apps.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_loading_app.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_loading_app.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

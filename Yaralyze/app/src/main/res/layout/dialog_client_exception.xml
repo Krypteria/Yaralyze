@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="20dp"
+    android:padding="10dp"
+    android:layout_gravity="center_horizontal">
+
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:layout_gravity="center_horizontal"
+        android:textSize="22dp"
+        android:text="Ha ocurrido un error">
+    </TextView>
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="20dp">
+    </Space>
+
+    <TextView
+        android:id="@+id/clientExceptionText"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:textColor="#646464"
+        android:layout_gravity="center_horizontal"
+        android:textSize="18dp"
+        android:text="">
+    </TextView>
+    
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="20dp">
+    </Space>
+
+    <Button
+        android:id="@+id/clientExceptionOkButton"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="OK">
+    </Button>
+</LinearLayout>

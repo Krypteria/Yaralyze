@@ -1,5 +1,6 @@
 package com.example.yaralyze01.ui.analysis.outcomes;
 
+import android.app.Dialog;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -8,10 +9,14 @@ import androidx.fragment.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.yaralyze01.MainActivity;
 import com.example.yaralyze01.R;
 import com.example.yaralyze01.YaralyzeDB;
 import com.example.yaralyze01.ui.analysis.appDetails.AppDetails;
@@ -25,7 +30,6 @@ public class AnalysisOutcomeManagerFragment extends Fragment implements Analysis
     private TextView appVersion;
     private int analysisType;
 
-    private ProgressBar analyzeProgressBar;
     private FragmentManager manager;
 
     public AnalysisOutcomeManagerFragment(FragmentManager manager, AppDetails appDetails, int analysisType){
@@ -46,7 +50,6 @@ public class AnalysisOutcomeManagerFragment extends Fragment implements Analysis
         this.appIcon = view.findViewById(R.id.appIcon);
         this.appName = view.findViewById(R.id.appName);
         this.appVersion = view.findViewById(R.id.appVersion);
-        this.analyzeProgressBar = view.findViewById(R.id.analyzeProgressBar);
 
         this.appIcon.setImageDrawable(this.appDetails.getAppIcon());
         this.appName.setText(this.appDetails.getAppName());
@@ -84,6 +87,11 @@ public class AnalysisOutcomeManagerFragment extends Fragment implements Analysis
          }
     }
 
+    @Override
+    public void showAnalysisException(String exception) {
+        this.showClientExceptionDialog(exception);
+    }
+
     private void insertSimpleAnalysisIntoDB(AnalysisOutcome analysisOutcome){
         YaralyzeDB db = YaralyzeDB.getInstance(getContext());
         db.insertAnalysisOutcome(analysisOutcome);
@@ -92,5 +100,30 @@ public class AnalysisOutcomeManagerFragment extends Fragment implements Analysis
     private void insertCompleteAnalysisIntoDB(AnalysisOutcome staticAnalysisOutcome, AnalysisOutcome hashAnalysisOutcome){
         YaralyzeDB db = YaralyzeDB.getInstance(getContext());
         db.insertCompleteAnalysisOutcome(staticAnalysisOutcome, hashAnalysisOutcome);
+    }
+
+    private void showClientExceptionDialog(String exceptionText){
+        getActivity().runOnUiThread(new Runnable() {
+               public void run() {
+                   Dialog dialog = new Dialog(getActivity());
+                   dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                   dialog.setCancelable(false);
+                   dialog.setContentView(R.layout.dialog_client_exception);
+
+                   TextView exceptionTextField = dialog.findViewById(R.id.clientExceptionText);
+                   exceptionTextField.setText(exceptionText);
+
+                   Button okButton = dialog.findViewById(R.id.clientExceptionOkButton);
+                   okButton.setOnClickListener(new View.OnClickListener() {
+                       @Override
+                       public void onClick(View v) {
+                           manager.popBackStack("waiting", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                           dialog.dismiss();
+                       }
+                   });
+
+                   dialog.show();
+               }
+        });
     }
 }

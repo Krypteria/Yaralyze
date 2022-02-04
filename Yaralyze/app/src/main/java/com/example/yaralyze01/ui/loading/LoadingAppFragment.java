@@ -1,5 +1,6 @@
 package com.example.yaralyze01.ui.loading;
 
+import android.app.Dialog;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -8,6 +9,9 @@ import androidx.fragment.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.yaralyze01.MainActivity;
 import com.example.yaralyze01.R;
@@ -17,6 +21,15 @@ import com.example.yaralyze01.ui.home.HomeFragment;
 import java.util.ArrayList;
 
 public class LoadingAppFragment extends Fragment {
+
+    private ArrayList<AppDetails> installedApps;
+    private boolean installedAppsLoaded;
+    private boolean malwareHashesLoaded;
+
+    public LoadingAppFragment(){
+        this.installedAppsLoaded = false;
+        this.malwareHashesLoaded = false;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,13 +43,26 @@ public class LoadingAppFragment extends Fragment {
         return view;
     }
 
-    public void loadingComplete(ArrayList<AppDetails> installedApps){
-        HomeFragment fragment = new HomeFragment(installedApps);
+    public void installedAppsLoaded(ArrayList<AppDetails> installedApps){
+        this.installedApps = installedApps;
+        this.installedAppsLoaded = true;
 
-        FragmentManager manager = getParentFragmentManager();
-        manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack(null).commitAllowingStateLoss();
+        this.loadApplication();
     }
 
+    public void malwareHashesLoaded(){
+        this.malwareHashesLoaded = true;
+        this.loadApplication();
+    }
+
+    public void loadApplication(){
+        if(this.malwareHashesLoaded && this.installedAppsLoaded){
+            HomeFragment fragment = new HomeFragment(this.installedApps);
+
+            FragmentManager manager = getParentFragmentManager();
+            manager.beginTransaction().replace(R.id.fragmentContainer, fragment, fragment.getTag()).addToBackStack(null).commitAllowingStateLoss();
+        }
+    }
     @Override
     public void onResume() {
         super.onResume();
@@ -46,5 +72,30 @@ public class LoadingAppFragment extends Fragment {
     public void onStop() {
         super.onStop();
         ((MainActivity)getActivity()).getSupportActionBar().show();
+    }
+
+    public void showClientExceptionDialog(String exceptionText){
+        getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                Dialog dialog = new Dialog(getContext());
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setCancelable(false);
+                dialog.setContentView(R.layout.dialog_client_exception);
+
+                TextView exceptionTextField = dialog.findViewById(R.id.clientExceptionText);
+                exceptionTextField.setText(exceptionText);
+
+                Button okButton = dialog.findViewById(R.id.clientExceptionOkButton);
+                okButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        System.exit(1);
+                    }
+                });
+
+                dialog.show();
+            }
+        });
     }
 }

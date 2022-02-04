@@ -89,7 +89,6 @@ class Server:
     
     def __proccessClientRequest(self, clientConnection) -> None:
         request = self.__receiveRequestType(clientConnection)
-        print(request)
         if request == STATIC_ANALYSIS_QUERY:
             self.__logger.info("Tramitando petición de análisis estático")
 
