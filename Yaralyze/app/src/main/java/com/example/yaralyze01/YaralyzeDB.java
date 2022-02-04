@@ -275,6 +275,64 @@ public class YaralyzeDB extends SQLiteOpenHelper {
         return matchedRules;
     }
 
+    public Pair<ArrayList<Pair<AnalysisOutcome, AnalysisOutcome>>, ArrayList<AnalysisOutcome>> getCompleteReports(){
+        ArrayList<Pair<AnalysisOutcome, AnalysisOutcome>> completeAnalysisOutcomes = new ArrayList<>();
+        ArrayList<AnalysisOutcome> analysisOutcomes = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String sql = "SELECT * FROM " + COMPLETE_ANALYSIS;
+        Cursor cursor = db.rawQuery(sql, null);
+
+        while(cursor.moveToNext()){
+            int idStaticAnalysisOutcome = cursor.getInt(1);
+            int idHashAnalysisOutcome = cursor.getInt(2);
+
+            AnalysisOutcome staticAnalysisOutcome = this.getAnalysisOutcomeByID(idStaticAnalysisOutcome);
+            AnalysisOutcome hashAnalysisOutcome = this.getAnalysisOutcomeByID(idHashAnalysisOutcome);
+
+            analysisOutcomes.add(staticAnalysisOutcome);
+            completeAnalysisOutcomes.add(new Pair<>(staticAnalysisOutcome, hashAnalysisOutcome));
+        }
+
+        return new Pair<>(completeAnalysisOutcomes, analysisOutcomes);
+    }
+
+    private AnalysisOutcome getAnalysisOutcomeByID(int idAnalysisOutcome){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String sql = "SELECT * FROM " + ANALYSIS_OUTCOME + " WHERE " + COLUMN_ID_OUTCOME_ANALYSIS_OUTCOME + " = " + idAnalysisOutcome;
+
+        Cursor cursor = db.rawQuery(sql, null);
+
+        if(cursor.moveToFirst()){
+            sql = "SELECT * FROM " + ANALYZED_APPS + " WHERE " + COLUMN_ID_APP_ANALYZED_APPS + " = " + cursor.getInt(1);
+            Cursor cursorAnalyzedApps = db.rawQuery(sql, null);
+
+            if (cursorAnalyzedApps.moveToFirst()) {
+                Drawable icon = null;
+                try {
+                    icon = this.context.getPackageManager().getApplicationIcon(cursorAnalyzedApps.getString(2));
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                ArrayList<String> matchedRules = null;
+                switch (cursor.getInt(2)) {
+                    case AnalysisType.STATIC:
+                        matchedRules = this.getMatchedRules(cursor.getInt(0));
+                        break;
+                    default:
+                        break;
+                }
+                return new AnalysisOutcome(cursor.getInt(2), icon, getAppName(cursor.getInt(1)), cursorAnalyzedApps.getString(2),
+                        cursor.getInt(3) == 1, cursor.getString(4), matchedRules);
+            }
+        }
+
+        return null;
+    }
+
     public ArrayList<AnalysisOutcome> getReports(int reportType){
         ArrayList<AnalysisOutcome> analysisOutcomes = new ArrayList<>();
 
@@ -326,7 +384,7 @@ public class YaralyzeDB extends SQLiteOpenHelper {
         while(cursor.moveToNext()){
             try {
                 Drawable icon = this.context.getPackageManager().getApplicationIcon(cursor.getString(2));
-                lastAnalyzedAppsIcons.add(new Pair<String, Drawable>(cursor.getString(1), icon));
+                lastAnalyzedAppsIcons.add(new Pair<>(cursor.getString(1), icon));
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
             }

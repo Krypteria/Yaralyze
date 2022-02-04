@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import com.example.yaralyze01.YaralyzeDB;
 import com.example.yaralyze01.ui.analysis.appDetails.AppDetails;
 import com.example.yaralyze01.ui.analysis.installedApps.OnAppListener;
 import com.example.yaralyze01.ui.analysis.outcomes.AnalysisOutcome;
+import com.example.yaralyze01.ui.analysis.outcomes.CompleteAnalysisOutcome;
 import com.example.yaralyze01.ui.analysis.outcomes.HashAnalysisOutcomeFragment;
 import com.example.yaralyze01.ui.analysis.outcomes.StaticAnalysisOutcomeFragment;
 import com.example.yaralyze01.ui.common.AnalysisType;
@@ -28,12 +30,20 @@ public class ReportListFragment extends Fragment implements OnAppListener {
     private ReportsAdapter reportsAdapter;
 
     private int reportType;
+    private ArrayList<Pair<AnalysisOutcome, AnalysisOutcome>> completeAnalysisOutcome;
     private ArrayList<AnalysisOutcome> analysisOutcomes;
     private ArrayList<AppDetails> installedApps;
 
     public ReportListFragment(int reportType, ArrayList<AppDetails> installedApps){
         this.reportType = reportType;
-        this.analysisOutcomes = new ArrayList<>();
+
+        if(reportType == AnalysisType.COMPLETE){
+            this.completeAnalysisOutcome = new ArrayList<>();
+        }
+        else{
+            this.analysisOutcomes = new ArrayList<>();
+        }
+
         this.installedApps = installedApps;
 
         getReports();
@@ -49,7 +59,9 @@ public class ReportListFragment extends Fragment implements OnAppListener {
                 this.analysisOutcomes = db.getReports(AnalysisType.STATIC);
                 break;
             case AnalysisType.COMPLETE:
-                this.analysisOutcomes = db.getReports(AnalysisType.COMPLETE);
+                Pair<ArrayList<Pair<AnalysisOutcome, AnalysisOutcome>>, ArrayList<AnalysisOutcome>> tmp = db.getCompleteReports();
+                this.completeAnalysisOutcome = tmp.first;
+                this.analysisOutcomes = tmp.second;
                 break;
             default:
                 break;
@@ -90,6 +102,8 @@ public class ReportListFragment extends Fragment implements OnAppListener {
                 manager.beginTransaction().replace(R.id.fragmentContainer, staticFragment, staticFragment.getTag()).addToBackStack(null).commit();
                 break;
             case AnalysisType.COMPLETE:
+                CompleteAnalysisOutcome completeFragment = new CompleteAnalysisOutcome(appDetails, this.completeAnalysisOutcome.get(position).first, this.completeAnalysisOutcome.get(position).second);
+                manager.beginTransaction().replace(R.id.fragmentContainer, completeFragment, completeFragment.getTag()).addToBackStack(null).commit();
                 break;
             default:
                 break;
