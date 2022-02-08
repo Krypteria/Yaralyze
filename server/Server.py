@@ -11,8 +11,13 @@ from datetime import datetime
 from YaralyzeServerDB import YaralyzeServerDB
 
 CLIENT_SAMPLES_PATH = ".\\Analysis_samples"
-PARTIAL_MALWARE_HASHES_PATH = ".\\Analysis_tools\\MalwareHashes\\Partial_hashes.txt"
 LOGS_DIRECTORY_PATH = ".\\Logs\\"
+ANALYSIS_TOOLS_PATH = ".\\Analysis_tools"
+HASHES_DIRECTORY_PATH = ANALYSIS_TOOLS_PATH + "\\MalwareHashes"
+YARA_RULES_DIRECTORY_PATH =  ANALYSIS_TOOLS_PATH + "\\YaraRules"
+PARTIAL_MALWARE_HASHES_PATH = ".\\Analysis_tools\\MalwareHashes\\Partial_hashes.txt"
+DATABASE_DIRECTORY = ".\\Database"
+
 LOGS_PATH = ".\\Logs\\serverLogs.log"
 
 EXTENSION = ".apk"
@@ -50,18 +55,43 @@ class Server:
         return local_ip
     
     def __createDirectories(self) -> None: #Añadir el resto de directorios que faltan
-        if(not os.path.isdir(LOGS_DIRECTORY_PATH)):
+        if not os.path.isdir(LOGS_DIRECTORY_PATH):
             try:
                 os.makedirs(LOGS_DIRECTORY_PATH)
             except:
                 print("[!] - Error al crear el el directorio de logs")
 
-        if(not os.path.isdir(CLIENT_SAMPLES_PATH)):
+        if not os.path.isdir(DATABASE_DIRECTORY):
+            try:
+                os.makedirs(DATABASE_DIRECTORY)
+            except:
+                self.__logger.error("[!] - Error al crear el el directorio de la base de datos")
+
+        if not os.path.isdir(ANALYSIS_TOOLS_PATH):
+            try:
+                os.makedirs(ANALYSIS_TOOLS_PATH)
+            except:
+                self.__logger.error("[!] - Error al crear el el directorio de herramientas")
+
+        if not os.path.isdir(YARA_RULES_DIRECTORY_PATH):
+            try:
+                os.makedirs(YARA_RULES_DIRECTORY_PATH)
+            except:
+                self.__logger.error("[!] - Error al crear el el directorio de reglas Yara")
+
+        if not os.path.isdir(HASHES_DIRECTORY_PATH):
+            try:
+                os.makedirs(HASHES_DIRECTORY_PATH)
+            except:
+                self.__logger.error("[!] - Error al crear el el directorio de hashes")
+
+        if not os.path.isdir(CLIENT_SAMPLES_PATH):
             try:
                 os.makedirs(CLIENT_SAMPLES_PATH)
             except:
                 print("[!] - Error al crear el el directorio de muestras")
                 self.__logger.error("Error al crear el el directorio de muestras")
+                
 
     def __setupLogConfig(self) -> None:
         if(not os.path.exists(LOGS_PATH)):

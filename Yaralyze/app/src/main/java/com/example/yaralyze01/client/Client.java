@@ -324,8 +324,8 @@ public class Client implements Runnable{
         this.clientSocket.close();
     }
 
-    // Métodos para mostrar el outcome de los diferentes análsis
-    // ---------------------------------------------------------
+    // Métodos para mostrar el outcome de los diferentes análisis
+    // ----------------------------------------------------------
 
     private void sendSimpleAnalysisOutcomeToView(AnalysisOutcome analysisOutcome){
         this.analysisOutcomeManager.showAnalysisOutcome(analysisOutcome);
