@@ -1,5 +1,6 @@
+from http import client
+import re
 import socket
-import threading
 import os
 import json
 import logging
@@ -7,15 +8,18 @@ import logging
 from Analyzer import Analyzer
 from datetime import datetime
 
-CLIENT_SAMPLES_PATH = ".\\AnalysisSamples\\ClientSamples\\"
-MALWARE_HASHES_PATH = ".\\AnalysisSamples\\MalwareHashes\\hashes.txt"
+from YaralyzeServerDB import YaralyzeServerDB
+
+CLIENT_SAMPLES_PATH = ".\\Analysis_samples"
+PARTIAL_MALWARE_HASHES_PATH = ".\\Analysis_tools\\MalwareHashes\\Partial_hashes.txt"
 LOGS_DIRECTORY_PATH = ".\\Logs\\"
 LOGS_PATH = ".\\Logs\\serverLogs.log"
 
 EXTENSION = ".apk"
 
 #Comunicacion con el cliente
-STATIC_ANALYSIS_QUERY = 0;
+STATIC_ANALYSIS_QUERY = 1;
+HASH_ANALYSIS_QUERY = 2;
 UPDATE_DB_QUERY = 3;
 
 BUFFERSIZE = 8192
@@ -28,9 +32,15 @@ class Server:
         self.__createDirectories()
         self.__setupLogConfig()
 
+        self.__db = YaralyzeServerDB()
+
         self.__analyzer = Analyzer()
         self.__startServer()
         self.__waitForConnections()
+
+
+    # Métodos relacionados con la configuración del servidor
+    # ------------------------------------------------------
 
     def __getCurrentAddress(self) -> str:
         tempSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -39,7 +49,7 @@ class Server:
         tempSocket.close()
         return local_ip
     
-    def __createDirectories(self) -> None:
+    def __createDirectories(self) -> None: #Añadir el resto de directorios que faltan
         if(not os.path.isdir(LOGS_DIRECTORY_PATH)):
             try:
                 os.makedirs(LOGS_DIRECTORY_PATH)
@@ -71,6 +81,9 @@ class Server:
         self.__logger.addHandler(handler)
         
 
+    # Métodos relacionados con la gestión de requests
+    # -----------------------------------------------
+
     def __startServer(self) -> None:
         try:
             self.__serverSocket.bind((self.__host, PORT))
@@ -81,42 +94,60 @@ class Server:
     def __waitForConnections(self) -> None:
         while(1):
             self.__serverSocket.listen(1)
+
             print("Servidor esperando peticiones en: " + str(self.__host) + ":" + str(PORT))
             self.__logger.info("Servidor esperando peticiones en: " + str(self.__host) + ":" + str(PORT))
+
             clientConnection, clientAddress = self.__serverSocket.accept()  
             self.__logger.info("Gestionando petición proveniente de " + str(clientAddress[0]) + ":" + str(clientAddress[1]))
+
             self.__proccessClientRequest(clientConnection)
     
     def __proccessClientRequest(self, clientConnection) -> None:
         request = self.__receiveRequestType(clientConnection)
         if request == STATIC_ANALYSIS_QUERY:
             self.__logger.info("Tramitando petición de análisis estático")
-
-            clientSamplePath = self.__proccessSample(clientConnection)
-            self.__sendAnalysisOutcome(clientConnection, self.__requestStaticAnalysis(clientSamplePath))
-            self.__removeClientSample(clientSamplePath)
-            self.__analyzer.cleanAnalysisOutcome()
+            self.__staticAnalysis(clientConnection)
+        elif request == HASH_ANALYSIS_QUERY:
+            self.__logger.info("Tramitando petición de análisis del hash")
+            print("Tramitando petición de análisis del hash")
+            self.__hashAnalysis(clientConnection)
         elif request == UPDATE_DB_QUERY:
             self.__logger.info("Tramitando petición de actualización de base de datos")
-
-            self.__sendMalwareHashes(clientConnection)
+            self.__sendPartialHashesDB(clientConnection)
         
 
     def __receiveRequestType(self, clientConnection):
         requestType = clientConnection.recv(1024)
         return int.from_bytes(requestType, "big")
 
+
+    # Métodos relacionados con peticiones de análisis del hash
+    # --------------------------------------------------------
+
+    def __hashAnalysis(self, clientConnection) -> None:
+        hash = json.loads(self.__receiveClientSampleHeader(clientConnection))["hash"]
+
+        malwareFound = self.__db.getHashCoincidence(hash)
+        analysisOutcome = {}
+        analysisOutcome["detected"] = malwareFound
+
+        self.__sendAnalysisOutcome(clientConnection, analysisOutcome)
+
+    
     # Métodos relacionados con peticiones de análisis estático
     # --------------------------------------------------------
 
-    def __proccessSample(self, clientConnection) -> str:
-        header = json.loads(self.__receiveSampleHeader(clientConnection))
+    def __staticAnalysis(self, clientConnection) -> None:
+        clientSamplePath = self.receiveClientSample(clientConnection)
+        self.__sendAnalysisOutcome(clientConnection, self.__startStaticAnalysis(clientSamplePath))
+        self.__removeClientSample(clientSamplePath)
+        self.__analyzer.cleanAnalysisOutcome()
+
+    def receiveClientSample(self, clientConnection) -> str:
+        header = json.loads(self.__receiveClientSampleHeader(clientConnection))
         clientSamplePath = self.__receiveSampleFile(clientConnection, header)
         return clientSamplePath
-    
-    def __receiveSampleHeader(self, clientConnection) -> str:
-        header = clientConnection.recv(1024).decode("utf-8")
-        return header[2:]
 
     def __receiveSampleFile(self, clientConnection, header) -> str:
         sampleName, sampleSize = header["name"], header["size"]
@@ -134,9 +165,17 @@ class Server:
         self.__logger.info("Fichero a analizar recibido correctamente desde el cliente")
         return CLIENT_SAMPLES_PATH + sampleName
     
-    def __requestStaticAnalysis(self, clientSamplePath) -> bool:
+    def __startStaticAnalysis(self, clientSamplePath) -> bool:
         print("[!] Iniciando análisis estático en el sample del cliente")
+        self.__logger.info("Iniciando análisis estático en " + clientSamplePath + EXTENSION)
         return self.__analyzer.executeStaticAnalysis(clientSamplePath + EXTENSION)
+
+
+    # Métodos comunes a todos los tipos de análisis
+    # ---------------------------------------------
+    
+    def __receiveClientSampleHeader(self, clientConnection) -> str:
+        return clientConnection.recv(1024).decode("utf-8")[2:]
 
     def __sendAnalysisOutcome(self, clientConnection, analysisOutcome):
         print("Enviando resultado del análisis al cliente")
@@ -149,11 +188,12 @@ class Server:
     def __removeClientSample(self, clientSamplePath):
         os.remove(clientSamplePath + EXTENSION)
 
+
     # Métodos relacionados con peticiones de actualización de la base de datos
     # ------------------------------------------------------------------------
     
-    def __sendMalwareHashes(self, clientConnection):
-        malwareHashesFile = open(MALWARE_HASHES_PATH, "r")
+    def __sendPartialHashesDB(self, clientConnection):
+        malwareHashesFile = open(PARTIAL_MALWARE_HASHES_PATH, "r")
         lines = malwareHashesFile.readlines()
 
         for line in lines:
@@ -164,4 +204,4 @@ class Server:
 
 
 if __name__ == "__main__":
-    threading.Thread(target=Server())
+    Server()

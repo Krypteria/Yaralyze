@@ -31,12 +31,9 @@ import java.util.ArrayList;
 
 public class Client implements Runnable{
 
-    private final int STATIC_ANALYSIS_QUERY = 0;
-    private final int HASH_ANALYSIS_QUERY = 1;
-    private final int COMPLETE_ANALYSIS_QUERY = 2;
     private final int UPDATE_DB_QUERY = 3;
 
-    private final String serverIP = "192.168.1.34"; // placeholder
+    private final String serverIP = "192.168.1.35"; // placeholder
     private final int PORT = 2020;
     private final int BUFFER_SIZE = 8192;
 
@@ -67,20 +64,21 @@ public class Client implements Runnable{
         this.appDetails = appDetails;
 
         switch (analysisType){
-            case AnalysisType.STATIC:
-                this.appPath = appDetails.getAppSrc();
-                this.appName = appDetails.getAppName();
-                this.requestType = STATIC_ANALYSIS_QUERY;
-                break;
-            case AnalysisType.HASH:
-                this.appHash = this.appDetails.getSha256hash();
-                this.requestType = HASH_ANALYSIS_QUERY;
-                break;
             case AnalysisType.COMPLETE:
                 this.appPath = appDetails.getAppSrc();
                 this.appName = appDetails.getAppName();
                 this.appHash = this.appDetails.getSha256hash();
-                this.requestType = COMPLETE_ANALYSIS_QUERY;
+                this.requestType = AnalysisType.COMPLETE;
+                break;
+            case AnalysisType.STATIC:
+                this.appPath = appDetails.getAppSrc();
+                this.appName = appDetails.getAppName();
+                this.requestType = AnalysisType.STATIC;
+                break;
+            case AnalysisType.HASH:
+                this.appHash = this.appDetails.getSha256hash();
+                this.requestType = AnalysisType.HASH;
+                break;
             default:
                 break;
         }
@@ -97,38 +95,17 @@ public class Client implements Runnable{
     public void run(){
         this.connectSocket();
         switch (this.requestType){
-            case STATIC_ANALYSIS_QUERY:
-                this.sendRequestType();
-                this.sendStaticAnalysisRequest();
-                try {
-                    this.sendSimpleAnalysisOutcomeToView(this.receiveServerAnalysisOutcome());
-                } catch (IOException e) {
-                    this.analysisOutcomeManager.showAnalysisException("Ha ocurrido un error al recibir el resultado del análisis estático.");
-                } catch (JSONException e) {
-                    this.analysisOutcomeManager.showAnalysisException("Ha ocurrido un error al procesar el resultado del análisis estático.");
-                }
+            case AnalysisType.COMPLETE:
+                this.completeAnalysis();
                 break;
-            case HASH_ANALYSIS_QUERY:
-                this.sendRequestType();
-                this.sendSimpleAnalysisOutcomeToView(this.receiveHashAnalysisOutcome());
+            case AnalysisType.STATIC:
+                this.staticAnalysis();
                 break;
-            case COMPLETE_ANALYSIS_QUERY:
-                try {
-                    this.performCompleteAnalysis();
-                } catch (IOException e) {
-                    this.analysisOutcomeManager.showAnalysisException("Ha ocurrido un error al recibir el resultado del análisis completo.");
-                } catch (JSONException e) {
-                    this.analysisOutcomeManager.showAnalysisException("Ha ocurrido un error al procesar el resultado del análisis completo.");
-                }
+            case AnalysisType.HASH:
+                this.hashAnalysis();
                 break;
             case UPDATE_DB_QUERY:
-                try {
-                    this.sendRequestType();
-                    this.receiveServerDBHashes();
-                    this.loadingAppFragment.malwareHashesLoaded();
-                } catch (IOException e) {
-                    this.loadingAppFragment.showClientExceptionDialog("Ha ocurrido un error al actualizar la base de datos de hashes.");
-                }
+                this.updateDB();
                 break;
             default:
                 break;
@@ -167,55 +144,49 @@ public class Client implements Runnable{
         }
     }
 
-    // Métodos relacionados con peticiones de actualización de la base de datos
-    // ------------------------------------------------------------------------
-
-    private void receiveServerDBHashes() throws IOException {
-        this.textInput = new BufferedReader(new InputStreamReader(this.clientSocket.getInputStream()));
-        YaralyzeDB db = YaralyzeDB.getInstance(this.context);
-
-        String hash;
-        while((hash = this.textInput.readLine()) != null) {
-            db.insertHash(hash);
-        }
-
-        this.textInput.close();
-        this.clientSocket.close();
-    }
-
     // Métodos relacionados con peticiones de análisis completo
     // --------------------------------------------------------
 
-    private void performCompleteAnalysis() throws IOException, JSONException {
-        this.requestType = STATIC_ANALYSIS_QUERY;
-        this.sendRequestType();
-        this.sendStaticAnalysisRequest();
+    private void completeAnalysis(){
+        try {
+            this.performCompleteAnalysis();
+        } catch (IOException e) {
+            this.analysisOutcomeManager.showAnalysisException("Ha ocurrido un error al recibir el resultado del análisis completo.");
+        } catch (JSONException e) {
+            this.analysisOutcomeManager.showAnalysisException("Ha ocurrido un error al procesar el resultado del análisis completo.");
+            e.printStackTrace();
+        }
+    }
 
+    private void performCompleteAnalysis() throws IOException, JSONException {
+        this.requestType = AnalysisType.STATIC;
+        this.sendStaticAnalysisRequest();
         AnalysisOutcome staticAnalysisOutcome = this.receiveServerAnalysisOutcome();
+
+        this.connectSocket();
+        this.requestType = AnalysisType.HASH;
+        this.sendHashAnalysisRequest();
         AnalysisOutcome hashAnalysisOutcome = this.receiveHashAnalysisOutcome();
 
         this.sendCompleteAnalysisOutcomeToView(staticAnalysisOutcome, hashAnalysisOutcome);
     }
 
-    // Métodos relacionados con peticiones de análisis de hash
-    // -------------------------------------------------------
-
-    private AnalysisOutcome receiveHashAnalysisOutcome(){
-        YaralyzeDB db = YaralyzeDB.getInstance(this.context);
-        AnalysisOutcome analysisOutcome = db.getCoincidence(this.appName, appDetails.getPackageName(), this.appHash);
-        /*if(!analysisOutcome.isMalwareDetected()){
-            //lanzariamos una petición al servidor
-        }*/
-
-        //Hay que crear nuevos metodos de comunicacion con el servidor y ver si puedo centralizar el receive simple
-
-        return analysisOutcome;
-    }
-
     // Métodos relacionados con peticiones de análisis estático
     // --------------------------------------------------------
 
+    private void staticAnalysis(){
+        this.sendStaticAnalysisRequest();
+        try {
+            this.sendSimpleAnalysisOutcomeToView(this.receiveServerAnalysisOutcome());
+        } catch (IOException e) {
+            this.analysisOutcomeManager.showAnalysisException("Ha ocurrido un error al recibir el resultado del análisis estático.");
+        } catch (JSONException e) {
+            this.analysisOutcomeManager.showAnalysisException("Ha ocurrido un error al procesar el resultado del análisis estático.");
+        }
+    }
+
     private void sendStaticAnalysisRequest(){
+        this.sendRequestType();
         File apk = new File(appPath);
         try{
             this.sendAPKHeader(appName, apk.length());
@@ -279,14 +250,78 @@ public class Client implements Runnable{
     private AnalysisOutcome buildAnalysisOutcomeObject(JSONObject analysisOutcomeJSON) throws JSONException {
         ArrayList<String> matchedRules = new ArrayList<>();
 
-        int numMatchedRules = analysisOutcomeJSON.getInt("numMatchedRules");
-        JSONArray matchedRulesJSON = analysisOutcomeJSON.getJSONArray("matchedRules");
+        if(analysisOutcomeJSON.has("numMatchedRules")){
+            int numMatchedRules = analysisOutcomeJSON.getInt("numMatchedRules");
+            JSONArray matchedRulesJSON = analysisOutcomeJSON.getJSONArray("matchedRules");
 
-        for(int i = 0; i < numMatchedRules; i++){
-           matchedRules.add(matchedRulesJSON.get(i).toString());
+            for(int i = 0; i < numMatchedRules; i++){
+                matchedRules.add(matchedRulesJSON.get(i).toString());
+            }
         }
 
-        return new AnalysisOutcome(AnalysisType.STATIC, null, this.appName, this.appDetails.getPackageName(), analysisOutcomeJSON.getBoolean("detected"), null, matchedRules);
+        return new AnalysisOutcome(this.requestType, null, this.appName, this.appDetails.getPackageName(), analysisOutcomeJSON.getBoolean("detected"), null, matchedRules);
+    }
+
+    // Métodos relacionados con peticiones de análisis de hash
+    // -------------------------------------------------------
+
+    private void hashAnalysis(){
+        this.sendSimpleAnalysisOutcomeToView(this.receiveHashAnalysisOutcome());
+    }
+
+    private AnalysisOutcome receiveHashAnalysisOutcome(){
+        YaralyzeDB db = YaralyzeDB.getInstance(this.context);
+        AnalysisOutcome analysisOutcome = db.getCoincidence(this.appName, appDetails.getPackageName(), this.appHash);
+        if(!analysisOutcome.isMalwareDetected()){
+            try {
+                this.sendHashAnalysisRequest();
+                analysisOutcome = this.receiveServerAnalysisOutcome();
+            } catch (IOException e) {
+                this.analysisOutcomeManager.showAnalysisException("Ha ocurrido un error al recibir el resultado del análisis del hash del servidor.");
+            } catch (JSONException e) {
+                this.analysisOutcomeManager.showAnalysisException("Ha ocurrido un error al procesar el resultado del análisis del hash del servidor.");
+            }
+
+        }
+
+        return analysisOutcome;
+    }
+
+    private void sendHashAnalysisRequest() throws IOException, JSONException {
+        this.sendRequestType();
+
+        JSONObject hashJSON = new JSONObject();
+        hashJSON.put("hash", this.appHash);
+
+        this.bytesOutput = new DataOutputStream(new BufferedOutputStream(this.clientSocket.getOutputStream()));
+        this.bytesOutput.writeUTF(hashJSON.toString());
+        this.bytesOutput.flush();
+    }
+
+    // Métodos relacionados con peticiones de actualización de la base de datos
+    // ------------------------------------------------------------------------
+
+    private void updateDB(){
+        try {
+            this.sendRequestType();
+            this.receiveServerDBHashes();
+            this.loadingAppFragment.malwareHashesLoaded();
+        } catch (IOException e) {
+            this.loadingAppFragment.showClientExceptionDialog("Ha ocurrido un error al actualizar la base de datos de hashes.");
+        }
+    }
+
+    private void receiveServerDBHashes() throws IOException {
+        this.textInput = new BufferedReader(new InputStreamReader(this.clientSocket.getInputStream()));
+        YaralyzeDB db = YaralyzeDB.getInstance(this.context);
+
+        String hash;
+        while((hash = this.textInput.readLine()) != null) {
+            db.insertHash(hash);
+        }
+
+        this.textInput.close();
+        this.clientSocket.close();
     }
 
     // Métodos para mostrar el outcome de los diferentes análsis

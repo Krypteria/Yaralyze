@@ -13,5 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
-/server/AnalysisSamples
+/server/Analysis_samples
+/server/Analysis_tools
+/server/Database
 /server/Logs

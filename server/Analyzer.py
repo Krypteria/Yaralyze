@@ -4,7 +4,7 @@ import logging
 
 from datetime import datetime
 
-YARA_RULES_PATH = ".\\AnalysisSamples\\YaraRules\\"
+YARA_RULES_PATH = ".\\Analysis_tools\\YaraRules\\"
 LOGS_PATH = ".\\Logs\\analyzerLogs.log"
 
 class Analyzer():
