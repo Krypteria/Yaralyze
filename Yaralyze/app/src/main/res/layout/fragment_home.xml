@@ -3,7 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_marginLeft="4dp"
+    android:layout_marginRight="4dp">
 
 <LinearLayout
     android:layout_width="match_parent"
@@ -23,7 +25,7 @@
             android:id="@+id/appIcon"
             android:src="@drawable/yara_logo"
             android:background="#000000"
-            android:padding="1dp"
+            android:padding="2dp"
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:layout_centerVertical="true"
@@ -47,86 +49,99 @@
 
     </LinearLayout>
 
-
-    <View
+    <Space
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginTop="10dp"
-        android:background="#C6C1C1">
-    </View>
+        android:layout_height="20dp">
+    </Space>
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/analyzeAppsButton"
         android:layout_width="match_parent"
         android:layout_height="98dp"
-        android:drawableLeft="@drawable/analyze_logo"
-        android:drawableRight="@drawable/right_black_arrow"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:layout_margin="4dp"
+        android:drawableRight="@drawable/analyze_logo"
+        android:background="@drawable/button_border"
         android:gravity="left|center_vertical"
-        android:backgroundTint="@color/white"
         android:textColor="@color/black"
+        android:textSize="15dp"
         android:text="Analizar aplicaciones"
     />
 
-    <View
+    <Space
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginTop="10dp"
-        android:background="#C6C1C1">
-    </View>
+        android:layout_height="2dp"></Space>
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/reportsButton"
         android:layout_width="match_parent"
         android:layout_height="98dp"
-        android:drawableLeft="@drawable/outcomes_logo"
-        android:drawableRight="@drawable/right_black_arrow"
+        android:layout_margin="4dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:drawableRight="@drawable/outcomes_logo"
         android:gravity="left|center_vertical"
-        android:backgroundTint="@color/white"
+        android:background="@drawable/button_border"
         android:textColor="@color/black"
+        android:textSize="15dp"
         android:text="Revisar informes"
     />
 
-    <View
+    <Space
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginTop="10dp"
-        android:background="#C6C1C1">
-    </View>
+        android:layout_height="15dp">
+    </Space>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="4dp"
         android:layout_marginTop="16dp"
         android:textColor="@color/black"
         android:textSize="17dp"
         android:text="Fecha del último análisis">
     </TextView>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginLeft="4dp"
+        android:background="@color/black">
+    </View>
+
     <TextView
         android:id="@+id/lastAnalysisDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="4dp"
         android:layout_marginTop="3dp"
         android:textColor="#646464"
         android:textSize="15dp"
         android:text="05 - 12 - 2021   13:30">
     </TextView>
 
-    <View
+    <Space
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="16dp"
-        android:background="#C6C1C1">
-    </View>
+        android:layout_height="15dp">
+    </Space>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="4dp"
         android:layout_marginTop="17dp"
         android:textColor="@color/black"
-        android:textSize="16dp"
+        android:textSize="17dp"
         android:text="Últimas aplicaciones analizadas">
     </TextView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginLeft="4dp"
+        android:background="@color/black">
+    </View>
 
     <Space
         android:layout_width="0dp"

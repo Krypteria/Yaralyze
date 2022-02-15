@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.3828125" />
+        <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/drawable/button_border.xml" value="0.3828125" />
         <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/drawable/ic_launcher_background.xml" value="0.3828125" />
         <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/layout/activity_main.xml" value="0.36666666666666664" />
         <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/layout/app_header.xml" value="0.36666666666666664" />
@@ -14,7 +15,7 @@
         <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/layout/fragment_app_details.xml" value="0.22135416666666666" />
         <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/layout/fragment_complete_analysis_outcome.xml" value="0.36666666666666664" />
         <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/layout/fragment_hash_analysis_outcome.xml" value="0.2625" />
-        <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/layout/fragment_home.xml" value="0.36666666666666664" />
+        <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/layout/fragment_home.xml" value="0.5105148658448151" />
         <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/layout/fragment_installed_apps.xml" value="0.36666666666666664" />
         <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/layout/fragment_loading_app.xml" value="0.36666666666666664" />
         <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/layout/fragment_report_list.xml" value="0.36666666666666664" />
@@ -27,7 +28,7 @@
         <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/layout/report_item.xml" value="0.6346967559943583" />
         <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/layout/static_outcome.xml" value="0.34375" />
         <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/layout/toolbar.xml" value="0.36666666666666664" />
-        <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/menu/toolbar_menu.xml" value="0.25" />
+        <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/menu/toolbar_menu.xml" value="0.5" />
         <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.3828125" />
         <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/app/src/main/res/layout/activity_main.xml" value="0.35104166666666664" />
         <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/app/src/main/res/layout/activity_static_analysis.xml" value="0.2222222222222222" />
