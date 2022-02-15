@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.3828125" />
+        <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/drawable/analysis_button_border.xml" value="0.3828125" />
         <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/drawable/button_border.xml" value="0.3828125" />
         <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/drawable/ic_launcher_background.xml" value="0.3828125" />
         <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/drawable/outcome_border.xml" value="0.3828125" />
@@ -13,7 +14,7 @@
         <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/layout/dialog_client_exception.xml" value="0.36666666666666664" />
         <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/layout/dialog_no_internet_avalaible.xml" value="0.36666666666666664" />
         <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/layout/fragment_analysis_outcome.xml" value="0.36666666666666664" />
-        <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/layout/fragment_app_details.xml" value="0.22135416666666666" />
+        <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/layout/fragment_app_details.xml" value="0.5" />
         <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/layout/fragment_complete_analysis_outcome.xml" value="0.36666666666666664" />
         <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/layout/fragment_hash_analysis_outcome.xml" value="0.2625" />
         <entry key="..\:/Biblioteca/Documentos/Github/Yaralyze-TFG/Yaralyze/app/src/main/res/layout/fragment_home.xml" value="0.5105148658448151" />

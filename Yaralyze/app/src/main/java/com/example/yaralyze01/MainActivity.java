@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentManager;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.Menu;

@@ -1,33 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="4dp"
     xmlns:tools="http://schemas.android.com/tools">
+    
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/black"
+        android:background="@color/purple_500"
+        android:textSize="18dp"
+        android:text="ANALISIS DEL HASH" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="10dp"
         android:textColor="@color/black"
         android:textSize="18dp"
         android:text="Resultado del análisis del hash" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/black">
+    </View>
 
     <TextView
         android:id="@+id/hashMalwareDetectionText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:textColor="#646464"
         android:textSize="15dp"/>
 
-    <View
-        android:id="@+id/ruleCoincidenceSeparator"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginTop="10dp"
-        android:background="#C6C1C1">
-    </View>
-
-</merge>
+</LinearLayout>

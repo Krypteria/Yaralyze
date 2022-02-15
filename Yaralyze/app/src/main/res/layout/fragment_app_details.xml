@@ -9,7 +9,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="4dp"
+    android:layout_marginLeft="4dp"
+    android:layout_marginRight="4dp"
+
     tools:context=".ui.analysis.appDetails.AppDetailsFragment">
 
     <include
@@ -20,135 +22,172 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_margin="4dp"
+        android:layout_marginTop="22dp"
         android:orientation="horizontal">
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/completeAnalysisButton"
-            android:layout_width="120dp"
+            android:layout_width="126dp"
+            android:background="@drawable/analysis_button_border"
             android:layout_height="wrap_content"
+            android:textColor="@color/white"
             android:text="Análisis completo"
-            android:textSize="12dp"></Button>
+            android:textSize="12dp">
+
+        </androidx.appcompat.widget.AppCompatButton>
 
         <Space
-            android:layout_width="12dp"
+            android:layout_width="10dp"
             android:layout_height="0dp">
         </Space>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/staticAnalysisButton"
-            android:layout_width="120dp"
+            android:layout_width="126dp"
             android:layout_height="wrap_content"
+            android:background="@drawable/analysis_button_border"
+            android:textColor="@color/white"
             android:textSize="12dp"
             android:text="Análisis estático">
-        </Button>
+        </androidx.appcompat.widget.AppCompatButton>
 
         <Space
-            android:layout_width="12dp"
+            android:layout_width="10dp"
             android:layout_height="0dp">
         </Space>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/hashAnalysisButton"
             android:layout_width="120dp"
             android:layout_height="wrap_content"
+            android:background="@drawable/analysis_button_border"
+            android:textColor="@color/white"
             android:textSize="12dp"
             android:text="Analizar Hash">
-        </Button>
+        </androidx.appcompat.widget.AppCompatButton>
 
     </LinearLayout>
 
-    <View
+
+    <Space
         android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:layout_marginTop="16dp"
-        android:background="#C6C1C1">
-    </View>
+        android:layout_height="30dp">
+
+    </Space>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="4dp"
         android:layout_marginTop="16dp"
         android:textColor="@color/black"
         android:textSize="18dp"
         android:text="Paquete" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginLeft="4dp"
+        android:background="@color/black">
+    </View>
+
     <TextView
         android:id="@+id/packageName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="4dp"
         android:textColor="#646464"
         android:textSize="16dp"
-        tools:text="Package name" />
+        android:text="Package name" />
 
-    <View
+    <Space
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginTop="16dp"
-        android:background="#C6C1C1">
-    </View>
+        android:layout_height="15dp">
+    </Space>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_margin="4dp"
         android:textColor="@color/black"
         android:textSize="18dp"
         android:text="Ruta" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginLeft="4dp"
+        android:background="@color/black">
+    </View>
 
     <TextView
         android:id="@+id/sourceDir"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="4dp"
         android:textColor="#646464"
         android:textSize="16dp"
-        tools:text="Source direction" />
+        android:text="Source direction" />
 
-    <View
+    <Space
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginTop="16dp"
-        android:background="#C6C1C1">
-    </View>
+        android:layout_height="15dp">
+    </Space>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_margin="4dp"
         android:textColor="@color/black"
         android:textSize="18dp"
         android:text="Instalada por primera vez" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginLeft="4dp"
+        android:background="@color/black">
+    </View>
 
     <TextView
         android:id="@+id/firstTimeInstalled"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="4dp"
         android:textColor="#646464"
         android:textSize="16dp"
-        tools:text="20/10/2021 17:33:10" />
+        android:text="20/10/2021 17:33:10" />
 
-    <View
+
+    <Space
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="16dp"
-        android:background="#C6C1C1">
-    </View>
+        android:layout_height="15dp">
+    </Space>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_margin="4dp"
         android:textColor="@color/black"
         android:textSize="18dp"
         android:text="Actualizada por última vez" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginLeft="4dp"
+        android:background="@color/black">
+    </View>
 
     <TextView
         android:id="@+id/lastTimeUpdated"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="4dp"
         android:textColor="#646464"
         android:textSize="16dp"
-        tools:text="20/10/2021 17:33:10" />
+        android:text="20/10/2021 17:33:10" />
 
 
     <include
