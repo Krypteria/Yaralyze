@@ -33,7 +33,7 @@ public class Client implements Runnable{
 
     private final int UPDATE_DB_QUERY = 3;
 
-    private final String serverIP = "192.168.1.35"; // placeholder
+    private final String serverIP = "192.168.1.37"; // placeholder
     private final int PORT = 2020;
     private final int BUFFER_SIZE = 8192;
 
@@ -76,7 +76,8 @@ public class Client implements Runnable{
                 this.requestType = AnalysisType.STATIC;
                 break;
             case AnalysisType.HASH:
-                this.appHash = this.appDetails.getSha256hash();
+                this.appName = appDetails.getAppName();
+                this.appHash = appDetails.getSha256hash();
                 this.requestType = AnalysisType.HASH;
                 break;
             default:
@@ -163,6 +164,7 @@ public class Client implements Runnable{
         this.sendStaticAnalysisRequest();
         AnalysisOutcome staticAnalysisOutcome = this.receiveServerAnalysisOutcome();
 
+        
         this.connectSocket();
         this.requestType = AnalysisType.HASH;
         this.sendHashAnalysisRequest();
@@ -278,6 +280,7 @@ public class Client implements Runnable{
                 analysisOutcome = this.receiveServerAnalysisOutcome();
             } catch (IOException e) {
                 this.analysisOutcomeManager.showAnalysisException("Ha ocurrido un error al recibir el resultado del análisis del hash del servidor.");
+                e.printStackTrace();
             } catch (JSONException e) {
                 this.analysisOutcomeManager.showAnalysisException("Ha ocurrido un error al procesar el resultado del análisis del hash del servidor.");
             }

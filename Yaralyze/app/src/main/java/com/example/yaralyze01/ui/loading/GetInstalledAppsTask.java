@@ -19,6 +19,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class GetInstalledAppsTask extends BackgroundTask {
     private LoadingAppFragment fragment;
@@ -59,6 +60,8 @@ public class GetInstalledAppsTask extends BackgroundTask {
                 this.installedApps.add(installedApp);
             }
         }
+
+        Collections.sort(this.installedApps, (app2, app1) -> app2.getAppName().compareToIgnoreCase(app1.getAppName()));
     }
 
     private void getAppHashesIntent(AppDetails app){

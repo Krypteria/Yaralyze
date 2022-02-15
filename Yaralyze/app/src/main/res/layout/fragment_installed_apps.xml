@@ -5,6 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+    
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="25dp">
+    </Space>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewApps"

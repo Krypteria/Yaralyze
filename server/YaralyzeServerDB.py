@@ -1,7 +1,4 @@
 import sqlite3
-from xmlrpc.client import Boolean
-
-from itsdangerous import json
 
 DATABASE_NAME = ".\\Database\\Yaralyze_server.db"
 
@@ -29,7 +26,7 @@ class YaralyzeServerDB:
         cursor.close()
         self.db.commit()
 
-    def __hasMalwareHashes(self, cursor) -> Boolean:
+    def __hasMalwareHashes(self, cursor) -> bool:
         sql = "SELECT count(*) FROM " + MALWARE_HASHES
         cursor.execute(sql)
 
@@ -43,7 +40,7 @@ class YaralyzeServerDB:
             cursor.execute("INSERT INTO " + MALWARE_HASHES + " (" + COLUMN_HASH_MALWARE_HASHES + ") VALUES(?)", (line,))
 
 
-    def getHashCoincidence(self, hash) -> Boolean:
+    def getHashCoincidence(self, hash) -> bool:
         cursor = self.db.cursor()
         
         sql = "SELECT * FROM " + MALWARE_HASHES + " WHERE " + COLUMN_HASH_MALWARE_HASHES + " = " + "'" + hash + "'"
