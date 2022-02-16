@@ -124,6 +124,9 @@ public class YaralyzeDB extends SQLiteOpenHelper {
         this.context.deleteDatabase(DATABASE_NAME);
     }
 
+    //Metodos para insertar datos en la DB
+    //------------------------------------
+
     public boolean insertHash(String hash){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -137,27 +140,6 @@ public class YaralyzeDB extends SQLiteOpenHelper {
         }
 
         return true;
-    }
-
-    public AnalysisOutcome getCoincidence(String appName, String packageName, String hash){
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        String sql = "SELECT * FROM " + MALWARE_HASHES + " WHERE " + COLUMN_HASH_MALWARE_HASHES +
-                        " = " + "'" + hash + "'";
-        Cursor cursor = db.rawQuery(sql, null);
-
-        AnalysisOutcome AnalysisOutcome;
-
-        if(cursor.moveToFirst()){
-            AnalysisOutcome = new AnalysisOutcome(cursor.getInt(0), AnalysisType.HASH, null, appName, packageName,true, null, null);
-        }
-        else{
-            AnalysisOutcome = new AnalysisOutcome(-1, AnalysisType.HASH, null, appName, packageName,false, null, null);
-        }
-
-        cursor.close();
-
-        return AnalysisOutcome;
     }
 
     public void insertAnalysisOutcome(AnalysisOutcome AnalysisOutcome){
@@ -230,6 +212,30 @@ public class YaralyzeDB extends SQLiteOpenHelper {
         }
     }
 
+    //Metodos para obtener datos en la DB
+    //-----------------------------------
+
+    public AnalysisOutcome getCoincidence(String appName, String packageName, String hash){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String sql = "SELECT * FROM " + MALWARE_HASHES + " WHERE " + COLUMN_HASH_MALWARE_HASHES +
+                        " = " + "'" + hash + "'";
+        Cursor cursor = db.rawQuery(sql, null);
+
+        AnalysisOutcome AnalysisOutcome;
+
+        if(cursor.moveToFirst()){
+            AnalysisOutcome = new AnalysisOutcome(cursor.getInt(0), AnalysisType.HASH, null, appName, packageName,true, null, null);
+        }
+        else{
+            AnalysisOutcome = new AnalysisOutcome(-1, AnalysisType.HASH, null, appName, packageName,false, null, null);
+        }
+
+        cursor.close();
+
+        return AnalysisOutcome;
+    }
+
     public String getLastAnalysisDate(){
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -292,7 +298,11 @@ public class YaralyzeDB extends SQLiteOpenHelper {
             AnalysisOutcome staticAnalysisOutcome = this.getAnalysisOutcomeByID(idStaticAnalysisOutcome);
             AnalysisOutcome hashAnalysisOutcome = this.getAnalysisOutcomeByID(idHashAnalysisOutcome);
 
-            analysisOutcomes.add(staticAnalysisOutcome);
+            AnalysisOutcome completeAnalysisOutcome = staticAnalysisOutcome;
+            completeAnalysisOutcome.setAnalysisType(AnalysisType.COMPLETE);
+            completeAnalysisOutcome.setId(cursor.getInt(0));
+
+            analysisOutcomes.add(completeAnalysisOutcome);
             completeAnalysisOutcomes.add(new Pair<>(staticAnalysisOutcome, hashAnalysisOutcome));
         }
 
@@ -345,33 +355,50 @@ public class YaralyzeDB extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(sql, null);
 
         while(cursor.moveToNext()){
-            sql = "SELECT * FROM " + ANALYZED_APPS + " WHERE " + COLUMN_ID_APP_ANALYZED_APPS + " = " + cursor.getInt(1);
-            Cursor cursorAnalyzedApps = db.rawQuery(sql, null);
+            if(!isCompleteOutcomePart(cursor.getInt(0), reportType)) {
+                sql = "SELECT * FROM " + ANALYZED_APPS + " WHERE " + COLUMN_ID_APP_ANALYZED_APPS + " = " + cursor.getInt(1);
+                Cursor cursorAnalyzedApps = db.rawQuery(sql, null);
 
-            if(cursorAnalyzedApps.moveToFirst()){
-                Drawable icon = null;
-                try {
-                    icon = this.context.getPackageManager().getApplicationIcon(cursorAnalyzedApps.getString(2));
-                } catch (PackageManager.NameNotFoundException e) {
-                    e.printStackTrace();
+                if (cursorAnalyzedApps.moveToFirst()) {
+                    Drawable icon = null;
+                    try {
+                        icon = this.context.getPackageManager().getApplicationIcon(cursorAnalyzedApps.getString(2));
+                    } catch (PackageManager.NameNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                    ArrayList<String> matchedRules = null;
+                    switch (reportType) {
+                        case AnalysisType.STATIC:
+                            matchedRules = this.getMatchedRules(cursor.getInt(0));
+                            break;
+                        default:
+                            break;
+                    }
+
+                    AnalysisOutcome analysisOutcome = new AnalysisOutcome(cursor.getInt(0), reportType, icon, getAppName(cursor.getInt(1)), cursorAnalyzedApps.getString(2),
+                            cursor.getInt(3) == 1, cursor.getString(4), matchedRules);
+                    analysisOutcomes.add(analysisOutcome);
                 }
-
-                ArrayList<String> matchedRules = null;
-                switch (reportType){
-                    case AnalysisType.STATIC:
-                        matchedRules = this.getMatchedRules(cursor.getInt(0));
-                        break;
-                    default:
-                        break;
-                }
-
-                AnalysisOutcome analysisOutcome = new AnalysisOutcome(cursor.getInt(0), reportType, icon, getAppName(cursor.getInt(1)), cursorAnalyzedApps.getString(2),
-                                                            cursor.getInt(3) == 1, cursor.getString(4), matchedRules);
-                analysisOutcomes.add(analysisOutcome);
             }
         }
 
         return analysisOutcomes;
+    }
+
+    private boolean isCompleteOutcomePart(int id, int reportType){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String sql = "";
+        if(reportType == AnalysisType.STATIC){
+            sql = "SELECT * FROM " + COMPLETE_ANALYSIS + " WHERE " + COLUMN_ID_STATIC_ANALYSIS + " = " + id;
+        }
+        else if(reportType == AnalysisType.HASH){
+            sql = "SELECT * FROM " + COMPLETE_ANALYSIS + " WHERE " + COLUMN_ID_HASH_ANALYSIS + " = " + id;
+        }
+
+        Cursor cursor = db.rawQuery(sql, null);
+        return cursor.moveToFirst();
     }
 
     public ArrayList<Pair<String, Drawable>> getLastAnalyzedAppsIcons(){
@@ -407,57 +434,6 @@ public class YaralyzeDB extends SQLiteOpenHelper {
         }
     }
 
-    //Metodos para eliminar informacion de la DB
-    //------------------------------------------
-
-    public void deleteOutcome(AnalysisOutcome outcome){
-        switch(outcome.getAnalysisType()){
-            case AnalysisType.COMPLETE:
-                this.deleteCompleteOutcome(outcome.getId());
-                break;
-            case AnalysisType.STATIC:
-                this.deleteStaticOutcome(outcome.getId());
-                break;
-            case AnalysisType.HASH:
-                this.deleteHashOutcome(outcome.getId());
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void deleteCompleteOutcome(int id){
-        SQLiteDatabase db = this.getReadableDatabase();
-        String sql = "SELECT * FROM " + COMPLETE_ANALYSIS + " WHERE " + COLUMN_ID_COMPLETE_ANALYSIS +
-                        " = " + id;
-        Cursor cursor = db.rawQuery(sql, null);
-
-        if(cursor.moveToFirst()){
-            this.deleteStaticOutcome(cursor.getInt(1));
-            this.deleteHashOutcome(cursor.getInt(2));
-            cursor.close();
-
-            db = this.getWritableDatabase();
-            db.delete(COMPLETE_ANALYSIS, COLUMN_ID_COMPLETE_ANALYSIS + " = "  + id, null);
-        }
-    }
-
-    private void deleteStaticOutcome(int id){
-        this.deleteCoincidences(id);
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(ANALYSIS_OUTCOME, COLUMN_ID_OUTCOME_ANALYSIS_OUTCOME + " = " + id, null);
-    }
-
-    private void deleteCoincidences(int id){
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(COINCIDENCES, COLUMN_ID_COINCIDENCE_COINCIDENCES + " = " + id, null);
-    }
-
-    private void deleteHashOutcome(int id){
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(ANALYSIS_OUTCOME, COLUMN_ID_OUTCOME_ANALYSIS_OUTCOME + " = " + id, null);
-    }
-
     //Metodos generales
     //-----------------
 
@@ -491,5 +467,57 @@ public class YaralyzeDB extends SQLiteOpenHelper {
 
         cursor.close();
         return index;
+    }
+
+
+    //Metodos para eliminar informacion de la DB
+    //------------------------------------------
+
+    public void deleteOutcome(AnalysisOutcome outcome){
+        switch(outcome.getAnalysisType()){
+            case AnalysisType.COMPLETE:
+                this.deleteCompleteOutcome(outcome.getId());
+                break;
+            case AnalysisType.STATIC:
+                this.deleteStaticOutcome(outcome.getId());
+                break;
+            case AnalysisType.HASH:
+                this.deleteHashOutcome(outcome.getId());
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void deleteCompleteOutcome(int id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT * FROM " + COMPLETE_ANALYSIS + " WHERE " + COLUMN_ID_COMPLETE_ANALYSIS +
+                        " = " + id;
+        Cursor cursor = db.rawQuery(sql, null);
+
+        if(cursor.moveToFirst()){
+            this.deleteStaticOutcome(cursor.getInt(1));
+            this.deleteHashOutcome(cursor.getInt(2));
+
+            db = this.getWritableDatabase();
+            db.delete(COMPLETE_ANALYSIS, COLUMN_ID_COMPLETE_ANALYSIS + " = "  + cursor.getInt(0), null);
+            cursor.close();
+        }
+    }
+
+    private void deleteStaticOutcome(int id){
+        this.deleteCoincidences(id);
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(ANALYSIS_OUTCOME, COLUMN_ID_OUTCOME_ANALYSIS_OUTCOME + " = " + id, null);
+    }
+
+    private void deleteCoincidences(int id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(COINCIDENCES, COLUMN_ID_OUTCOME_COINCIDENCES + " = " + id, null);
+    }
+
+    private void deleteHashOutcome(int id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(ANALYSIS_OUTCOME, COLUMN_ID_OUTCOME_ANALYSIS_OUTCOME + " = " + id, null);
     }
 }

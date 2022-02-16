@@ -43,6 +43,14 @@ public class AnalysisOutcome {
         return dateFormat.format(new Date());
     }
 
+    public void setAnalysisType(int type){
+        this.analysisType = type;
+    }
+
+    public void setId(int id){
+        this.id = id;
+    }
+
     public int getId(){
         return this.id;
     }
