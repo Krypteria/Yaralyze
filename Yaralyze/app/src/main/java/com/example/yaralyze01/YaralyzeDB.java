@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.drawable.Drawable;
+import android.media.midi.MidiManager;
 import android.util.Pair;
 
 import androidx.annotation.Nullable;
@@ -364,7 +365,6 @@ public class YaralyzeDB extends SQLiteOpenHelper {
                         break;
                 }
 
-                //SI ES COMPLETO DEBERIA DEVOLVER EL ID DE LA TABLA COMPLETO,MODIFICAR
                 AnalysisOutcome analysisOutcome = new AnalysisOutcome(cursor.getInt(0), reportType, icon, getAppName(cursor.getInt(1)), cursorAnalyzedApps.getString(2),
                                                             cursor.getInt(3) == 1, cursor.getString(4), matchedRules);
                 analysisOutcomes.add(analysisOutcome);
@@ -411,16 +411,55 @@ public class YaralyzeDB extends SQLiteOpenHelper {
     //------------------------------------------
 
     public void deleteOutcome(AnalysisOutcome outcome){
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        //Miro el tipo de outcome
-        //Si es completo o estatico tengo que eliminar coincidencias también
-        //Si es completo tengo que quitar la fila correspondiente en la c
-
-        //
-
-
+        switch(outcome.getAnalysisType()){
+            case AnalysisType.COMPLETE:
+                this.deleteCompleteOutcome(outcome.getId());
+                break;
+            case AnalysisType.STATIC:
+                this.deleteStaticOutcome(outcome.getId());
+                break;
+            case AnalysisType.HASH:
+                this.deleteHashOutcome(outcome.getId());
+                break;
+            default:
+                break;
+        }
     }
+
+    private void deleteCompleteOutcome(int id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT * FROM " + COMPLETE_ANALYSIS + " WHERE " + COLUMN_ID_COMPLETE_ANALYSIS +
+                        " = " + id;
+        Cursor cursor = db.rawQuery(sql, null);
+
+        if(cursor.moveToFirst()){
+            this.deleteStaticOutcome(cursor.getInt(1));
+            this.deleteHashOutcome(cursor.getInt(2));
+            cursor.close();
+
+            db = this.getWritableDatabase();
+            db.delete(COMPLETE_ANALYSIS, COLUMN_ID_COMPLETE_ANALYSIS + " = "  + id, null);
+        }
+    }
+
+    private void deleteStaticOutcome(int id){
+        this.deleteCoincidences(id);
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(ANALYSIS_OUTCOME, COLUMN_ID_OUTCOME_ANALYSIS_OUTCOME + " = " + id, null);
+    }
+
+    private void deleteCoincidences(int id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(COINCIDENCES, COLUMN_ID_COINCIDENCE_COINCIDENCES + " = " + id, null);
+    }
+
+    private void deleteHashOutcome(int id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(ANALYSIS_OUTCOME, COLUMN_ID_OUTCOME_ANALYSIS_OUTCOME + " = " + id, null);
+    }
+
+    //Metodos generales
+    //-----------------
 
     private Cursor getIndexFrom(String tableName, String idColumnName, String item){
         SQLiteDatabase db = this.getReadableDatabase();
