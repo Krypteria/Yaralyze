@@ -14,8 +14,12 @@
   <component name="ChangeListManager">
     <list default="true" id="0160ba6b-57d3-4a86-acb0-2fc3ca671a96" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/YaralyzeDB.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/YaralyzeDB.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/client/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/Server.py" beforeDir="false" afterPath="$PROJECT_DIR$/../server/Server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/outcomes/AnalysisOutcome.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/outcomes/AnalysisOutcome.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/reports/ReportsAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/reports/ReportsAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/reports/ReportsViewHolder.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/yaralyze01/ui/analysis/reports/ReportsViewHolder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/report_item.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/report_item.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

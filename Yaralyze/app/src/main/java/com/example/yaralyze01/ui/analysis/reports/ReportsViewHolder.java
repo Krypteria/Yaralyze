@@ -1,6 +1,7 @@
 package com.example.yaralyze01.ui.analysis.reports;
 
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,6 +17,7 @@ public class ReportsViewHolder extends RecyclerView.ViewHolder implements View.O
     private TextView appName;
     private TextView reportDate;
     private TextView reportDetection;
+    private ImageButton deleteButton;
 
     private OnAppListener onAppListener;
 
@@ -25,6 +27,7 @@ public class ReportsViewHolder extends RecyclerView.ViewHolder implements View.O
         this.appIcon = itemView.findViewById(R.id.reportAppIcon);
         this.reportDate = itemView.findViewById(R.id.reportDate);
         this.reportDetection = itemView.findViewById(R.id.reportDetection);
+        this.deleteButton = itemView.findViewById(R.id.deleteReport);
 
         this.onAppListener = onAppListener;
 
@@ -46,6 +49,8 @@ public class ReportsViewHolder extends RecyclerView.ViewHolder implements View.O
     public TextView getReportDetection(){
         return this.reportDetection;
     }
+
+    public ImageButton getDeleteButton(){ return this.deleteButton; }
 
     @Override
     public void onClick(View v) {

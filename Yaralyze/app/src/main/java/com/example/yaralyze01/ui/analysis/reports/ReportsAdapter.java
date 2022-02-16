@@ -1,5 +1,6 @@
 package com.example.yaralyze01.ui.analysis.reports;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +9,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.yaralyze01.MainActivity;
 import com.example.yaralyze01.R;
+import com.example.yaralyze01.YaralyzeDB;
 import com.example.yaralyze01.ui.analysis.installedApps.OnAppListener;
 import com.example.yaralyze01.ui.analysis.outcomes.AnalysisOutcome;
 
@@ -45,10 +48,21 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ReportsViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ReportsViewHolder holder, @SuppressLint("RecyclerView") int position) {
         holder.getReportAppName().setText(this.analysisOutcomes.get(position).getAnalyzedAppName());
         holder.getReportAppIcon().setImageDrawable(this.analysisOutcomes.get(position).getAnalyzedAppIcon());
         holder.getReportDate().setText(this.analysisOutcomes.get(position).getAnalysisDate());
+
+        holder.getDeleteButton().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                YaralyzeDB db = YaralyzeDB.getInstance(v.getContext());
+                db.deleteOutcome(analysisOutcomes.get(position));
+
+                analysisOutcomes.remove(position);
+                notifyDataSetChanged();
+            }
+        });
 
         if(this.analysisOutcomes.get(position).isMalwareDetected()){
             holder.getReportDetection().setText(malwareDetectedString);

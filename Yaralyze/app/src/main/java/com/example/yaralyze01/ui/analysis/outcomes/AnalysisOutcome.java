@@ -9,6 +9,7 @@ import java.util.TimeZone;
 
 public class AnalysisOutcome {
 
+    private int id;
     private int analysisType;
 
     private String analyzedAppName;
@@ -19,8 +20,9 @@ public class AnalysisOutcome {
     private ArrayList<String> matchedRules;
     private String analysisDate;
 
-    public AnalysisOutcome(int analysisType, Drawable analyzedAppIcon, String analyzedAppName, String analyzedAppPackage, boolean malwareDetected,
+    public AnalysisOutcome(int id, int analysisType, Drawable analyzedAppIcon, String analyzedAppName, String analyzedAppPackage, boolean malwareDetected,
                                 String analysisDate, ArrayList<String> matchedRules){
+        this.id = id;
         this.analysisType = analysisType;
         this.analyzedAppName = analyzedAppName;
         this.analyzedAppPackage = analyzedAppPackage;
@@ -39,6 +41,10 @@ public class AnalysisOutcome {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd - MM - yyyy  HH:mm:ss");
         dateFormat.setTimeZone(TimeZone.getTimeZone("Europe/Madrid"));
         return dateFormat.format(new Date());
+    }
+
+    public int getId(){
+        return this.id;
     }
 
     public int getAnalysisType() {

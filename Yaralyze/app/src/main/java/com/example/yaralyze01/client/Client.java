@@ -263,7 +263,7 @@ public class Client implements Runnable{
             }
         }
 
-        return new AnalysisOutcome(this.requestType, null, this.appName, this.appDetails.getPackageName(), analysisOutcomeJSON.getBoolean("detected"), null, matchedRules);
+        return new AnalysisOutcome(-1, this.requestType, null, this.appName, this.appDetails.getPackageName(), analysisOutcomeJSON.getBoolean("detected"), null, matchedRules);
     }
 
     // Métodos relacionados con peticiones de análisis de hash

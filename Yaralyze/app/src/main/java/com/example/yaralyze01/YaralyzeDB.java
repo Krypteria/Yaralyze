@@ -148,13 +148,13 @@ public class YaralyzeDB extends SQLiteOpenHelper {
         AnalysisOutcome AnalysisOutcome;
 
         if(cursor.moveToFirst()){
-            cursor.close();
-            AnalysisOutcome = new AnalysisOutcome(AnalysisType.HASH, null, appName, packageName,true, null, null);
+            AnalysisOutcome = new AnalysisOutcome(cursor.getInt(0), AnalysisType.HASH, null, appName, packageName,true, null, null);
         }
         else{
-            cursor.close();
-            AnalysisOutcome = new AnalysisOutcome(AnalysisType.HASH, null, appName, packageName,false, null, null);
+            AnalysisOutcome = new AnalysisOutcome(-1, AnalysisType.HASH, null, appName, packageName,false, null, null);
         }
+
+        cursor.close();
 
         return AnalysisOutcome;
     }
@@ -325,7 +325,7 @@ public class YaralyzeDB extends SQLiteOpenHelper {
                     default:
                         break;
                 }
-                return new AnalysisOutcome(cursor.getInt(2), icon, getAppName(cursor.getInt(1)), cursorAnalyzedApps.getString(2),
+                return new AnalysisOutcome(cursor.getInt(0), cursor.getInt(2), icon, getAppName(cursor.getInt(1)), cursorAnalyzedApps.getString(2),
                         cursor.getInt(3) == 1, cursor.getString(4), matchedRules);
             }
         }
@@ -363,7 +363,9 @@ public class YaralyzeDB extends SQLiteOpenHelper {
                     default:
                         break;
                 }
-                AnalysisOutcome analysisOutcome = new AnalysisOutcome(reportType, icon, getAppName(cursor.getInt(1)), cursorAnalyzedApps.getString(2),
+
+                //SI ES COMPLETO DEBERIA DEVOLVER EL ID DE LA TABLA COMPLETO,MODIFICAR
+                AnalysisOutcome analysisOutcome = new AnalysisOutcome(cursor.getInt(0), reportType, icon, getAppName(cursor.getInt(1)), cursorAnalyzedApps.getString(2),
                                                             cursor.getInt(3) == 1, cursor.getString(4), matchedRules);
                 analysisOutcomes.add(analysisOutcome);
             }
@@ -403,6 +405,21 @@ public class YaralyzeDB extends SQLiteOpenHelper {
         else{
             return false;
         }
+    }
+
+    //Metodos para eliminar informacion de la DB
+    //------------------------------------------
+
+    public void deleteOutcome(AnalysisOutcome outcome){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //Miro el tipo de outcome
+        //Si es completo o estatico tengo que eliminar coincidencias también
+        //Si es completo tengo que quitar la fila correspondiente en la c
+
+        //
+
+
     }
 
     private Cursor getIndexFrom(String tableName, String idColumnName, String item){
