@@ -1,5 +1,3 @@
-from http import client
-import re
 import socket
 import os
 import json
@@ -10,7 +8,7 @@ from datetime import datetime
 
 from YaralyzeServerDB import YaralyzeServerDB
 
-CLIENT_SAMPLES_PATH = ".\\Analysis_samples"
+CLIENT_SAMPLES_PATH = ".\\Analysis_samples\\"
 LOGS_DIRECTORY_PATH = ".\\Logs\\"
 ANALYSIS_TOOLS_PATH = ".\\Analysis_tools"
 HASHES_DIRECTORY_PATH = ANALYSIS_TOOLS_PATH + "\\MalwareHashes"
@@ -27,7 +25,7 @@ STATIC_ANALYSIS_QUERY = 1;
 HASH_ANALYSIS_QUERY = 2;
 UPDATE_DB_QUERY = 3;
 
-BUFFERSIZE = 8192
+BUFFERSIZE = 16384
 PORT = 2020
 
 class Server:
@@ -135,8 +133,11 @@ class Server:
     
     def __proccessClientRequest(self, clientConnection) -> None:
         request = self.__receiveRequestType(clientConnection)
+        print("Petición " + str(request) + " recibida")
+
         if request == STATIC_ANALYSIS_QUERY:
             self.__logger.info("Tramitando petición de análisis estático")
+            print("Tramitando petición de análisis estatico")
             self.__staticAnalysis(clientConnection)
         elif request == HASH_ANALYSIS_QUERY:
             self.__logger.info("Tramitando petición de análisis del hash")
@@ -213,7 +214,6 @@ class Server:
             
         analysisOutcome = json.dumps(analysisOutcome)
         clientConnection.sendall(bytes(analysisOutcome + "\n", encoding="utf-8"))
-        clientConnection.close()
 
     def __removeClientSample(self, clientSamplePath):
         os.remove(clientSamplePath + EXTENSION)

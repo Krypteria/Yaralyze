@@ -35,7 +35,7 @@ public class Client implements Runnable{
 
     private final String serverIP = "192.168.1.37"; // placeholder
     private final int PORT = 2020;
-    private final int BUFFER_SIZE = 8192;
+    private final int BUFFER_SIZE = 16384;
 
     private Socket clientSocket;
     private DataOutputStream bytesOutput;
@@ -115,11 +115,6 @@ public class Client implements Runnable{
 
     private void connectSocket() {
         this.clientSocket = new Socket();
-        try {
-            this.clientSocket.setSoTimeout(5000);
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
 
         try {
             this.clientSocket.connect(new InetSocketAddress(this.serverIP, this.PORT));
@@ -164,12 +159,18 @@ public class Client implements Runnable{
         this.sendStaticAnalysisRequest();
         AnalysisOutcome staticAnalysisOutcome = this.receiveServerAnalysisOutcome();
 
-        
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         this.connectSocket();
         this.requestType = AnalysisType.HASH;
         this.sendHashAnalysisRequest();
         AnalysisOutcome hashAnalysisOutcome = this.receiveHashAnalysisOutcome();
 
+        this.clientSocket.close();
         this.sendCompleteAnalysisOutcomeToView(staticAnalysisOutcome, hashAnalysisOutcome);
     }
 
@@ -179,7 +180,9 @@ public class Client implements Runnable{
     private void staticAnalysis(){
         this.sendStaticAnalysisRequest();
         try {
-            this.sendSimpleAnalysisOutcomeToView(this.receiveServerAnalysisOutcome());
+            AnalysisOutcome outcome = this.receiveServerAnalysisOutcome();
+            this.clientSocket.close();
+            this.sendSimpleAnalysisOutcomeToView(outcome);
         } catch (IOException e) {
             this.analysisOutcomeManager.showAnalysisException("Ha ocurrido un error al recibir el resultado del análisis estático.");
         } catch (JSONException e) {
@@ -244,7 +247,6 @@ public class Client implements Runnable{
         AnalysisOutcome analysisOutcome = this.buildAnalysisOutcomeObject(analysisOutcomeJSON);
 
         this.textInput.close();
-        this.clientSocket.close();
 
         return analysisOutcome;
     }
@@ -268,7 +270,13 @@ public class Client implements Runnable{
     // -------------------------------------------------------
 
     private void hashAnalysis(){
-        this.sendSimpleAnalysisOutcomeToView(this.receiveHashAnalysisOutcome());
+        AnalysisOutcome outcome = this.receiveHashAnalysisOutcome();
+        try {
+            this.clientSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.sendSimpleAnalysisOutcomeToView(outcome);
     }
 
     private AnalysisOutcome receiveHashAnalysisOutcome(){
