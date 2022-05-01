@@ -5,7 +5,7 @@ import logging
 from datetime import datetime
 
 YARA_RULES_PATH = ".\\Analysis_tools\\YaraRules\\"
-LOGS_PATH = ".\\Logs\\analyzerLogs.log"
+LOGS_PATH = ".\\Logs\\"
 
 class Analyzer():
     def __init__(self) -> None:
@@ -17,16 +17,11 @@ class Analyzer():
         self.__matchedRulesCount = 0
 
     def __setupLogConfig(self) -> None:
-        if(not os.path.exists(LOGS_PATH)):
-            open(LOGS_PATH, 'a').close()
+        logfilePath = LOGS_PATH + str(datetime.now().strftime("%d")) + "_analyzer.log"
+        if(not os.path.exists(logfilePath)):
+            open(logfilePath, 'a').close()
 
-        file = open(LOGS_PATH, "a")
-        file.write("--------------------------- \n")
-        file.write(str(datetime.now().strftime("%d-%B-%Y \n")))
-        file.write("--------------------------- \n")
-        file.close()
-
-        handler = logging.FileHandler(LOGS_PATH)        
+        handler = logging.FileHandler(logfilePath)        
         handler.setFormatter(logging.Formatter('%(asctime)s: %(levelname)s - %(message)s', "%H:%M:%S"))
 
         self.__logger = logging.getLogger("analyzerLogger")
@@ -39,25 +34,23 @@ class Analyzer():
                 raise FileNotFoundError("La ruta especificada para las reglas Yara es incorrecta")
 
             yaraRulesDic = {}
-            self.__logger.info("Cargando reglas Yara en Analyzer.py")
+            self.__logger.info("[!] - Cargando reglas Yara")
             for root, __, files in os.walk(YARA_RULES_PATH):
                 for file in files:
                     filePath = os.path.join(root, file)                 
                     yaraRulesDic[file] = filePath
-                    self.__logger.info("Regla " + file + " cargada con éxito")
+                    self.__logger.info("Regla " + file + " cargada")
 
             return yara.compile(filepaths=yaraRulesDic) 
         except FileNotFoundError as e:
-            print("[!] - ", str(e))
-            self.__logger.error(str(e))
+            self.__logger.error("[!][!][!] - Error al cargar reglas Yara: " + str(e))
         except yara.YaraSyntaxError as e:
-            print("[!] - ", str(e))
-            self.__logger.error(str(e))
+            self.__logger.error("[!][!][!] - Error al cargar reglas Yara: " + str(e))
 
 
     def __staticAnalysisCallback(self,data):
         if(data["matches"]):
-            self.__logger.warning("El archivo coincide con la regla " + data["rule"])
+            self.__logger.warning("[!][!] - El archivo coincide con la regla " + data["rule"])
             self.__matchedRules.append(data["rule"])
             self.__matchedRulesCount = self.__matchedRulesCount + 1
             self.__malwareFound = 1
@@ -69,7 +62,7 @@ class Analyzer():
         self.__matchedRulesCount = 0
 
     def executeStaticAnalysis(self, clientSamplePath) -> dict:
-        self.__logger.info("Ejecutando el análisis del archivo situado en " + clientSamplePath)
+        self.__logger.info("[!] - Ejecutando el análisis del archivo " + clientSamplePath)
         self.__rules.match(filepath=clientSamplePath, callback=self.__staticAnalysisCallback)
         if self.__malwareFound:
             self.__analysisOutcome["detected"] = True
@@ -77,7 +70,6 @@ class Analyzer():
             self.__analysisOutcome["matchedRules"] = self.__matchedRules
         else:
             self.__analysisOutcome["detected"] = False
-
-        self.__logger.info("Análisis finalizado")
-
+        
+        self.__logger.info("[!] - Análisis del archivo " + clientSamplePath + " terminado")
         return self.__analysisOutcome

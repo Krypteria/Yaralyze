@@ -16,7 +16,7 @@ YARA_RULES_DIRECTORY_PATH =  ANALYSIS_TOOLS_PATH + "\\YaraRules"
 PARTIAL_MALWARE_HASHES_PATH = ".\\Analysis_tools\\MalwareHashes\\Partial_hashes.txt"
 DATABASE_DIRECTORY = ".\\Database"
 
-LOGS_PATH = ".\\Logs\\serverLogs.log"
+LOGS_PATH = ".\\Logs\\"
 
 EXTENSION = ".apk"
 
@@ -52,56 +52,51 @@ class Server:
         tempSocket.close()
         return local_ip
     
-    def __createDirectories(self) -> None: #Añadir el resto de directorios que faltan
+    def __createDirectories(self) -> None:
         if not os.path.isdir(LOGS_DIRECTORY_PATH):
             try:
                 os.makedirs(LOGS_DIRECTORY_PATH)
             except:
-                print("[!] - Error al crear el el directorio de logs")
+                print("[!][!][!] - Error al crear el el directorio de logs")
 
         if not os.path.isdir(DATABASE_DIRECTORY):
             try:
                 os.makedirs(DATABASE_DIRECTORY)
             except:
-                self.__logger.error("[!] - Error al crear el el directorio de la base de datos")
+                self.__logger.error("[!][!][!] - Error al crear el el directorio de la base de datos")
 
         if not os.path.isdir(ANALYSIS_TOOLS_PATH):
             try:
                 os.makedirs(ANALYSIS_TOOLS_PATH)
             except:
-                self.__logger.error("[!] - Error al crear el el directorio de herramientas")
+                self.__logger.error("[!][!][!] - Error al crear el el directorio de herramientas")
 
         if not os.path.isdir(YARA_RULES_DIRECTORY_PATH):
             try:
                 os.makedirs(YARA_RULES_DIRECTORY_PATH)
             except:
-                self.__logger.error("[!] - Error al crear el el directorio de reglas Yara")
+                self.__logger.error("[!][!][!] - Error al crear el el directorio de reglas Yara")
 
         if not os.path.isdir(HASHES_DIRECTORY_PATH):
             try:
                 os.makedirs(HASHES_DIRECTORY_PATH)
             except:
-                self.__logger.error("[!] - Error al crear el el directorio de hashes")
+                self.__logger.error("[!][!][!] - Error al crear el el directorio de hashes")
 
         if not os.path.isdir(CLIENT_SAMPLES_PATH):
             try:
                 os.makedirs(CLIENT_SAMPLES_PATH)
             except:
-                print("[!] - Error al crear el el directorio de muestras")
-                self.__logger.error("Error al crear el el directorio de muestras")
+                self.__logger.error("[!][!][!] - Error al crear el el directorio de muestras")
                 
 
     def __setupLogConfig(self) -> None:
-        if(not os.path.exists(LOGS_PATH)):
-            open(LOGS_PATH, 'a').close()
+        logfilePath = LOGS_PATH + str(datetime.now().strftime("%d")) + "_server.log"
 
-        file = open(LOGS_PATH, "a")
-        file.write("--------------------------- \n")
-        file.write(str(datetime.now().strftime("%d-%B-%Y \n")))
-        file.write("--------------------------- \n")
-        file.close()
+        if(not os.path.exists(logfilePath)):
+            open(logfilePath, 'a').close()
 
-        handler = logging.FileHandler(LOGS_PATH)        
+        handler = logging.FileHandler(logfilePath)        
         handler.setFormatter(logging.Formatter('%(asctime)s: %(levelname)s - %(message)s', "%H:%M:%S"))
 
         self.__logger = logging.getLogger("serverLogger")
@@ -114,38 +109,40 @@ class Server:
 
     def __startServer(self) -> None:
         try:
+            self.__logger.info("[!][!][!] - Iniciando servicio en " + str(self.__host) + ":" + str(PORT))
             self.__serverSocket.bind((self.__host, PORT))
         except socket.error as e:
-            print(str(e))
-            self.__logger.error(str(e))
+            self.__logger.error("[!][!][!] - Error al iniciar el servicio: " + str(e))
     
     def __waitForConnections(self) -> None:
         while(1):
             self.__serverSocket.listen(1)
 
             print("Servidor esperando peticiones en: " + str(self.__host) + ":" + str(PORT))
-            self.__logger.info("Servidor esperando peticiones en: " + str(self.__host) + ":" + str(PORT))
 
-            clientConnection, clientAddress = self.__serverSocket.accept()  
-            self.__logger.info("Gestionando petición proveniente de " + str(clientAddress[0]) + ":" + str(clientAddress[1]))
+            clientConnection, _ = self.__serverSocket.accept()  
+            try:
+                self.__proccessClientConnection(clientConnection)
+            except Exception as e:
+                self.__logger.error("[!][!][!] - Error al procesar la petición de un cliente: " + str(e))
+                clientConnection.close()
 
-            self.__proccessClientRequest(clientConnection)
     
-    def __proccessClientRequest(self, clientConnection) -> None:
+    def __proccessClientConnection(self, clientConnection) -> None:
         request = self.__receiveRequestType(clientConnection)
-        print("Petición " + str(request) + " recibida")
 
         if request == STATIC_ANALYSIS_QUERY:
-            self.__logger.info("Tramitando petición de análisis estático")
-            print("Tramitando petición de análisis estatico")
+            self.__logger.info("[!] - Petición de análisis estático recibida")
             self.__staticAnalysis(clientConnection)
+            self.__logger.info("[!] - Análisis estático terminado")
         elif request == HASH_ANALYSIS_QUERY:
-            self.__logger.info("Tramitando petición de análisis del hash")
-            print("Tramitando petición de análisis del hash")
+            self.__logger.info("[!] - Petición de análisis del hash recibida")
             self.__hashAnalysis(clientConnection)
+            self.__logger.info("[!] - Análisis del hash terminado")
         elif request == UPDATE_DB_QUERY:
-            self.__logger.info("Tramitando petición de actualización de base de datos")
+            self.__logger.info("[!] - Petición de actualización de la base de datos recibida")
             self.__sendPartialHashesDB(clientConnection)
+            self.__logger.info("[!] - Actualización de la base de datos terminada")
         
 
     def __receiveRequestType(self, clientConnection):
@@ -157,9 +154,8 @@ class Server:
     # --------------------------------------------------------
 
     def __hashAnalysis(self, clientConnection) -> None:
-        hash = json.loads(self.__receiveClientSampleHeader(clientConnection))["hash"]
-
-        malwareFound = self.__db.getHashCoincidence(hash)
+        clientHash = json.loads(self.__receiveClientSampleHeader(clientConnection))["hash"]
+        malwareFound = self.__db.getHashCoincidence(clientHash)
         analysisOutcome = {}
         analysisOutcome["detected"] = malwareFound
 
@@ -181,8 +177,9 @@ class Server:
         return clientSamplePath
 
     def __receiveSampleFile(self, clientConnection, header) -> str:
-        sampleName, sampleSize = header["name"], header["size"]
+        sampleName, sampleSize = header["name"], int(header["size"])
 
+        self.__logger.info("Recibiendo fichero " + sampleName)
         with open(CLIENT_SAMPLES_PATH + sampleName + EXTENSION, "wb") as sampleFile:
             while True:
                 bytes_readed = clientConnection.recv(min(BUFFERSIZE, sampleSize))
@@ -193,12 +190,11 @@ class Server:
                 sampleFile.write(bytes_readed)
                 sampleSize = sampleSize - len(bytes_readed) 
         
-        self.__logger.info("Fichero a analizar recibido correctamente desde el cliente")
+        self.__logger.info("Fichero " + sampleName + " recibido")
         return CLIENT_SAMPLES_PATH + sampleName
     
-    def __startStaticAnalysis(self, clientSamplePath) -> bool:
-        print("[!] Iniciando análisis estático en el sample del cliente")
-        self.__logger.info("Iniciando análisis estático en " + clientSamplePath + EXTENSION)
+    def __startStaticAnalysis(self, clientSamplePath) -> dict:
+        self.__logger.info("[!] - Iniciando análisis estático sobre " + clientSamplePath + EXTENSION)
         return self.__analyzer.executeStaticAnalysis(clientSamplePath + EXTENSION)
 
 
@@ -206,11 +202,14 @@ class Server:
     # ---------------------------------------------
     
     def __receiveClientSampleHeader(self, clientConnection) -> str:
-        return clientConnection.recv(1024).decode("utf-8")[2:]
+        try:
+            header = clientConnection.recv(1024).decode("utf-8")[2:]
+            return header
+        except:
+            raise OSError("Error al procesar la cabecera del archivo")
 
     def __sendAnalysisOutcome(self, clientConnection, analysisOutcome):
-        print("Enviando resultado del análisis al cliente")
-        self.__logger.info("Enviando resultado del análisis al cliente")
+        self.__logger.info("Enviando resultado del análisis")
             
         analysisOutcome = json.dumps(analysisOutcome)
         clientConnection.sendall(bytes(analysisOutcome + "\n", encoding="utf-8"))
@@ -230,8 +229,6 @@ class Server:
             clientConnection.sendall(bytes(line, encoding="utf-8"))
 
         clientConnection.close()
-
-
 
 if __name__ == "__main__":
     Server()

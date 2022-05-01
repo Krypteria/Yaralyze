@@ -33,7 +33,7 @@ public class Client implements Runnable{
 
     private final int UPDATE_DB_QUERY = 3;
 
-    private final String serverIP = "192.168.1.37"; // placeholder
+    private final String serverIP = "192.168.1.33";
     private final int PORT = 2020;
     private final int BUFFER_SIZE = 16384;
 
@@ -136,7 +136,14 @@ public class Client implements Runnable{
             this.bytesOutput.writeInt(this.requestType);
             this.bytesOutput.flush();
         } catch (IOException e) {
-            this.analysisOutcomeManager.showAnalysisException("Ha ocurrido un error al enviar la petición al servidor.");
+            switch (this.requestType){
+                case UPDATE_DB_QUERY:
+                    this.loadingAppFragment.showClientExceptionDialog("Ha ocurrido un error al enviar la petición al servidor.");
+                    break;
+                default:
+                    this.analysisOutcomeManager.showAnalysisException("Ha ocurrido un error al enviar la petición al servidor.");
+                    break;
+            }
         }
     }
 
@@ -205,7 +212,7 @@ public class Client implements Runnable{
     private void sendAPKHeader(String apkName, long apkLength) throws IOException, JSONException {
         JSONObject headerJSON = new JSONObject();
         headerJSON.put("name", apkName);
-        headerJSON.put("size", apkLength);
+        headerJSON.put("size", String.valueOf(apkLength));
 
         this.bytesOutput = new DataOutputStream(new BufferedOutputStream(this.clientSocket.getOutputStream()));
         this.bytesOutput.writeUTF(headerJSON.toString());
