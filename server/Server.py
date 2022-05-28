@@ -8,15 +8,16 @@ from datetime import datetime
 
 from YaralyzeServerDB import YaralyzeServerDB
 
-CLIENT_SAMPLES_PATH = ".\\Analysis_samples\\"
-LOGS_DIRECTORY_PATH = ".\\Logs\\"
-ANALYSIS_TOOLS_PATH = ".\\Analysis_tools"
-HASHES_DIRECTORY_PATH = ANALYSIS_TOOLS_PATH + "\\MalwareHashes"
-YARA_RULES_DIRECTORY_PATH =  ANALYSIS_TOOLS_PATH + "\\YaraRules"
-PARTIAL_MALWARE_HASHES_PATH = ".\\Analysis_tools\\MalwareHashes\\Partial_hashes.txt"
-DATABASE_DIRECTORY = ".\\Database"
+BASE_PATH = os.path.abspath(os.getcwd())
+CLIENT_SAMPLES_PATH = BASE_PATH + "/Analysis_samples"
+LOGS_DIRECTORY_PATH = BASE_PATH + "/Logs"
+ANALYSIS_TOOLS_PATH = BASE_PATH + "/Analysis_tools"
+DATABASE_DIRECTORY = BASE_PATH + "/Database"
 
-LOGS_PATH = ".\\Logs\\"
+HASHES_DIRECTORY_PATH = ANALYSIS_TOOLS_PATH + "/MalwareHashes"
+YARA_RULES_DIRECTORY_PATH =  ANALYSIS_TOOLS_PATH + "/YaraRules"
+
+PARTIAL_MALWARE_HASHES_PATH = HASHES_DIRECTORY_PATH + "/Partial_hashes.txt"
 
 EXTENSION = ".apk"
 
@@ -26,7 +27,8 @@ HASH_ANALYSIS_QUERY = 2;
 UPDATE_DB_QUERY = 3;
 
 BUFFERSIZE = 16384
-PORT = 2020
+IP = "0.0.0.0"
+PORT = 3389
 
 class Server:
     def __init__(self) -> None:
@@ -91,8 +93,7 @@ class Server:
                 
 
     def __setupLogConfig(self) -> None:
-        logfilePath = LOGS_PATH + str(datetime.now().strftime("%d")) + "_server.log"
-
+        logfilePath = LOGS_DIRECTORY_PATH + "/" + str(datetime.now().strftime("%d")) + "_server.log"
         if(not os.path.exists(logfilePath)):
             open(logfilePath, 'a').close()
 
@@ -109,8 +110,13 @@ class Server:
 
     def __startServer(self) -> None:
         try:
-            self.__logger.info("[!][!][!] - Iniciando servicio en " + str(self.__host) + ":" + str(PORT))
-            self.__serverSocket.bind((self.__host, PORT))
+            try:
+                self.__logger.info("[!][!] - Iniciando servicio en " + IP + ":" + str(PORT))
+                self.__serverSocket.bind((IP, PORT))
+            except: 
+                self.__logger.warning("[!][!] - Ejecutando el servidor en modo local")
+                self.__logger.info("[!][!] - Iniciando servicio en " + str(self.__host) + ":" + str(PORT))
+                self.__serverSocket.bind((self.__host, PORT))
         except socket.error as e:
             self.__logger.error("[!][!][!] - Error al iniciar el servicio: " + str(e))
     
@@ -155,6 +161,7 @@ class Server:
 
     def __hashAnalysis(self, clientConnection) -> None:
         clientHash = json.loads(self.__receiveClientSampleHeader(clientConnection))["hash"]
+        print(clientHash)
         malwareFound = self.__db.getHashCoincidence(clientHash)
         analysisOutcome = {}
         analysisOutcome["detected"] = malwareFound
@@ -180,7 +187,7 @@ class Server:
         sampleName, sampleSize = header["name"], int(header["size"])
 
         self.__logger.info("Recibiendo fichero " + sampleName)
-        with open(CLIENT_SAMPLES_PATH + sampleName + EXTENSION, "wb") as sampleFile:
+        with open(CLIENT_SAMPLES_PATH + "/" + sampleName + EXTENSION, "wb") as sampleFile:
             while True:
                 bytes_readed = clientConnection.recv(min(BUFFERSIZE, sampleSize))
                 if not bytes_readed:
@@ -191,7 +198,7 @@ class Server:
                 sampleSize = sampleSize - len(bytes_readed) 
         
         self.__logger.info("Fichero " + sampleName + " recibido")
-        return CLIENT_SAMPLES_PATH + sampleName
+        return CLIENT_SAMPLES_PATH + "/" + sampleName
     
     def __startStaticAnalysis(self, clientSamplePath) -> dict:
         self.__logger.info("[!] - Iniciando análisis estático sobre " + clientSamplePath + EXTENSION)
@@ -222,13 +229,21 @@ class Server:
     # ------------------------------------------------------------------------
     
     def __sendPartialHashesDB(self, clientConnection):
-        malwareHashesFile = open(PARTIAL_MALWARE_HASHES_PATH, "r")
-        lines = malwareHashesFile.readlines()
+        if os.path.isfile(PARTIAL_MALWARE_HASHES_PATH):
+            malwareHashesFile = open(PARTIAL_MALWARE_HASHES_PATH, "r")
+            lines = malwareHashesFile.readlines()
 
-        for line in lines:
-            clientConnection.sendall(bytes(line, encoding="utf-8"))
+            for line in lines:
+                clientConnection.sendall(bytes(line, encoding="utf-8"))
 
-        clientConnection.close()
+            clientConnection.close()
+        else:
+            self.__logger.error("[!][!][!] - Error, archivo partial hashes no encontrado")
+            clientConnection.close()
 
 if __name__ == "__main__":
-    Server()
+    try:
+        Server()
+    except KeyboardInterrupt:
+        print("\nCerrando servidor...")
+        exit(1)

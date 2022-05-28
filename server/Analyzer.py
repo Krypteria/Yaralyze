@@ -1,11 +1,13 @@
+from lib2to3.pytree import BasePattern
 import yara
 import os
 import logging
 
 from datetime import datetime
 
-YARA_RULES_PATH = ".\\Analysis_tools\\YaraRules\\"
-LOGS_PATH = ".\\Logs\\"
+BASE_PATH = os.path.abspath(os.getcwd())
+YARA_RULES_PATH = BASE_PATH + "/Analysis_tools/YaraRules"
+LOGS_DIRECTORY_PATH = BASE_PATH + "/Logs"
 
 class Analyzer():
     def __init__(self) -> None:
@@ -17,7 +19,7 @@ class Analyzer():
         self.__matchedRulesCount = 0
 
     def __setupLogConfig(self) -> None:
-        logfilePath = LOGS_PATH + str(datetime.now().strftime("%d")) + "_analyzer.log"
+        logfilePath = LOGS_DIRECTORY_PATH + "/" + str(datetime.now().strftime("%d")) + "_analyzer.log"
         if(not os.path.exists(logfilePath)):
             open(logfilePath, 'a').close()
 

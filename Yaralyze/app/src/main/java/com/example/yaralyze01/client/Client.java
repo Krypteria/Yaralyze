@@ -34,7 +34,7 @@ public class Client implements Runnable{
     private final int UPDATE_DB_QUERY = 3;
 
     private final String serverIP = "192.168.1.33";
-    private final int PORT = 2020;
+    private final int PORT = 3389;
     private final int BUFFER_SIZE = 16384;
 
     private Socket clientSocket;
