@@ -40,7 +40,7 @@ Another favourable point of yara rules is that they are a current technique that
 
 <div align="justify">
 
-Yaralyze is a malware detection tool that **employs two static analysis techniques**, one using **yara rules** and the other based on **hashes analysis**. It allows the **storage and visualisation of reports**, it is designed using a **client-server architecture** where **the server can be hosted in the cloud** so that it is always available from any mobile device that has the client installed and makes use of **+130,000 Yara rules and +500,000 hashes of malware apps** obtained from virusShare and Github (the rules and hashes are not published in the repository).
+Yaralyze is a malware detection tool for Android devices that **employs two static analysis techniques**, one using **yara rules** and the other based on **hashes analysis**. It allows the **storage and visualisation of reports**, it is designed using a **client-server architecture** where **the server can be hosted in the cloud** so that it is always available from any mobile device that has the client installed and makes use of **+130,000 Yara rules and +500,000 hashes of malware apps** obtained from virusShare and Github (the rules and hashes are not published in the repository).
 
 </div>
 
