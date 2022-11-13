@@ -81,4 +81,8 @@ As it can be seen in the images, it manages to detect the malware files and does
 | Server DB |0.088s |0.085s |0.087s |0.091s |0.0877s  | 
 | No coincidence             |0.087s |0.088s |0.084s |0.088s |0.0867s  | 
 
+In the first table we can see that in terms of speed it can be observed that the average analysis times are very similar, this is because all the APKs analysed go through all the Yara rules even if they have already been marked as malware because there may be rules that narrow down the type of malware we are dealing with. In addition, the analysis time is also conditioned by the size of the APK to be analysed, as is logical. These APKs did not have very different sizes.
+
+In the second table we can see that the times are also very similar and this may seem strange because when the hash is in the server's database or when there are no matches, the client is required to make a request to the server, which should slow down the speed of the analysis. The equal time can be justified by the fact that at the time of testing the server was only receiving a single request so it did not have a heavy workload and also the database does not have a large enough number of hashes to overly burden the searches.
+
 </div>
